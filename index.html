@@ -21,6 +21,7 @@ h1{color:#ff8c00;font-size:22px;margin-bottom:4px}
 .divider{width:1px;background:#ffffff22}
 .btn{width:100%;padding:14px;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:12px;color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:4px}
 .btn:hover{opacity:0.9}
+.btn:disabled{opacity:0.5;cursor:not-allowed}
 .hist-title{font-size:13px;color:#888;font-weight:700;margin-bottom:8px}
 .hist-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #ffffff11;font-size:13px}
 .hist-score{color:#ff8c00;font-weight:700}
@@ -62,6 +63,9 @@ h1{color:#ff8c00;font-size:22px;margin-bottom:4px}
 .review{text-align:left;background:#0f3460;border-radius:10px;padding:12px;margin-bottom:18px}
 .rev-row{display:flex;gap:8px;padding:4px 0;border-bottom:1px solid #ffffff11;font-size:13px;color:#aaa;align-items:center}
 .footer{text-align:center;font-size:12px;color:#444;margin-top:8px}
+.loading{text-align:center;color:#ff8c00;padding:20px;font-size:14px}
+.cat-select{width:100%;background:#0f3460;border:1px solid #ff8c0055;border-radius:8px;color:#fff;font-size:14px;padding:10px;margin-bottom:12px;outline:none}
+.q-count{font-size:12px;color:#888;text-align:center;margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -75,14 +79,25 @@ h1{color:#ff8c00;font-size:22px;margin-bottom:4px}
     <div class="big">楽しく、気分良く、</div>
     <div class="big orange">完全理解！</div>
     <div class="sub2">暗記じゃなくて「なぜ？」で理解する学習法</div>
+
+    <select class="cat-select" id="cat-sel">
+      <option value="all">すべての分野</option>
+      <option value="ライフ・社会保険">ライフ・社会保険</option>
+      <option value="タックス">タックス</option>
+      <option value="リスク管理">リスク管理</option>
+      <option value="金融資産運用">金融資産運用</option>
+      <option value="不動産">不動産</option>
+      <option value="相続・事業承継">相続・事業承継</option>
+    </select>
+
     <div class="stats">
-      <div class="stat"><div class="stat-n">5</div><div class="stat-l">問題数</div></div>
+      <div class="stat"><div class="stat-n" id="s-total">...</div><div class="stat-l">問題数</div></div>
       <div class="divider"></div>
       <div class="stat"><div class="stat-n" id="s-attempts">0</div><div class="stat-l">挑戦回数</div></div>
       <div class="divider"></div>
       <div class="stat"><div class="stat-n" id="s-latest">--</div><div class="stat-l">最新スコア</div></div>
     </div>
-    <button class="btn" onclick="startQuiz()">スタート！🔥</button>
+    <button class="btn" id="start-btn" onclick="startQuiz()">スタート！🔥</button>
   </div>
   <div class="card" id="hist-card" style="display:none">
     <div class="hist-title">📊 最近の記録</div>
@@ -128,126 +143,197 @@ h1{color:#ff8c00;font-size:22px;margin-bottom:4px}
   <div class="footer">AID式学習法 © amadopapa</div>
 </div>
 
-<script>
-var Qs=[
-  {cat:"ライフ・社会保険",q:"協会けんぽの被保険者に関する記述の空欄にあてはまる組合せとして、最も適切なものはどれか。\n\n短時間労働者のうち次のいずれかに該当する者は被保険者とならない。\n①1週間の所定労働時間が（イ）未満\n②所定内賃金が月額（ウ）未満\n③学生\n\nまた所定労働時間・日数が通常の労働者の（ア）未満であること。",opts:["ア：3分の2　イ：20時間　ウ：5万8千円","ア：3分の2　イ：25時間　ウ：8万8千円","ア：4分の3　イ：20時間　ウ：8万8千円","ア：4分の3　イ：25時間　ウ：5万8千円"],ans:2,ex:"✅ ア：4分の3\n✅ イ：20時間\n✅ ウ：8万8千円（106万円の壁のライン！）\n\n「ハチハチ（88）で切れる！」で覚えよう！"},
-  {cat:"ライフ・社会保険",q:"労働者災害補償保険に関する次の記述のうち、最も不適切なものはどれか。",opts:["労災保険の適用を受ける労働者には、アルバイトやパートタイマーも含まれる","労災保険率は、適用事業に従事する労働者数に応じて定められている","業務上の傷病が治癒したときに一定の障害が残り障害等級に該当する場合、障害補償給付が支給される","業務災害で労働者が死亡した場合、遺族補償年金または遺族補償一時金が支給される"],ans:1,ex:"2番が不適切！\n\n✅ 労災保険率は「労働者数」ではなく「業種」で決まる！\n\n労災は雇用形態に関係なく全員対象！"},
-  {cat:"タックス",q:"わが国の税制に関する次の記述のうち、最も不適切なものはどれか。",opts:["所得税では課税対象となる所得を10種類に区分し種類ごとに計算する","相続税では税務署長が納付税額を決定する賦課課税方式が採用されている","消費税は間接税に該当する","法人税は国税、不動産取得税は地方税に該当する"],ans:1,ex:"2番が不適切！\n\n✅ 相続税は「申告納税方式」！自分で計算して申告！\n\n📝 申告納税方式：所得税・相続税・贈与税・法人税\n📬 賦課課税方式：固定資産税・住民税・不動産取得税"},
-  {cat:"タックス",q:"所得税における損益通算に関する次の記述のうち、最も適切なものはどれか。",opts:["不動産所得の損失のうち土地取得の負債利子は給与所得と損益通算できる","先物取引の雑所得の損失は不動産所得と損益通算できる","生活用自家用車を売却した譲渡所得の損失は給与所得と損益通算できる","コンサルティング事業の事業所得の損失は不動産所得と損益通算できる"],ans:3,ex:"4番が正解！\n\n✅ 事業所得の損失は他の所得と損益通算できる！\n\n損益通算できる所得は「不事山譲（ふじさんじょう）」！\n不動産・事業・山林・譲渡の4つや！"},
-  {cat:"タックス",q:"所得税における所得控除に関する次の記述のうち、最も不適切なものはどれか。",opts:["19歳以上23歳未満の扶養親族は特定扶養親族に該当する","70歳以上の扶養親族は老人扶養親族に該当する","合計所得金額が1,000万円を超える場合、配偶者控除の適用を受けることはできない","婚姻届を提出していなくても内縁関係にある者は控除対象配偶者に該当する"],ans:3,ex:"4番が不適切！\n\n✅ 内縁関係は配偶者控除の対象外！戸籍上の配偶者のみ！\n\n健康保険はOKでも税金はNG！\n「健康保険は人情、税金は法律」で覚えよう！"},
-];
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, query, where, orderBy }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-var cur=0,score=0,answers=[],hist=JSON.parse(localStorage.getItem('aid_hist')||'[]'),chatHist=[];
+const firebaseConfig = {
+  apiKey: "AIzaSyBDi1ueP7mXRMmy7pS8bHWkQRbwCkbcagw",
+  authDomain: "aid-learning.firebaseapp.com",
+  projectId: "aid-learning",
+  storageBucket: "aid-learning.firebasestorage.app",
+  messagingSenderId: "164950010760",
+  appId: "1:164950010760:web:bae9feb51fbfe7bd67683d"
+};
 
-function show(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on')});document.getElementById(id).classList.add('on')}
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-function updateHome(){
-  document.getElementById('s-attempts').textContent=hist.length;
-  if(hist.length>0){
-    document.getElementById('s-latest').textContent=Math.round(hist[0].score/hist[0].total*100)+'%';
-    document.getElementById('hist-card').style.display='block';
-    document.getElementById('hist-list').innerHTML=hist.slice(0,3).map(function(h){
-      return '<div class="hist-row"><span>'+h.date+'</span><span class="hist-score">'+h.score+'/'+h.total+' ('+Math.round(h.score/h.total*100)+'%)</span></div>';
-    }).join('');
+var allQs = [];
+var Qs = [];
+var cur = 0, score = 0, answers = [], chatHist = [];
+var hist = JSON.parse(localStorage.getItem('aid_hist') || '[]');
+
+// Firebase から問題を取得
+async function loadQuestions() {
+  document.getElementById('s-total').textContent = '...';
+  document.getElementById('start-btn').disabled = true;
+  try {
+    const snap = await getDocs(collection(db, 'questions'));
+    allQs = [];
+    snap.forEach(doc => {
+      allQs.push({ id: doc.id, ...doc.data() });
+    });
+
+    // ローカルの問題も追加（バックアップ）
+    if (allQs.length === 0) {
+      allQs = getLocalQs();
+    }
+
+    document.getElementById('s-total').textContent = allQs.length;
+    document.getElementById('start-btn').disabled = false;
+    updateHome();
+  } catch(e) {
+    // Firebase失敗時はローカル問題を使う
+    allQs = getLocalQs();
+    document.getElementById('s-total').textContent = allQs.length;
+    document.getElementById('start-btn').disabled = false;
+    updateHome();
   }
 }
 
-function startQuiz(){cur=0;score=0;answers=[];show('quiz');renderQ()}
-
-function renderQ(){
-  var q=Qs[cur];
-  document.getElementById('prog').style.width=((cur+1)/Qs.length*100)+'%';
-  document.getElementById('q-cat').textContent=q.cat;
-  document.getElementById('q-num').textContent=(cur+1)+' / '+Qs.length;
-  document.getElementById('q-text').textContent=q.q;
-  document.getElementById('exbox').style.display='none';
-  chatHist=[];
-  document.getElementById('chat-msgs').innerHTML='';
-  addBot('なんか気になることあったら何でも聞いてや！🖤');
-  var opts=document.getElementById('opts');
-  opts.innerHTML=q.opts.map(function(o,i){
-    return '<button class="opt" id="o'+i+'" onclick="pick('+i+')"><span class="opt-n">'+(i+1)+'</span><span>'+o+'</span></button>';
-  }).join('');
+// ローカルの問題（バックアップ）
+function getLocalQs() {
+  return [
+    {cat:"ライフ・社会保険",q:"協会けんぽの被保険者に関する記述の空欄にあてはまる組合せとして、最も適切なものはどれか。\n\n短時間労働者のうち次のいずれかに該当する者は被保険者とならない。\n①1週間の所定労働時間が（イ）未満\n②所定内賃金が月額（ウ）未満\n③学生\n\nまた所定労働時間・日数が通常の労働者の（ア）未満であること。",opts:["ア：3分の2　イ：20時間　ウ：5万8千円","ア：3分の2　イ：25時間　ウ：8万8千円","ア：4分の3　イ：20時間　ウ：8万8千円","ア：4分の3　イ：25時間　ウ：5万8千円"],ans:2,ex:"✅ ア：4分の3\n✅ イ：20時間\n✅ ウ：8万8千円（106万円の壁のライン！）\n\n「ハチハチ（88）で切れる！」で覚えよう！"},
+    {cat:"ライフ・社会保険",q:"労働者災害補償保険に関する次の記述のうち、最も不適切なものはどれか。",opts:["労災保険の適用を受ける労働者には、アルバイトやパートタイマーも含まれる","労災保険率は、適用事業に従事する労働者数に応じて定められている","業務上の傷病が治癒したときに一定の障害が残り障害等級に該当する場合、障害補償給付が支給される","業務災害で労働者が死亡した場合、遺族補償年金または遺族補償一時金が支給される"],ans:1,ex:"2番が不適切！\n\n✅ 労災保険率は「労働者数」ではなく「業種」で決まる！\n\n労災は雇用形態に関係なく全員対象！"},
+    {cat:"タックス",q:"わが国の税制に関する次の記述のうち、最も不適切なものはどれか。",opts:["所得税では課税対象となる所得を10種類に区分し種類ごとに計算する","相続税では税務署長が納付税額を決定する賦課課税方式が採用されている","消費税は間接税に該当する","法人税は国税、不動産取得税は地方税に該当する"],ans:1,ex:"2番が不適切！\n\n✅ 相続税は「申告納税方式」！自分で計算して申告！\n\n📝 申告納税方式：所得税・相続税・贈与税・法人税\n📬 賦課課税方式：固定資産税・住民税・不動産取得税"},
+    {cat:"タックス",q:"所得税における損益通算に関する次の記述のうち、最も適切なものはどれか。",opts:["不動産所得の損失のうち土地取得の負債利子は給与所得と損益通算できる","先物取引の雑所得の損失は不動産所得と損益通算できる","生活用自家用車を売却した譲渡所得の損失は給与所得と損益通算できる","コンサルティング事業の事業所得の損失は不動産所得と損益通算できる"],ans:3,ex:"4番が正解！\n\n✅ 事業所得の損失は他の所得と損益通算できる！\n\n損益通算できる所得は「不事山譲（ふじさんじょう）」！\n不動産・事業・山林・譲渡の4つや！"},
+    {cat:"タックス",q:"所得税における所得控除に関する次の記述のうち、最も不適切なものはどれか。",opts:["19歳以上23歳未満の扶養親族は特定扶養親族に該当する","70歳以上の扶養親族は老人扶養親族に該当する","合計所得金額が1,000万円を超える場合、配偶者控除の適用を受けることはできない","婚姻届を提出していなくても内縁関係にある者は控除対象配偶者に該当する"],ans:3,ex:"4番が不適切！\n\n✅ 内縁関係は配偶者控除の対象外！戸籍上の配偶者のみ！\n\n健康保険はOKでも税金はNG！\n「健康保険は人情、税金は法律」で覚えよう！"},
+  ];
 }
 
-function pick(idx){
-  var q=Qs[cur];
-  var ok=idx===q.ans;
-  if(ok)score++;
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on')}
+
+function updateHome(){
+  document.getElementById('s-attempts').textContent = hist.length;
+  if(hist.length > 0){
+    document.getElementById('s-latest').textContent = Math.round(hist[0].score/hist[0].total*100)+'%';
+    document.getElementById('hist-card').style.display = 'block';
+    document.getElementById('hist-list').innerHTML = hist.slice(0,3).map(h=>
+      `<div class="hist-row"><span>${h.date}</span><span class="hist-score">${h.score}/${h.total} (${Math.round(h.score/h.total*100)}%)</span></div>`
+    ).join('');
+  }
+}
+
+window.startQuiz = function(){
+  const cat = document.getElementById('cat-sel').value;
+  if(cat === 'all'){
+    Qs = shuffle([...allQs]).slice(0, 10);
+  } else {
+    Qs = shuffle(allQs.filter(q => q.cat === cat)).slice(0, 10);
+  }
+  if(Qs.length === 0){
+    alert('この分野の問題がまだないで！');
+    return;
+  }
+  cur = 0; score = 0; answers = [];
+  show('quiz');
+  renderQ();
+}
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function renderQ(){
+  const q = Qs[cur];
+  document.getElementById('prog').style.width = ((cur+1)/Qs.length*100)+'%';
+  document.getElementById('q-cat').textContent = q.cat;
+  document.getElementById('q-num').textContent = (cur+1)+' / '+Qs.length;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('exbox').style.display = 'none';
+  chatHist = [];
+  document.getElementById('chat-msgs').innerHTML = '';
+  addBot('なんか気になることあったら何でも聞いてや！🖤');
+  const opts = document.getElementById('opts');
+  opts.innerHTML = q.opts.map((o,i)=>
+    `<button class="opt" id="o${i}" onclick="pick(${i})"><span class="opt-n">${i+1}</span><span>${o}</span></button>`
+  ).join('');
+}
+
+window.pick = function(idx){
+  const q = Qs[cur];
+  const ok = idx === q.ans;
+  if(ok) score++;
   answers.push({q:cur,sel:idx,ok:ok});
-  for(var i=0;i<q.opts.length;i++){
-    var b=document.getElementById('o'+i);
+  for(let i=0;i<q.opts.length;i++){
+    const b=document.getElementById('o'+i);
     b.disabled=true;
     if(i===q.ans)b.classList.add('correct');
     else if(i===idx)b.classList.add('wrong');
     else b.classList.add('dim');
   }
-  document.getElementById('ex-title').textContent=ok?'🎉 正解！！':'💦 不正解...';
-  document.getElementById('ex-text').textContent=q.ex;
-  document.getElementById('next-btn').textContent=cur+1<Qs.length?'次の問題へ →':'結果を見る 🏁';
-  document.getElementById('exbox').style.display='block';
+  document.getElementById('ex-title').textContent = ok ? '🎉 正解！！ ナイスですねー！！' : '💦 不正解...';
+  document.getElementById('ex-text').textContent = q.ex;
+  document.getElementById('next-btn').textContent = cur+1<Qs.length ? '次の問題へ →' : '結果を見る 🏁';
+  document.getElementById('exbox').style.display = 'block';
 }
 
-function nextQ(){
+window.nextQ = function(){
   if(cur+1<Qs.length){cur++;renderQ();}
   else finish();
 }
 
 function finish(){
-  var rec={date:new Date().toLocaleDateString('ja-JP'),score:score,total:Qs.length};
-  hist=[rec].concat(hist).slice(0,10);
+  const rec={date:new Date().toLocaleDateString('ja-JP'),score:score,total:Qs.length};
+  hist=[rec,...hist].slice(0,10);
   localStorage.setItem('aid_hist',JSON.stringify(hist));
-  var pct=Math.round(score/Qs.length*100);
-  document.getElementById('r-emoji').textContent=pct>=80?'🎉':pct>=60?'💪':'😅';
-  document.getElementById('r-score').textContent=score+' / '+Qs.length;
-  document.getElementById('r-pct').textContent=pct+'%';
-  document.getElementById('r-msg').textContent=pct>=80?'めっちゃええやん！この調子で2級合格や！':pct>=60?'惜しい！あと一歩やで！':'ドンマイ！間違いが宝や！解説読んで完全理解しよ！';
-  document.getElementById('review').innerHTML=answers.map(function(a,i){
-    return '<div class="rev-row"><span>'+(a.ok?'✅':'❌')+'</span><span>問'+(i+1)+'：'+Qs[a.q].cat+'</span></div>';
-  }).join('');
+  const pct=Math.round(score/Qs.length*100);
+  document.getElementById('r-emoji').textContent = pct>=80?'🎉':pct>=60?'💪':'😅';
+  document.getElementById('r-score').textContent = score+' / '+Qs.length;
+  document.getElementById('r-pct').textContent = pct+'%';
+  document.getElementById('r-msg').textContent = pct>=80?'ファンタスティック！！この調子で2級合格や！':pct>=60?'惜しい！あと一歩やで！':'ドンマイ！間違いが宝や！解説読んで完全理解しよ！';
+  document.getElementById('review').innerHTML = answers.map((a,i)=>
+    `<div class="rev-row"><span>${a.ok?'✅':'❌'}</span><span>問${i+1}：${Qs[a.q].cat}</span></div>`
+  ).join('');
   show('result');
 }
 
-function goHome(){updateHome();show('home')}
+window.goHome = function(){updateHome();show('home')}
 
 function addBot(txt){
-  var m=document.getElementById('chat-msgs');
-  var d=document.createElement('div');d.className='bot-wrap';
-  d.innerHTML='<div style="font-size:18px;flex-shrink:0">🖤</div><div class="bot-msg">'+txt+'</div>';
+  const m=document.getElementById('chat-msgs');
+  const d=document.createElement('div');d.className='bot-wrap';
+  d.innerHTML=`<div style="font-size:18px;flex-shrink:0">🖤</div><div class="bot-msg">${txt}</div>`;
   m.appendChild(d);m.scrollTop=m.scrollHeight;
 }
 
 function addUser(txt){
-  var m=document.getElementById('chat-msgs');
-  var d=document.createElement('div');d.className='user-wrap';
-  d.innerHTML='<div class="user-msg">'+txt+'</div>';
+  const m=document.getElementById('chat-msgs');
+  const d=document.createElement('div');d.className='user-wrap';
+  d.innerHTML=`<div class="user-msg">${txt}</div>`;
   m.appendChild(d);m.scrollTop=m.scrollHeight;
 }
 
 function removeLast(){
-  var m=document.getElementById('chat-msgs');
+  const m=document.getElementById('chat-msgs');
   if(m.lastChild)m.removeChild(m.lastChild);
 }
 
-async function sendChat(){
-  var inp=document.getElementById('chat-in');
-  var txt=inp.value.trim();
+window.sendChat = async function(){
+  const inp=document.getElementById('chat-in');
+  const txt=inp.value.trim();
   if(!txt)return;
   inp.value='';
   addUser(txt);
   chatHist.push({role:'user',content:txt});
   addBot('考え中やで...⏳');
-  var q=Qs[cur];
-  var sys='あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに楽しく教えてください。\n今の問題：'+q.cat+'\n問題：'+q.q+'\n正解：'+q.opts[q.ans]+'\n解説：'+q.ex+'\n200字以内で簡潔に答えてください。';
+  const q=Qs[cur];
+  const sys=`あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに楽しく教えてください。\n今の問題：${q.cat}\n問題：${q.q}\n正解：${q.opts[q.ans]}\n解説：${q.ex}\n200字以内で簡潔に答えてください。`;
   try{
-    // Vercelのサーバーレス関数経由でAPIを呼ぶ
-    var r=await fetch('/api/chat',{
+    const r=await fetch('/api/chat',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({messages:chatHist, system:sys})
+      body:JSON.stringify({messages:chatHist,system:sys})
     });
-    var d=await r.json();
-    var rep=d.reply||'ごめん、うまく答えられへんかった！';
+    const d=await r.json();
+    const rep=d.reply||'ごめん、うまく答えられへんかった！';
     chatHist.push({role:'assistant',content:rep});
     removeLast();addBot(rep);
   }catch(e){
@@ -255,7 +341,8 @@ async function sendChat(){
   }
 }
 
-updateHome();
+// 起動時に問題を読み込む
+loadQuestions();
 </script>
 </body>
 </html>
