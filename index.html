@@ -474,12 +474,10 @@ async function sendQuestion() {
   const currentQ = questions[current] || questions[questions.length - 1];
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
         system: `あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに、でも正確に答えてください。今取り組んでいる問題：「${currentQ.text}」。解説：「${currentQ.explanation}」。この問題に関連した質問に答えてあげてください。短めにわかりやすく！`,
         messages: [{ role: 'user', content: q }]
       })
