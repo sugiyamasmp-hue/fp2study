@@ -329,7 +329,7 @@ window.loadVideos = async function() {
 
 window.filterVideos = function() {
   const cat = document.getElementById('video-cat-filter').value;
-  filteredVideos = cat === 'all' ? [...allVideos] : allVideos.filter(v => v.cat === cat);
+  filteredVideos = cat === 'all' ? [...allVideos] : allVideos.filter(v => v.category === cat);
   renderVideoList();
 }
 
@@ -340,7 +340,7 @@ function renderVideoList() {
   }
   document.getElementById('video-list-inner').innerHTML = filteredVideos.map((v, i) => `
     <div class="video-card" onclick="openLecture(${i})">
-      <div class="video-cat">${v.cat || '未分類'}</div>
+      <div class="video-cat">${v.category || '未分類'}</div>
       <div class="video-title">${v.title || '無題'}</div>
       <div class="video-summary">${v.summary || ''}</div>
     </div>
@@ -349,7 +349,7 @@ function renderVideoList() {
 
 window.openLecture = async function(idx) {
   currentVideo = filteredVideos[idx];
-  currentLecCat = currentVideo.cat || '';
+  currentLecCat = currentVideo.category || '';
   document.getElementById('lec-cat').textContent = currentLecCat;
   document.getElementById('lec-title').textContent = currentVideo.title || '無題';
   document.getElementById('lec-script').textContent = '🖤 クロちゃんが講義の準備中やで...⏳';
@@ -380,7 +380,7 @@ window.openLecture = async function(idx) {
 
 window.startLecQuiz = function() {
   // 同カテゴリの問題から最大3問
-  const catQs = allQs.filter(q => q.cat === currentLecCat);
+  const catQs = allQs.filter(q => q.category === currentLecCat);
   lecQs = shuffle(catQs.length > 0 ? catQs : allQs).slice(0, 3);
   lecCur = 0; lecScore = 0; lecAnswers = [];
   show('lec-quiz');
@@ -390,7 +390,7 @@ window.startLecQuiz = function() {
 function renderLecQ() {
   const q = lecQs[lecCur];
   document.getElementById('lec-prog').style.width = ((lecCur+1)/lecQs.length*100)+'%';
-  document.getElementById('lec-q-cat').textContent = q.cat;
+  document.getElementById('lec-q-cat').textContent = q.category;
   document.getElementById('lec-q-num').textContent = (lecCur+1)+' / '+lecQs.length;
   document.getElementById('lec-q-text').textContent = q.q;
   document.getElementById('lec-exbox').style.display = 'none';
@@ -437,7 +437,7 @@ function finishLec() {
 
 window.startQuizFromLec = function() {
   const cat = currentLecCat;
-  Qs = shuffle(cat ? allQs.filter(q=>q.cat===cat) : allQs).slice(0,10);
+  Qs = shuffle(cat ? allQs.filter(q=>q.category===cat) : allQs).slice(0,10);
   if(Qs.length===0) Qs = shuffle([...allQs]).slice(0,10);
   cur=0;score=0;answers=[];
   show('quiz');
@@ -501,7 +501,7 @@ window.sendLecQChat = async function(){
   lecQChatHist.push({role:'user',content:txt});
   addLecQBot('考え中やで...⏳');
   const q=lecQs[lecCur];
-  const sys=`あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに楽しく教えてください。\n今の問題：${q?.cat}\n問題：${q?.q}\n正解：${q?.opts[q?.ans]}\n解説：${q?.ex}\n200字以内で簡潔に答えてください。`;
+  const sys=`あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに楽しく教えてください。\n今の問題：${q?.category}\n問題：${q?.q}\n正解：${q?.opts[q?.ans]}\n解説：${q?.ex}\n200字以内で簡潔に答えてください。`;
   try{
     const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:lecQChatHist,system:sys})});
     const d=await r.json();
@@ -532,7 +532,7 @@ window.updateHome = updateHome;
 
 window.startQuiz = function(){
   const cat=document.getElementById('cat-sel').value;
-  Qs=shuffle(cat==='all'?[...allQs]:allQs.filter(q=>q.cat===cat)).slice(0,10);
+  Qs=shuffle(cat==='all'?[...allQs]:allQs.filter(q=>q.category===cat)).slice(0,10);
   if(Qs.length===0){alert('この分野の問題がまだないで！');return;}
   cur=0;score=0;answers=[];
   show('quiz');renderQ();
@@ -543,7 +543,7 @@ function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.ra
 function renderQ(){
   const q=Qs[cur];
   document.getElementById('prog').style.width=((cur+1)/Qs.length*100)+'%';
-  document.getElementById('q-cat').textContent=q.cat;
+  document.getElementById('q-cat').textContent=q.category;
   document.getElementById('q-num').textContent=(cur+1)+' / '+Qs.length;
   document.getElementById('q-text').textContent=q.q;
   document.getElementById('exbox').style.display='none';
@@ -574,7 +574,7 @@ function finish(){
   document.getElementById('r-score').textContent=score+' / '+Qs.length;
   document.getElementById('r-pct').textContent=pct+'%';
   document.getElementById('r-msg').textContent=pct>=80?'ファンタスティック！！この調子で2級合格や！':pct>=60?'惜しい！あと一歩やで！':'ドンマイ！間違いが宝や！解説読んで完全理解しよ！';
-  document.getElementById('review').innerHTML=answers.map((a,i)=>`<div class="rev-row"><span>${a.ok?'✅':'❌'}</span><span>問${i+1}：${Qs[a.q].cat}</span></div>`).join('');
+  document.getElementById('review').innerHTML=answers.map((a,i)=>`<div class="rev-row"><span>${a.ok?'✅':'❌'}</span><span>問${i+1}：${Qs[a.q].category}</span></div>`).join('');
   show('result');
 }
 
@@ -588,7 +588,7 @@ window.sendChat=async function(){
   const inp=document.getElementById('chat-in');const txt=inp.value.trim();if(!txt)return;
   inp.value='';addUser(txt);chatHist.push({role:'user',content:txt});addBot('考え中やで...⏳');
   const q=Qs[cur];
-  const sys=`あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに楽しく教えてください。\n今の問題：${q.cat}\n問題：${q.q}\n正解：${q.opts[q.ans]}\n解説：${q.ex}\n200字以内で簡潔に答えてください。`;
+  const sys=`あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに楽しく教えてください。\n今の問題：${q.category}\n問題：${q.q}\n正解：${q.opts[q.ans]}\n解説：${q.ex}\n200字以内で簡潔に答えてください。`;
   try{
     const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:chatHist,system:sys})});
     const d=await r.json();const rep=d.reply||'ごめん、うまく答えられへんかった！';
