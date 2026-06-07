@@ -486,7 +486,7 @@ async function sendQuestion() {
     loading.remove();
     const kuroBubble = document.createElement('div');
     kuroBubble.className = 'chat-bubble kuro';
-    kuroBubble.textContent = data.content[0].text;
+    kuroBubble.textContent = data.reply;
     messages.appendChild(kuroBubble);
   } catch(e) {
     loading.remove();
