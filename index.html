@@ -22,6 +22,8 @@ h1{color:#ff8c00;font-size:22px;margin-bottom:4px}
 .btn{width:100%;padding:14px;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:12px;color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:4px}
 .btn:hover{opacity:0.9}
 .btn:disabled{opacity:0.5;cursor:not-allowed}
+.btn-outline{width:100%;padding:13px;background:transparent;border:2px solid #ff8c00;border-radius:12px;color:#ff8c00;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px}
+.btn-outline:hover{background:#ff8c0011}
 .hist-title{font-size:13px;color:#888;font-weight:700;margin-bottom:8px}
 .hist-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #ffffff11;font-size:13px}
 .hist-score{color:#ff8c00;font-weight:700}
@@ -66,6 +68,28 @@ h1{color:#ff8c00;font-size:22px;margin-bottom:4px}
 .loading{text-align:center;color:#ff8c00;padding:20px;font-size:14px}
 .cat-select{width:100%;background:#0f3460;border:1px solid #ff8c0055;border-radius:8px;color:#fff;font-size:14px;padding:10px;margin-bottom:12px;outline:none}
 .q-count{font-size:12px;color:#888;text-align:center;margin-bottom:8px}
+
+/* 動画一覧 */
+.video-card{background:#16213e;border:1px solid #0f3460;border-radius:14px;padding:16px;margin-bottom:12px;cursor:pointer;transition:all 0.2s}
+.video-card:hover{border-color:#ff8c0055;background:#1a2550}
+.video-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:6px;line-height:1.5}
+.video-cat{background:#ff8c0022;border:1px solid #ff8c0055;color:#ff8c00;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;display:inline-block;margin-bottom:8px}
+.video-summary{font-size:12px;color:#888;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.video-filter{width:100%;background:#0f3460;border:1px solid #ff8c0055;border-radius:8px;color:#fff;font-size:14px;padding:10px;margin-bottom:12px;outline:none}
+.back-btn{display:flex;align-items:center;gap:6px;color:#ff8c00;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:16px;background:none;border:none;padding:0}
+
+/* 講義画面 */
+.lecture-header{background:#0f3460;border-radius:12px;padding:14px;margin-bottom:16px}
+.lecture-title{font-size:15px;font-weight:800;color:#fff;margin-bottom:4px;line-height:1.5}
+.lecture-cat{font-size:12px;color:#ff8c00;font-weight:700}
+.kuro-wrap{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+.kuro-icon{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#ff8c00,#ff4500);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;box-shadow:0 0 20px #ff8c0044}
+.kuro-bubble{background:#0a0a1a;border:1px solid #ff8c0033;border-radius:4px 16px 16px 16px;padding:14px;font-size:13px;line-height:1.9;color:#ddd;flex:1;white-space:pre-wrap}
+.lecture-chat-box{background:#0a0a1a;border:1px solid #ff8c0033;border-radius:12px;padding:12px;margin-bottom:16px}
+.step-indicator{display:flex;justify-content:center;gap:8px;margin-bottom:16px}
+.step-dot{width:8px;height:8px;border-radius:50%;background:#ffffff22}
+.step-dot.active{background:#ff8c00}
+.step-dot.done{background:#00c864}
 </style>
 </head>
 <body>
@@ -79,25 +103,26 @@ h1{color:#ff8c00;font-size:22px;margin-bottom:4px}
     <div class="big">楽しく、気分良く、</div>
     <div class="big orange">完全理解！</div>
     <div class="sub2">暗記じゃなくて「なぜ？」で理解する学習法</div>
-
-    <select class="cat-select" id="cat-sel">
-      <option value="all">すべての分野</option>
-      <option value="ライフ・社会保険">ライフ・社会保険</option>
-      <option value="タックス">タックス</option>
-      <option value="リスク管理">リスク管理</option>
-      <option value="金融資産運用">金融資産運用</option>
-      <option value="不動産">不動産</option>
-      <option value="相続・事業承継">相続・事業承継</option>
-    </select>
-
-    <div class="stats">
-      <div class="stat"><div class="stat-n" id="s-total">...</div><div class="stat-l">問題数</div></div>
-      <div class="divider"></div>
-      <div class="stat"><div class="stat-n" id="s-attempts">0</div><div class="stat-l">挑戦回数</div></div>
-      <div class="divider"></div>
-      <div class="stat"><div class="stat-n" id="s-latest">--</div><div class="stat-l">最新スコア</div></div>
+    <button class="btn" onclick="show('video-list');loadVideos()">📹 講義から学ぶ！</button>
+    <div style="margin-top:12px">
+      <select class="cat-select" id="cat-sel">
+        <option value="all">すべての分野</option>
+        <option value="ライフ・社会保険">ライフ・社会保険</option>
+        <option value="タックス">タックス</option>
+        <option value="リスク管理">リスク管理</option>
+        <option value="金融資産運用">金融資産運用</option>
+        <option value="不動産">不動産</option>
+        <option value="相続・事業承継">相続・事業承継</option>
+      </select>
+      <div class="stats">
+        <div class="stat"><div class="stat-n" id="s-total">...</div><div class="stat-l">問題数</div></div>
+        <div class="divider"></div>
+        <div class="stat"><div class="stat-n" id="s-attempts">0</div><div class="stat-l">挑戦回数</div></div>
+        <div class="divider"></div>
+        <div class="stat"><div class="stat-n" id="s-latest">--</div><div class="stat-l">最新スコア</div></div>
+      </div>
+      <button class="btn-outline" id="start-btn" onclick="startQuiz()">問題練習だけする 📝</button>
     </div>
-    <button class="btn" id="start-btn" onclick="startQuiz()">スタート！🔥</button>
   </div>
   <div class="card" id="hist-card" style="display:none">
     <div class="hist-title">📊 最近の記録</div>
@@ -106,8 +131,102 @@ h1{color:#ff8c00;font-size:22px;margin-bottom:4px}
   <div class="footer">クロちゃんと一緒に合格めざそ！🖤</div>
 </div>
 
+<!-- 動画一覧 -->
+<div id="video-list" class="screen">
+  <button class="back-btn" onclick="show('home')">← ホームへ戻る</button>
+  <h1>📹 講義を選んでや！</h1>
+  <div class="sub" style="margin-bottom:12px">動画の内容をクロちゃんが講義するで！</div>
+  <select class="video-filter" id="video-cat-filter" onchange="filterVideos()">
+    <option value="all">すべての分野</option>
+    <option value="ライフ・社会保険">ライフ・社会保険</option>
+    <option value="タックス">タックス</option>
+    <option value="リスク管理">リスク管理</option>
+    <option value="金融資産運用">金融資産運用</option>
+    <option value="不動産">不動産</option>
+    <option value="相続・事業承継">相続・事業承継</option>
+  </select>
+  <div id="video-list-inner"><div class="loading">📹 動画を読み込み中やで...⏳</div></div>
+</div>
+
+<!-- 講義画面 -->
+<div id="lecture" class="screen">
+  <button class="back-btn" onclick="show('video-list')">← 動画一覧へ戻る</button>
+  <div class="step-indicator">
+    <div class="step-dot active" id="step1"></div>
+    <div class="step-dot" id="step2"></div>
+    <div class="step-dot" id="step3"></div>
+  </div>
+  <div class="lecture-header">
+    <div class="lecture-cat" id="lec-cat"></div>
+    <div class="lecture-title" id="lec-title"></div>
+  </div>
+  <div class="kuro-wrap">
+    <div class="kuro-icon">🖤</div>
+    <div class="kuro-bubble" id="lec-script">読み込み中やで...⏳</div>
+  </div>
+  <div class="lecture-chat-box">
+    <div class="chat-head">🖤 講義について質問する</div>
+    <div class="chat-msgs" id="lec-chat-msgs"></div>
+    <div class="chat-row">
+      <input class="chat-input" id="lec-chat-in" placeholder="わからんとこ聞いてや！" onkeydown="if(event.key==='Enter')sendLecChat()">
+      <button class="chat-send" onclick="sendLecChat()">送信</button>
+    </div>
+  </div>
+  <button class="btn" onclick="startLecQuiz()">確認問題に挑戦！ ✅</button>
+</div>
+
+<!-- 確認問題（講義後） -->
+<div id="lec-quiz" class="screen">
+  <button class="back-btn" onclick="show('lecture')">← 講義に戻る</button>
+  <div class="step-indicator">
+    <div class="step-dot done" id="lstep1"></div>
+    <div class="step-dot active" id="lstep2"></div>
+    <div class="step-dot" id="lstep3"></div>
+  </div>
+  <div style="font-size:13px;color:#ff8c00;font-weight:700;margin-bottom:12px">📝 確認問題</div>
+  <div class="progress"><div class="progress-bar" id="lec-prog"></div></div>
+  <div class="qhead">
+    <span class="cat-tag" id="lec-q-cat"></span>
+    <span class="qnum" id="lec-q-num"></span>
+  </div>
+  <div class="qbox"><div class="qtext" id="lec-q-text"></div></div>
+  <div class="opts" id="lec-opts"></div>
+  <div class="exbox" id="lec-exbox" style="display:none">
+    <div class="ex-title" id="lec-ex-title"></div>
+    <div class="ex-text" id="lec-ex-text"></div>
+    <div class="chat-box">
+      <div class="chat-head">🖤 クロちゃんに質問する</div>
+      <div class="chat-msgs" id="lec-qchat-msgs"></div>
+      <div class="chat-row">
+        <input class="chat-input" id="lec-qchat-in" placeholder="なんでも聞いてや！" onkeydown="if(event.key==='Enter')sendLecQChat()">
+        <button class="chat-send" onclick="sendLecQChat()">送信</button>
+      </div>
+    </div>
+    <button class="next-btn" id="lec-next-btn" onclick="nextLecQ()"></button>
+  </div>
+</div>
+
+<!-- 講義後結果 -->
+<div id="lec-result" class="screen">
+  <div class="step-indicator">
+    <div class="step-dot done"></div>
+    <div class="step-dot done"></div>
+    <div class="step-dot active"></div>
+  </div>
+  <div class="result-box">
+    <div class="r-emoji" id="lr-emoji"></div>
+    <div class="r-score" id="lr-score"></div>
+    <div class="r-pct" id="lr-pct"></div>
+    <div class="r-msg" id="lr-msg"></div>
+    <button class="btn" onclick="show('home');updateHome()">🏠 ホームへ</button>
+    <button class="btn-outline" style="margin-top:8px" onclick="startQuizFromLec()">📚 もっと問題練習する！</button>
+  </div>
+  <div class="footer">AID式学習法 © amadopapa</div>
+</div>
+
 <!-- QUIZ -->
 <div id="quiz" class="screen">
+  <button class="back-btn" onclick="show('home')">← ホームへ戻る</button>
   <div class="progress"><div class="progress-bar" id="prog"></div></div>
   <div class="qhead">
     <span class="cat-tag" id="q-cat"></span>
@@ -145,8 +264,7 @@ h1{color:#ff8c00;font-size:22px;margin-bottom:4px}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, getDocs, query, where, orderBy }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBDi1ueP7mXRMmy7pS8bHWkQRbwCkbcagw",
@@ -165,27 +283,26 @@ var Qs = [];
 var cur = 0, score = 0, answers = [], chatHist = [];
 var hist = JSON.parse(localStorage.getItem('aid_hist') || '[]');
 
-// Firebase から問題を取得
+// 動画関連
+var allVideos = [];
+var filteredVideos = [];
+var currentVideo = null;
+var lecQs = [], lecCur = 0, lecScore = 0, lecAnswers = [], lecChatHist = [], lecQChatHist = [];
+var currentLecCat = '';
+
+// 問題取得
 async function loadQuestions() {
   document.getElementById('s-total').textContent = '...';
   document.getElementById('start-btn').disabled = true;
   try {
     const snap = await getDocs(collection(db, 'questions'));
     allQs = [];
-    snap.forEach(doc => {
-      allQs.push({ id: doc.id, ...doc.data() });
-    });
-
-    // ローカルの問題も追加（バックアップ）
-    if (allQs.length === 0) {
-      allQs = getLocalQs();
-    }
-
+    snap.forEach(doc => { allQs.push({ id: doc.id, ...doc.data() }); });
+    if (allQs.length === 0) allQs = getLocalQs();
     document.getElementById('s-total').textContent = allQs.length;
     document.getElementById('start-btn').disabled = false;
     updateHome();
   } catch(e) {
-    // Firebase失敗時はローカル問題を使う
     allQs = getLocalQs();
     document.getElementById('s-total').textContent = allQs.length;
     document.getElementById('start-btn').disabled = false;
@@ -193,155 +310,272 @@ async function loadQuestions() {
   }
 }
 
-// ローカルの問題（バックアップ）
-function getLocalQs() {
-  return [
-    {cat:"ライフ・社会保険",q:"協会けんぽの被保険者に関する記述の空欄にあてはまる組合せとして、最も適切なものはどれか。\n\n短時間労働者のうち次のいずれかに該当する者は被保険者とならない。\n①1週間の所定労働時間が（イ）未満\n②所定内賃金が月額（ウ）未満\n③学生\n\nまた所定労働時間・日数が通常の労働者の（ア）未満であること。",opts:["ア：3分の2　イ：20時間　ウ：5万8千円","ア：3分の2　イ：25時間　ウ：8万8千円","ア：4分の3　イ：20時間　ウ：8万8千円","ア：4分の3　イ：25時間　ウ：5万8千円"],ans:2,ex:"✅ ア：4分の3\n✅ イ：20時間\n✅ ウ：8万8千円（106万円の壁のライン！）\n\n「ハチハチ（88）で切れる！」で覚えよう！"},
-    {cat:"ライフ・社会保険",q:"労働者災害補償保険に関する次の記述のうち、最も不適切なものはどれか。",opts:["労災保険の適用を受ける労働者には、アルバイトやパートタイマーも含まれる","労災保険率は、適用事業に従事する労働者数に応じて定められている","業務上の傷病が治癒したときに一定の障害が残り障害等級に該当する場合、障害補償給付が支給される","業務災害で労働者が死亡した場合、遺族補償年金または遺族補償一時金が支給される"],ans:1,ex:"2番が不適切！\n\n✅ 労災保険率は「労働者数」ではなく「業種」で決まる！\n\n労災は雇用形態に関係なく全員対象！"},
-    {cat:"タックス",q:"わが国の税制に関する次の記述のうち、最も不適切なものはどれか。",opts:["所得税では課税対象となる所得を10種類に区分し種類ごとに計算する","相続税では税務署長が納付税額を決定する賦課課税方式が採用されている","消費税は間接税に該当する","法人税は国税、不動産取得税は地方税に該当する"],ans:1,ex:"2番が不適切！\n\n✅ 相続税は「申告納税方式」！自分で計算して申告！\n\n📝 申告納税方式：所得税・相続税・贈与税・法人税\n📬 賦課課税方式：固定資産税・住民税・不動産取得税"},
-    {cat:"タックス",q:"所得税における損益通算に関する次の記述のうち、最も適切なものはどれか。",opts:["不動産所得の損失のうち土地取得の負債利子は給与所得と損益通算できる","先物取引の雑所得の損失は不動産所得と損益通算できる","生活用自家用車を売却した譲渡所得の損失は給与所得と損益通算できる","コンサルティング事業の事業所得の損失は不動産所得と損益通算できる"],ans:3,ex:"4番が正解！\n\n✅ 事業所得の損失は他の所得と損益通算できる！\n\n損益通算できる所得は「不事山譲（ふじさんじょう）」！\n不動産・事業・山林・譲渡の4つや！"},
-    {cat:"タックス",q:"所得税における所得控除に関する次の記述のうち、最も不適切なものはどれか。",opts:["19歳以上23歳未満の扶養親族は特定扶養親族に該当する","70歳以上の扶養親族は老人扶養親族に該当する","合計所得金額が1,000万円を超える場合、配偶者控除の適用を受けることはできない","婚姻届を提出していなくても内縁関係にある者は控除対象配偶者に該当する"],ans:3,ex:"4番が不適切！\n\n✅ 内縁関係は配偶者控除の対象外！戸籍上の配偶者のみ！\n\n健康保険はOKでも税金はNG！\n「健康保険は人情、税金は法律」で覚えよう！"},
-  ];
-}
-
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on')}
-
-function updateHome(){
-  document.getElementById('s-attempts').textContent = hist.length;
-  if(hist.length > 0){
-    document.getElementById('s-latest').textContent = Math.round(hist[0].score/hist[0].total*100)+'%';
-    document.getElementById('hist-card').style.display = 'block';
-    document.getElementById('hist-list').innerHTML = hist.slice(0,3).map(h=>
-      `<div class="hist-row"><span>${h.date}</span><span class="hist-score">${h.score}/${h.total} (${Math.round(h.score/h.total*100)}%)</span></div>`
-    ).join('');
+// 動画取得
+window.loadVideos = async function() {
+  document.getElementById('video-list-inner').innerHTML = '<div class="loading">📹 動画を読み込み中やで...⏳</div>';
+  try {
+    const snap = await getDocs(collection(db, 'videos'));
+    allVideos = [];
+    snap.forEach(doc => {
+      const d = doc.data();
+      if (d.script) allVideos.push({ id: doc.id, ...d });
+    });
+    filteredVideos = [...allVideos];
+    renderVideoList();
+  } catch(e) {
+    document.getElementById('video-list-inner').innerHTML = '<div class="loading">❌ 読み込みに失敗したわ...もう一回試してや</div>';
   }
 }
 
-window.startQuiz = function(){
-  const cat = document.getElementById('cat-sel').value;
-  if(cat === 'all'){
-    Qs = shuffle([...allQs]).slice(0, 10);
-  } else {
-    Qs = shuffle(allQs.filter(q => q.cat === cat)).slice(0, 10);
-  }
-  if(Qs.length === 0){
-    alert('この分野の問題がまだないで！');
+window.filterVideos = function() {
+  const cat = document.getElementById('video-cat-filter').value;
+  filteredVideos = cat === 'all' ? [...allVideos] : allVideos.filter(v => v.cat === cat);
+  renderVideoList();
+}
+
+function renderVideoList() {
+  if (filteredVideos.length === 0) {
+    document.getElementById('video-list-inner').innerHTML = '<div class="loading">この分野の講義はまだないで！</div>';
     return;
   }
-  cur = 0; score = 0; answers = [];
-  show('quiz');
-  renderQ();
+  document.getElementById('video-list-inner').innerHTML = filteredVideos.map((v, i) => `
+    <div class="video-card" onclick="openLecture(${i})">
+      <div class="video-cat">${v.cat || '未分類'}</div>
+      <div class="video-title">${v.title || '無題'}</div>
+      <div class="video-summary">${v.summary || ''}</div>
+    </div>
+  `).join('');
 }
 
-function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]]=[arr[j],arr[i]];
-  }
-  return arr;
+window.openLecture = function(idx) {
+  currentVideo = filteredVideos[idx];
+  currentLecCat = currentVideo.cat || '';
+  document.getElementById('lec-cat').textContent = currentLecCat;
+  document.getElementById('lec-title').textContent = currentVideo.title || '無題';
+  document.getElementById('lec-script').textContent = currentVideo.script || '講義がまだ準備できてへんわ...😅';
+  document.getElementById('lec-chat-msgs').innerHTML = '';
+  addLecBot('この講義についてわからんことあったら何でも聞いてや！🖤');
+  show('lecture');
 }
 
-function renderQ(){
-  const q = Qs[cur];
-  document.getElementById('prog').style.width = ((cur+1)/Qs.length*100)+'%';
-  document.getElementById('q-cat').textContent = q.cat;
-  document.getElementById('q-num').textContent = (cur+1)+' / '+Qs.length;
-  document.getElementById('q-text').textContent = q.q;
-  document.getElementById('exbox').style.display = 'none';
-  chatHist = [];
-  document.getElementById('chat-msgs').innerHTML = '';
-  addBot('なんか気になることあったら何でも聞いてや！🖤');
-  const opts = document.getElementById('opts');
-  opts.innerHTML = q.opts.map((o,i)=>
-    `<button class="opt" id="o${i}" onclick="pick(${i})"><span class="opt-n">${i+1}</span><span>${o}</span></button>`
+window.startLecQuiz = function() {
+  // 同カテゴリの問題から最大3問
+  const catQs = allQs.filter(q => q.cat === currentLecCat);
+  lecQs = shuffle(catQs.length > 0 ? catQs : allQs).slice(0, 3);
+  lecCur = 0; lecScore = 0; lecAnswers = [];
+  show('lec-quiz');
+  renderLecQ();
+}
+
+function renderLecQ() {
+  const q = lecQs[lecCur];
+  document.getElementById('lec-prog').style.width = ((lecCur+1)/lecQs.length*100)+'%';
+  document.getElementById('lec-q-cat').textContent = q.cat;
+  document.getElementById('lec-q-num').textContent = (lecCur+1)+' / '+lecQs.length;
+  document.getElementById('lec-q-text').textContent = q.q;
+  document.getElementById('lec-exbox').style.display = 'none';
+  lecQChatHist = [];
+  document.getElementById('lec-qchat-msgs').innerHTML = '';
+  addLecQBot('なんか気になることあったら何でも聞いてや！🖤');
+  const opts = document.getElementById('lec-opts');
+  opts.innerHTML = q.opts.map((o,i) =>
+    `<button class="opt" id="lo${i}" onclick="lecPick(${i})"><span class="opt-n">${i+1}</span><span>${o}</span></button>`
   ).join('');
 }
 
-window.pick = function(idx){
-  const q = Qs[cur];
+window.lecPick = function(idx) {
+  const q = lecQs[lecCur];
   const ok = idx === q.ans;
-  if(ok) score++;
-  answers.push({q:cur,sel:idx,ok:ok});
+  if(ok) lecScore++;
+  lecAnswers.push({q:lecCur,sel:idx,ok:ok});
   for(let i=0;i<q.opts.length;i++){
-    const b=document.getElementById('o'+i);
+    const b=document.getElementById('lo'+i);
     b.disabled=true;
     if(i===q.ans)b.classList.add('correct');
     else if(i===idx)b.classList.add('wrong');
     else b.classList.add('dim');
   }
-  document.getElementById('ex-title').textContent = ok ? '🎉 正解！！ ナイスですねー！！' : '💦 不正解...';
-  document.getElementById('ex-text').textContent = q.ex;
-  document.getElementById('next-btn').textContent = cur+1<Qs.length ? '次の問題へ →' : '結果を見る 🏁';
-  document.getElementById('exbox').style.display = 'block';
+  document.getElementById('lec-ex-title').textContent = ok ? '🎉 正解！！ナイスですねー！！' : '💦 不正解...';
+  document.getElementById('lec-ex-text').textContent = q.ex;
+  document.getElementById('lec-next-btn').textContent = lecCur+1<lecQs.length ? '次の問題へ →' : '結果を見る 🏁';
+  document.getElementById('lec-exbox').style.display = 'block';
 }
 
-window.nextQ = function(){
-  if(cur+1<Qs.length){cur++;renderQ();}
-  else finish();
+window.nextLecQ = function() {
+  if(lecCur+1<lecQs.length){lecCur++;renderLecQ();}
+  else finishLec();
 }
 
-function finish(){
-  const rec={date:new Date().toLocaleDateString('ja-JP'),score:score,total:Qs.length};
-  hist=[rec,...hist].slice(0,10);
-  localStorage.setItem('aid_hist',JSON.stringify(hist));
-  const pct=Math.round(score/Qs.length*100);
-  document.getElementById('r-emoji').textContent = pct>=80?'🎉':pct>=60?'💪':'😅';
-  document.getElementById('r-score').textContent = score+' / '+Qs.length;
-  document.getElementById('r-pct').textContent = pct+'%';
-  document.getElementById('r-msg').textContent = pct>=80?'ファンタスティック！！この調子で2級合格や！':pct>=60?'惜しい！あと一歩やで！':'ドンマイ！間違いが宝や！解説読んで完全理解しよ！';
-  document.getElementById('review').innerHTML = answers.map((a,i)=>
-    `<div class="rev-row"><span>${a.ok?'✅':'❌'}</span><span>問${i+1}：${Qs[a.q].cat}</span></div>`
-  ).join('');
-  show('result');
+function finishLec() {
+  const pct = Math.round(lecScore/lecQs.length*100);
+  document.getElementById('lr-emoji').textContent = pct>=80?'🎉':pct>=60?'💪':'😅';
+  document.getElementById('lr-score').textContent = lecScore+' / '+lecQs.length;
+  document.getElementById('lr-pct').textContent = pct+'%';
+  document.getElementById('lr-msg').textContent = pct>=80?'完璧や！この調子で合格間違いなしやで！':pct>=60?'惜しい！もう一回講義見直してみよ！':'ドンマイ！もう一回クロちゃんの講義で確認しよ！';
+  show('lec-result');
 }
 
-window.goHome = function(){updateHome();show('home')}
+window.startQuizFromLec = function() {
+  const cat = currentLecCat;
+  Qs = shuffle(cat ? allQs.filter(q=>q.cat===cat) : allQs).slice(0,10);
+  if(Qs.length===0) Qs = shuffle([...allQs]).slice(0,10);
+  cur=0;score=0;answers=[];
+  show('quiz');
+  renderQ();
+}
 
-function addBot(txt){
-  const m=document.getElementById('chat-msgs');
+// 講義チャット
+function addLecBot(txt){
+  const m=document.getElementById('lec-chat-msgs');
   const d=document.createElement('div');d.className='bot-wrap';
   d.innerHTML=`<div style="font-size:18px;flex-shrink:0">🖤</div><div class="bot-msg">${txt}</div>`;
   m.appendChild(d);m.scrollTop=m.scrollHeight;
 }
-
-function addUser(txt){
-  const m=document.getElementById('chat-msgs');
+function addLecUser(txt){
+  const m=document.getElementById('lec-chat-msgs');
   const d=document.createElement('div');d.className='user-wrap';
   d.innerHTML=`<div class="user-msg">${txt}</div>`;
   m.appendChild(d);m.scrollTop=m.scrollHeight;
 }
+function removeLecLast(){const m=document.getElementById('lec-chat-msgs');if(m.lastChild)m.removeChild(m.lastChild);}
 
-function removeLast(){
-  const m=document.getElementById('chat-msgs');
-  if(m.lastChild)m.removeChild(m.lastChild);
-}
-
-window.sendChat = async function(){
-  const inp=document.getElementById('chat-in');
+window.sendLecChat = async function(){
+  const inp=document.getElementById('lec-chat-in');
   const txt=inp.value.trim();
   if(!txt)return;
   inp.value='';
-  addUser(txt);
-  chatHist.push({role:'user',content:txt});
-  addBot('考え中やで...⏳');
+  addLecUser(txt);
+  lecChatHist.push({role:'user',content:txt});
+  addLecBot('考え中やで...⏳');
+  const sys=`あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに楽しく教えてください。\n今の講義：${currentVideo?.title||''}\n分野：${currentLecCat}\n講義内容：${currentVideo?.script||''}\n200字以内で簡潔に答えてください。`;
+  try{
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:lecChatHist,system:sys})});
+    const d=await r.json();
+    const rep=d.reply||'ごめん、うまく答えられへんかった！';
+    lecChatHist.push({role:'assistant',content:rep});
+    removeLecLast();addLecBot(rep);
+  }catch(e){removeLecLast();addLecBot('通信エラーやで！もう一回試してみて！');}
+}
+
+// 確認問題チャット
+function addLecQBot(txt){
+  const m=document.getElementById('lec-qchat-msgs');
+  const d=document.createElement('div');d.className='bot-wrap';
+  d.innerHTML=`<div style="font-size:18px;flex-shrink:0">🖤</div><div class="bot-msg">${txt}</div>`;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+function addLecQUser(txt){
+  const m=document.getElementById('lec-qchat-msgs');
+  const d=document.createElement('div');d.className='user-wrap';
+  d.innerHTML=`<div class="user-msg">${txt}</div>`;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+function removeLecQLast(){const m=document.getElementById('lec-qchat-msgs');if(m.lastChild)m.removeChild(m.lastChild);}
+
+window.sendLecQChat = async function(){
+  const inp=document.getElementById('lec-qchat-in');
+  const txt=inp.value.trim();
+  if(!txt)return;
+  inp.value='';
+  addLecQUser(txt);
+  lecQChatHist.push({role:'user',content:txt});
+  addLecQBot('考え中やで...⏳');
+  const q=lecQs[lecCur];
+  const sys=`あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに楽しく教えてください。\n今の問題：${q?.cat}\n問題：${q?.q}\n正解：${q?.opts[q?.ans]}\n解説：${q?.ex}\n200字以内で簡潔に答えてください。`;
+  try{
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:lecQChatHist,system:sys})});
+    const d=await r.json();
+    const rep=d.reply||'ごめん、うまく答えられへんかった！';
+    lecQChatHist.push({role:'assistant',content:rep});
+    removeLecQLast();addLecQBot(rep);
+  }catch(e){removeLecQLast();addLecQBot('通信エラーやで！もう一回試してみて！');}
+}
+
+// ローカル問題
+function getLocalQs(){return[
+  {cat:"ライフ・社会保険",q:"協会けんぽの被保険者に関する記述の空欄にあてはまる組合せとして、最も適切なものはどれか。\n\n短時間労働者のうち次のいずれかに該当する者は被保険者とならない。\n①1週間の所定労働時間が（イ）未満\n②所定内賃金が月額（ウ）未満\n③学生\n\nまた所定労働時間・日数が通常の労働者の（ア）未満であること。",opts:["ア：3分の2　イ：20時間　ウ：5万8千円","ア：3分の2　イ：25時間　ウ：8万8千円","ア：4分の3　イ：20時間　ウ：8万8千円","ア：4分の3　イ：25時間　ウ：5万8千円"],ans:2,ex:"✅ ア：4分の3\n✅ イ：20時間\n✅ ウ：8万8千円（106万円の壁のライン！）\n\n「ハチハチ（88）で切れる！」で覚えよう！"},
+  {cat:"タックス",q:"わが国の税制に関する次の記述のうち、最も不適切なものはどれか。",opts:["所得税では課税対象となる所得を10種類に区分し種類ごとに計算する","相続税では税務署長が納付税額を決定する賦課課税方式が採用されている","消費税は間接税に該当する","法人税は国税、不動産取得税は地方税に該当する"],ans:1,ex:"2番が不適切！\n\n✅ 相続税は「申告納税方式」！自分で計算して申告！\n\n📝 申告納税方式：所得税・相続税・贈与税・法人税\n📬 賦課課税方式：固定資産税・住民税・不動産取得税"},
+];}
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on')}
+window.show = show;
+
+function updateHome(){
+  document.getElementById('s-attempts').textContent=hist.length;
+  if(hist.length>0){
+    document.getElementById('s-latest').textContent=Math.round(hist[0].score/hist[0].total*100)+'%';
+    document.getElementById('hist-card').style.display='block';
+    document.getElementById('hist-list').innerHTML=hist.slice(0,3).map(h=>`<div class="hist-row"><span>${h.date}</span><span class="hist-score">${h.score}/${h.total} (${Math.round(h.score/h.total*100)}%)</span></div>`).join('');
+  }
+}
+window.updateHome = updateHome;
+
+window.startQuiz = function(){
+  const cat=document.getElementById('cat-sel').value;
+  Qs=shuffle(cat==='all'?[...allQs]:allQs.filter(q=>q.cat===cat)).slice(0,10);
+  if(Qs.length===0){alert('この分野の問題がまだないで！');return;}
+  cur=0;score=0;answers=[];
+  show('quiz');renderQ();
+}
+
+function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+
+function renderQ(){
+  const q=Qs[cur];
+  document.getElementById('prog').style.width=((cur+1)/Qs.length*100)+'%';
+  document.getElementById('q-cat').textContent=q.cat;
+  document.getElementById('q-num').textContent=(cur+1)+' / '+Qs.length;
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('exbox').style.display='none';
+  chatHist=[];
+  document.getElementById('chat-msgs').innerHTML='';
+  addBot('なんか気になることあったら何でも聞いてや！🖤');
+  const opts=document.getElementById('opts');
+  opts.innerHTML=q.opts.map((o,i)=>`<button class="opt" id="o${i}" onclick="pick(${i})"><span class="opt-n">${i+1}</span><span>${o}</span></button>`).join('');
+}
+
+window.pick=function(idx){
+  const q=Qs[cur];const ok=idx===q.ans;
+  if(ok)score++;answers.push({q:cur,sel:idx,ok:ok});
+  for(let i=0;i<q.opts.length;i++){const b=document.getElementById('o'+i);b.disabled=true;if(i===q.ans)b.classList.add('correct');else if(i===idx)b.classList.add('wrong');else b.classList.add('dim');}
+  document.getElementById('ex-title').textContent=ok?'🎉 正解！！ ナイスですねー！！':'💦 不正解...';
+  document.getElementById('ex-text').textContent=q.ex;
+  document.getElementById('next-btn').textContent=cur+1<Qs.length?'次の問題へ →':'結果を見る 🏁';
+  document.getElementById('exbox').style.display='block';
+}
+
+window.nextQ=function(){if(cur+1<Qs.length){cur++;renderQ();}else finish();}
+
+function finish(){
+  const rec={date:new Date().toLocaleDateString('ja-JP'),score:score,total:Qs.length};
+  hist=[rec,...hist].slice(0,10);localStorage.setItem('aid_hist',JSON.stringify(hist));
+  const pct=Math.round(score/Qs.length*100);
+  document.getElementById('r-emoji').textContent=pct>=80?'🎉':pct>=60?'💪':'😅';
+  document.getElementById('r-score').textContent=score+' / '+Qs.length;
+  document.getElementById('r-pct').textContent=pct+'%';
+  document.getElementById('r-msg').textContent=pct>=80?'ファンタスティック！！この調子で2級合格や！':pct>=60?'惜しい！あと一歩やで！':'ドンマイ！間違いが宝や！解説読んで完全理解しよ！';
+  document.getElementById('review').innerHTML=answers.map((a,i)=>`<div class="rev-row"><span>${a.ok?'✅':'❌'}</span><span>問${i+1}：${Qs[a.q].cat}</span></div>`).join('');
+  show('result');
+}
+
+window.goHome=function(){updateHome();show('home')}
+
+function addBot(txt){const m=document.getElementById('chat-msgs');const d=document.createElement('div');d.className='bot-wrap';d.innerHTML=`<div style="font-size:18px;flex-shrink:0">🖤</div><div class="bot-msg">${txt}</div>`;m.appendChild(d);m.scrollTop=m.scrollHeight;}
+function addUser(txt){const m=document.getElementById('chat-msgs');const d=document.createElement('div');d.className='user-wrap';d.innerHTML=`<div class="user-msg">${txt}</div>`;m.appendChild(d);m.scrollTop=m.scrollHeight;}
+function removeLast(){const m=document.getElementById('chat-msgs');if(m.lastChild)m.removeChild(m.lastChild);}
+
+window.sendChat=async function(){
+  const inp=document.getElementById('chat-in');const txt=inp.value.trim();if(!txt)return;
+  inp.value='';addUser(txt);chatHist.push({role:'user',content:txt});addBot('考え中やで...⏳');
   const q=Qs[cur];
   const sys=`あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに楽しく教えてください。\n今の問題：${q.cat}\n問題：${q.q}\n正解：${q.opts[q.ans]}\n解説：${q.ex}\n200字以内で簡潔に答えてください。`;
   try{
-    const r=await fetch('/api/chat',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({messages:chatHist,system:sys})
-    });
-    const d=await r.json();
-    const rep=d.reply||'ごめん、うまく答えられへんかった！';
-    chatHist.push({role:'assistant',content:rep});
-    removeLast();addBot(rep);
-  }catch(e){
-    removeLast();addBot('通信エラーやで！もう一回試してみて！');
-  }
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:chatHist,system:sys})});
+    const d=await r.json();const rep=d.reply||'ごめん、うまく答えられへんかった！';
+    chatHist.push({role:'assistant',content:rep});removeLast();addBot(rep);
+  }catch(e){removeLast();addBot('通信エラーやで！もう一回試してみて！');}
 }
 
-// 起動時に問題を読み込む
 loadQuestions();
 </script>
 </body>
