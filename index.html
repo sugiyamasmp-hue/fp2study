@@ -347,15 +347,35 @@ function renderVideoList() {
   `).join('');
 }
 
-window.openLecture = function(idx) {
+window.openLecture = async function(idx) {
   currentVideo = filteredVideos[idx];
   currentLecCat = currentVideo.cat || '';
   document.getElementById('lec-cat').textContent = currentLecCat;
   document.getElementById('lec-title').textContent = currentVideo.title || '無題';
-  document.getElementById('lec-script').textContent = currentVideo.script || '講義がまだ準備できてへんわ...😅';
+  document.getElementById('lec-script').textContent = '🖤 クロちゃんが講義の準備中やで...⏳';
   document.getElementById('lec-chat-msgs').innerHTML = '';
-  addLecBot('この講義についてわからんことあったら何でも聞いてや！🖤');
   show('lecture');
+
+  // scriptをAPIに投げてクロちゃんキャラで講義生成
+  try {
+    const sys = `あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに、楽しくテンポよく教えてください。時々ボケやツッコミも入れて、「浩之さん」に語りかけるように講義してください。`;
+    const userMsg = `以下の講義内容を、クロちゃんとして浩之さんに語りかけるように、わかりやすく楽しく講義してください。300字程度でお願いします。\n\n【タイトル】${currentVideo.title}\n【内容】${currentVideo.script}`;
+    const r = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        system: sys,
+        messages: [{role: 'user', content: userMsg}]
+      })
+    });
+    const d = await r.json();
+    document.getElementById('lec-script').textContent = d.reply || currentVideo.script;
+  } catch(e) {
+    document.getElementById('lec-script').textContent = currentVideo.script || '講義がまだ準備できてへんわ...😅';
+  }
+
+  lecChatHist = [];
+  addLecBot('どや！わかったかな？質問あったら何でも聞いてや！🖤');
 }
 
 window.startLecQuiz = function() {
