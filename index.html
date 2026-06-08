@@ -56,6 +56,101 @@
     margin-bottom: 20px;
   }
 
+  /* 分野選択画面 */
+  .category-title {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--accent);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .category-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .category-btn {
+    background: #243552;
+    border: 2px solid #2e4470;
+    border-radius: 14px;
+    padding: 20px 24px;
+    font-size: 1.15rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 700;
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .category-btn:hover {
+    background: #2e4d7a;
+    border-color: var(--accent);
+    transform: translateX(4px);
+  }
+
+  .category-btn .icon { font-size: 1.4rem; }
+
+  /* 問題数選択 */
+  .count-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .count-btn {
+    padding: 12px 24px;
+    background: #243552;
+    border: 2px solid #2e4470;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .count-btn.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0f1923;
+  }
+
+  .start-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 18px;
+    background: var(--accent);
+    color: #0f1923;
+    border: none;
+    border-radius: 14px;
+    font-size: 1.2rem;
+    font-weight: 900;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .start-btn:hover { opacity: 0.85; }
+  .start-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ローディング */
+  .loading-box {
+    text-align: center;
+    padding: 40px;
+    font-size: 1.2rem;
+    color: var(--muted);
+  }
+
+  /* クイズ画面 */
   .question-label {
     font-size: 0.95rem;
     color: var(--accent);
@@ -149,6 +244,7 @@
     line-height: 1.9;
     color: #ccd9f0;
     border-left: 4px solid var(--accent);
+    white-space: pre-line;
   }
 
   .next-btn {
@@ -156,7 +252,7 @@
     margin-top: 20px;
     width: 100%;
     padding: 18px;
-    background: var(--accent);
+    background: var(--yellow);
     color: #0f1923;
     border: none;
     border-radius: 14px;
@@ -164,7 +260,6 @@
     font-weight: 900;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
-    letter-spacing: 0.05em;
     transition: opacity 0.2s;
   }
 
@@ -177,46 +272,11 @@
     font-size: 1rem;
     color: var(--muted);
     font-weight: 700;
+    max-width: 680px;
+    width: 100%;
   }
 
   .score-bar span { color: var(--yellow); }
-
-  .kuro-icon {
-    font-size: 2rem;
-    margin-right: 8px;
-  }
-
-  .finish-card {
-    display: none;
-    text-align: center;
-    padding: 40px 24px;
-  }
-
-  .finish-card h2 {
-    font-size: 2rem;
-    font-weight: 900;
-    color: var(--yellow);
-    margin-bottom: 12px;
-  }
-
-  .finish-card p {
-    font-size: 1.2rem;
-    color: var(--text);
-    line-height: 1.8;
-  }
-
-  .restart-btn {
-    margin-top: 28px;
-    padding: 16px 40px;
-    background: var(--yellow);
-    color: #0f1923;
-    border: none;
-    border-radius: 14px;
-    font-size: 1.15rem;
-    font-weight: 900;
-    font-family: 'Noto Sans JP', sans-serif;
-    cursor: pointer;
-  }
 
   /* クロちゃん質問エリア */
   .chat-area {
@@ -250,6 +310,7 @@
     font-size: 1.1rem;
     line-height: 1.8;
     font-weight: 500;
+    white-space: pre-line;
   }
 
   .chat-bubble.kuro {
@@ -262,7 +323,6 @@
     background: #243552;
     color: var(--text);
     border-left: 4px solid var(--yellow);
-    text-align: right;
   }
 
   .chat-bubble.loading {
@@ -288,9 +348,7 @@
     outline: none;
   }
 
-  .chat-input:focus {
-    border-color: var(--accent);
-  }
+  .chat-input:focus { border-color: var(--accent); }
 
   .chat-send-btn {
     padding: 16px 22px;
@@ -305,22 +363,113 @@
     white-space: nowrap;
   }
 
-  .chat-send-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+  .chat-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* 終了画面 */
+  .finish-card {
+    display: none;
+    text-align: center;
+    padding: 40px 24px;
+  }
+
+  .finish-card h2 {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--yellow);
+    margin-bottom: 12px;
+  }
+
+  .finish-card p {
+    font-size: 1.2rem;
+    color: var(--text);
+    line-height: 1.8;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+
+  .restart-btn {
+    flex: 1;
+    padding: 16px;
+    background: var(--yellow);
+    color: #0f1923;
+    border: none;
+    border-radius: 14px;
+    font-size: 1.1rem;
+    font-weight: 900;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+  }
+
+  .back-btn {
+    flex: 1;
+    padding: 16px;
+    background: #243552;
+    color: var(--text);
+    border: 2px solid #2e4470;
+    border-radius: 14px;
+    font-size: 1.1rem;
+    font-weight: 900;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
   }
 </style>
 </head>
 <body>
 
 <h1>🐾 クロちゃんと FP2級 一問一答</h1>
-<p class="subtitle">ライフプランニング・社会保険編</p>
+<p class="subtitle" id="main-subtitle">分野を選んでスタート！</p>
 
-<div class="score-bar">
-  問題 <span id="q-num">1</span> / <span id="q-total">3</span>　｜　正解 <span id="score">0</span> 問
+<!-- 分野選択画面 -->
+<div class="card" id="category-screen">
+  <div class="category-title">📚 どの分野を練習する？</div>
+  <div class="category-grid">
+    <button class="category-btn" onclick="selectCategory('all')">
+      <span class="icon">🎲</span>全分野おまかせ
+    </button>
+    <button class="category-btn" onclick="selectCategory('ライフプランニング・社会保険')">
+      <span class="icon">📋</span>ライフプランニング・社会保険
+    </button>
+    <button class="category-btn" onclick="selectCategory('リスク管理')">
+      <span class="icon">🛡️</span>リスク管理
+    </button>
+    <button class="category-btn" onclick="selectCategory('金融資産運用')">
+      <span class="icon">📈</span>金融資産運用
+    </button>
+    <button class="category-btn" onclick="selectCategory('タックスプランニング')">
+      <span class="icon">💰</span>タックスプランニング
+    </button>
+    <button class="category-btn" onclick="selectCategory('不動産')">
+      <span class="icon">🏠</span>不動産
+    </button>
+    <button class="category-btn" onclick="selectCategory('相続・事業承継')">
+      <span class="icon">🎁</span>相続・事業承継
+    </button>
+  </div>
+
+  <div class="count-row">
+    <button class="count-btn selected" onclick="selectCount(5)">5問</button>
+    <button class="count-btn" onclick="selectCount(10)">10問</button>
+    <button class="count-btn" onclick="selectCount(20)">20問</button>
+  </div>
 </div>
 
-<div class="card" id="quiz-card">
+<!-- ローディング -->
+<div class="card" id="loading-screen" style="display:none;">
+  <div class="loading-box">🐾 問題を読み込み中やで～...</div>
+</div>
+
+<!-- スコアバー -->
+<div class="score-bar" id="score-bar" style="display:none;">
+  問題 <span id="q-num">1</span> / <span id="q-total">10</span>　｜　正解 <span id="score">0</span> 問
+</div>
+
+<!-- クイズ画面 -->
+<div class="card" id="quiz-card" style="display:none;">
   <div class="question-label" id="q-label">📋 問題 1</div>
   <div class="question-text" id="q-text"></div>
   <div class="choices" id="choices"></div>
@@ -341,65 +490,79 @@
   <button class="next-btn" id="next-btn" onclick="nextQuestion()">次の問題へ →</button>
 </div>
 
+<!-- 終了画面 -->
 <div class="card finish-card" id="finish-card">
   <h2>🎉 お疲れ様！</h2>
   <p id="finish-msg"></p>
-  <button class="restart-btn" onclick="restart()">もう一度チャレンジ！</button>
+  <div class="btn-row">
+    <button class="restart-btn" onclick="restartSameCategory()">もう一度！</button>
+    <button class="back-btn" onclick="backToCategory()">分野を変える</button>
+  </div>
 </div>
 
 <script>
-const questions = [
-  {
-    text: "雇用保険の基本手当に関する記述のうち、最も不適切なものはどれか？",
-    choices: [
-      "一般被保険者が失業した場合、原則として離職の日以前2年間に被保険者期間が通算12カ月以上あることが必要",
-      "育児休業給付金は通算181日目以降、「休業開始時賃金日額×支給日数×67%」相当額が支給される",
-      "介護休業給付金は同一の対象家族について通算3回かつ93日を限度として支給される",
-      "失業等給付・育児休業給付の保険料は労使折半、雇用保険二事業の保険料は事業主が全額負担"
-    ],
-    correct: 1,
-    explanation: "181日目以降の育児休業給付金は「67%」ではなく「50%」が正解！\n\n開始〜180日目 → 67%\n181日目以降 → 50%\n\n最初はがっつりもらえるけど、だんだん減るイメージやで！"
-  },
-  {
-    text: "公的医療保険に関する記述のうち、最も不適切なものはどれか？",
-    choices: [
-      "健康保険の任意継続被保険者になるには、資格喪失前に引き続き2カ月以上被保険者で、資格喪失日から20日以内に申請が必要",
-      "健康保険や国民健康保険の被保険者が75歳になると後期高齢者医療制度の被保険者となる",
-      "同一月内に自己負担限度額を超えた場合、超えた部分が高額療養費として支給される",
-      "協会けんぽの介護保険料率は都道府県ごとに定められている"
-    ],
-    correct: 3,
-    explanation: "協会けんぽの介護保険料率は「都道府県ごと」ではなく「全国一律」やで！\n\n一般保険料率 → 都道府県ごとに異なる\n介護保険料率 → 全国一律\n\n「介護は全国みんな同じ」って覚えといて！"
-  },
-  {
-    text: "労働者災害補償保険（労災保険）の給付に関する記述のうち、最も適切なものはどれか？",
-    choices: [
-      "労災保険の適用を受ける労働者には、日雇労働者や外国人労働者は含まれない",
-      "業務上の負傷で賃金を受けられない場合、賃金を受けられない日の第4日目から休業補償給付が支給される",
-      "労災保険の保険料率は事業の種類による差異はない",
-      "障害補償年金と障害補償一時金はどちらかを選択して受給できる"
-    ],
-    correct: 1,
-    explanation: "正解は2番！待期期間が3日あって、4日目から支給されるんよ。\n\n1番→日雇・外国人も対象やで\n3番→事業の種類によって保険料率は異なる\n4番→障害等級によって年金か一時金が決まり、選択制ではない\n\n「3日待って4日目から」ってしっかり覚えといて！"
-  }
-];
-
+let questions = [];
 let current = 0;
 let score = 0;
 let answered = false;
+let selectedCategory = 'all';
+let selectedCount = 5;
+
+function selectCount(n) {
+  selectedCount = n;
+  document.querySelectorAll('.count-btn').forEach(b => b.classList.remove('selected'));
+  event.target.classList.add('selected');
+}
+
+async function selectCategory(cat) {
+  selectedCategory = cat;
+  document.getElementById('category-screen').style.display = 'none';
+  document.getElementById('loading-screen').style.display = 'block';
+  document.getElementById('main-subtitle').textContent = cat === 'all' ? '全分野' : cat;
+
+  await loadQuestions();
+}
+
+async function loadQuestions() {
+  try {
+    const catParam = selectedCategory === 'all' ? '' : `&category=${encodeURIComponent(selectedCategory)}`;
+    const res = await fetch(`/api/questions?limit=${selectedCount}${catParam}`);
+    const data = await res.json();
+
+    if (!data.questions || data.questions.length === 0) {
+      alert('問題が見つからんかったわ！別の分野を試してや！');
+      backToCategory();
+      return;
+    }
+
+    questions = data.questions;
+    current = 0;
+    score = 0;
+
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('score-bar').style.display = 'flex';
+    document.getElementById('quiz-card').style.display = 'block';
+    document.getElementById('q-total').textContent = questions.length;
+
+    loadQuestion();
+  } catch(e) {
+    alert('エラーが出たわ！もう一回試してや！');
+    backToCategory();
+  }
+}
 
 function loadQuestion() {
   const q = questions[current];
   answered = false;
+
   document.getElementById('q-label').textContent = `📋 問題 ${current + 1}`;
-  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('q-text').textContent = q.q;
   document.getElementById('q-num').textContent = current + 1;
-  document.getElementById('q-total').textContent = questions.length;
   document.getElementById('score').textContent = score;
 
   const choicesDiv = document.getElementById('choices');
   choicesDiv.innerHTML = '';
-  q.choices.forEach((c, i) => {
+  q.opts.forEach((c, i) => {
     const btn = document.createElement('button');
     btn.className = 'choice-btn';
     btn.textContent = `${i + 1}. ${c}`;
@@ -421,27 +584,27 @@ function answer(idx) {
   const btns = document.querySelectorAll('.choice-btn');
   btns.forEach(b => b.disabled = true);
 
+  const correctIdx = Number(q.ans);
   const resultBox = document.getElementById('result-box');
   const expBox = document.getElementById('explanation');
 
-  if (idx === q.correct) {
+  if (idx === correctIdx) {
     score++;
     btns[idx].classList.add('correct');
     resultBox.className = 'result-box correct-result';
     resultBox.textContent = '🎉 正解！さすが浩之さん！';
   } else {
     btns[idx].classList.add('wrong');
-    btns[q.correct].classList.add('reveal');
+    btns[correctIdx].classList.add('reveal');
     resultBox.className = 'result-box wrong-result';
-    resultBox.textContent = `😅 惜しい！正解は ${q.correct + 1} 番やで！`;
+    resultBox.textContent = `😅 惜しい！正解は ${correctIdx + 1} 番やで！`;
   }
 
   document.getElementById('score').textContent = score;
   resultBox.style.display = 'block';
-  expBox.textContent = q.explanation;
+  expBox.textContent = q.ex || '';
   expBox.style.display = 'block';
   document.getElementById('chat-area').style.display = 'block';
-  // チャット履歴リセット
   document.getElementById('chat-messages').innerHTML = '<div class="chat-bubble kuro">なんか気になることあったら何でも聞いてや！🐾</div>';
   document.getElementById('next-btn').style.display = 'block';
 
@@ -471,14 +634,14 @@ async function sendQuestion() {
   messages.appendChild(loading);
   messages.scrollTop = messages.scrollHeight;
 
-  const currentQ = questions[current] || questions[questions.length - 1];
+  const currentQ = questions[current];
 
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        system: `あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに、でも正確に答えてください。今取り組んでいる問題：「${currentQ.text}」。解説：「${currentQ.explanation}」。この問題に関連した質問に答えてあげてください。短めにわかりやすく！`,
+        system: `あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに、でも正確に答えてください。今取り組んでいる問題：「${currentQ.q}」。解説：「${currentQ.ex}」。この問題に関連した質問に答えてあげてください。短めにわかりやすく！`,
         messages: [{ role: 'user', content: q }]
       })
     });
@@ -511,27 +674,32 @@ function nextQuestion() {
 
 function showFinish() {
   document.getElementById('quiz-card').style.display = 'none';
-  document.querySelector('.score-bar').style.display = 'none';
+  document.getElementById('score-bar').style.display = 'none';
   const fc = document.getElementById('finish-card');
   fc.style.display = 'block';
   const pct = Math.round(score / questions.length * 100);
   let msg = '';
-  if (pct === 100) msg = `全問正解！！${questions.length}問中${score}問正解(${pct}%)🔥\nクロちゃんも鼻高々やで！この調子で10月の本番も突破や！`;
+  if (pct === 100) msg = `全問正解！！${questions.length}問中${score}問正解(${pct}%)🔥\nこの調子で10月の本番も突破や！`;
   else if (pct >= 60) msg = `${questions.length}問中${score}問正解(${pct}%)！\nええ感じやで！間違えた問題を復習したら完璧や！`;
   else msg = `${questions.length}問中${score}問正解(${pct}%)。\n一緒にもう一回やり直そ！絶対できるようになるで！`;
   document.getElementById('finish-msg').textContent = msg;
 }
 
-function restart() {
-  current = 0;
-  score = 0;
-  document.getElementById('quiz-card').style.display = 'block';
-  document.querySelector('.score-bar').style.display = 'flex';
+function restartSameCategory() {
   document.getElementById('finish-card').style.display = 'none';
-  loadQuestion();
+  document.getElementById('loading-screen').style.display = 'block';
+  document.getElementById('score-bar').style.display = 'none';
+  loadQuestions();
 }
 
-loadQuestion();
+function backToCategory() {
+  document.getElementById('finish-card').style.display = 'none';
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('quiz-card').style.display = 'none';
+  document.getElementById('score-bar').style.display = 'none';
+  document.getElementById('category-screen').style.display = 'block';
+  document.getElementById('main-subtitle').textContent = '分野を選んでスタート！';
+}
 </script>
 </body>
 </html>
