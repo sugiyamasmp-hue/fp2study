@@ -34,7 +34,7 @@ export default async function handler(req, res) {
 
     // カテゴリ指定があればフィルタ
     if (category && category !== 'all') {
-      query = query.where('category', '==', category);
+      query = query.where('cat', '==', category);
     }
 
     // 件数制限
