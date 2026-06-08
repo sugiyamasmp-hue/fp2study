@@ -575,8 +575,14 @@ function loadQuestion() {
 
   document.getElementById('result-box').style.display = 'none';
   document.getElementById('explanation').style.display = 'none';
-  document.getElementById('chat-area').style.display = 'none';
   document.getElementById('next-btn').style.display = 'none';
+
+  // 問題が出た瞬間からクロちゃんに質問できる！
+  document.getElementById('chat-area').style.display = 'block';
+  document.getElementById('chat-messages').innerHTML = '<div class="chat-bubble kuro">問題見て気になることあったら何でも聞いてや！🐾</div>';
+  document.getElementById('chat-input').onkeydown = (e) => {
+    if (e.key === 'Enter') sendQuestion();
+  };
 }
 
 function answer(idx) {
@@ -607,13 +613,16 @@ function answer(idx) {
   resultBox.style.display = 'block';
   expBox.textContent = q.ex || '';
   expBox.style.display = 'block';
-  document.getElementById('chat-area').style.display = 'block';
-  document.getElementById('chat-messages').innerHTML = '<div class="chat-bubble kuro">なんか気になることあったら何でも聞いてや！🐾</div>';
-  document.getElementById('next-btn').style.display = 'block';
 
-  document.getElementById('chat-input').onkeydown = (e) => {
-    if (e.key === 'Enter') sendQuestion();
-  };
+  // チャットはリセットせず継続、解説後も質問できる
+  const messages = document.getElementById('chat-messages');
+  const kuroBubble = document.createElement('div');
+  kuroBubble.className = 'chat-bubble kuro';
+  kuroBubble.textContent = '解説も出たで！まだ気になることあったら何でも聞いてや！🐾';
+  messages.appendChild(kuroBubble);
+  messages.scrollTop = messages.scrollHeight;
+
+  document.getElementById('next-btn').style.display = 'block';
 }
 
 async function sendQuestion() {
