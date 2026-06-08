@@ -1,20 +1,21 @@
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+const { initializeApp, getApps, cert } = require('firebase-admin/app');
+const { getFirestore } = require('firebase-admin/firestore');
 
-// Firebase Admin初期化（重複初期化防止）
 if (!getApps().length) {
   initializeApp({
     credential: cert({
       projectId: process.env.FIREBASE_PROJECT_ID,
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      privateKey: process.env.FIREBASE_PRIVATE_KEY
+        ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+        : undefined,
     }),
   });
 }
 
 const db = getFirestore();
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -32,12 +33,10 @@ export default async function handler(req, res) {
 
     let query = db.collection('questions');
 
-    // カテゴリ指定があればフィルタ
     if (category && category !== 'all') {
       query = query.where('cat', '==', category);
     }
 
-    // 件数制限
     query = query.limit(Number(limit));
 
     const snapshot = await query.get();
@@ -51,12 +50,11 @@ export default async function handler(req, res) {
       questions.push({ id: doc.id, ...doc.data() });
     });
 
-    // シャッフル
     questions.sort(() => Math.random() - 0.5);
 
     return res.status(200).json({ questions });
 
   } catch (error) {
-    return res.status(200).json({ error: 'エラー: ' + error.message, questions: [] });
+    return res.status(200).json({ error: error.message, questions: [] });
   }
-}
+};
