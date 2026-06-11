@@ -417,12 +417,159 @@
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
   }
+
+  /* モード切り替え */
+  .mode-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    max-width: 860px;
+    width: 100%;
+  }
+
+  .mode-btn {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    font-weight: 900;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    border: 2px solid #2e4470;
+    background: #243552;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+
+  .mode-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0f1923;
+  }
+
+  /* チャットモード専用 */
+  .chat-mode-area {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    max-width: 860px;
+    width: 100%;
+  }
+
+  .chat-mode-messages {
+    background: var(--card);
+    border-radius: 20px 20px 0 0;
+    padding: 24px;
+    min-height: 400px;
+    max-height: 60vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .chat-mode-input-row {
+    display: flex;
+    gap: 10px;
+    background: #111e30;
+    border-radius: 0 0 20px 20px;
+    padding: 16px;
+    border-top: 2px solid #2e4470;
+  }
+
+  .chat-mode-input {
+    flex: 1;
+    padding: 16px 18px;
+    font-size: 1.15rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    background: #1a2840;
+    border: 2px solid #2e4470;
+    border-radius: 12px;
+    color: var(--text);
+    outline: none;
+  }
+
+  .chat-mode-input:focus { border-color: var(--accent); }
+
+  .chat-mode-send-btn {
+    padding: 16px 22px;
+    background: var(--accent);
+    color: #0f1923;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.15rem;
+    font-weight: 900;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+  }
+
+  .chat-mode-send-btn:disabled { opacity: 0.5; }
+
+  .chat-msg {
+    padding: 16px 20px;
+    border-radius: 16px;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    font-weight: 500;
+    white-space: pre-line;
+  }
+
+  .chat-msg.kuro {
+    background: #1a3a5c;
+    color: var(--text);
+    border-left: 4px solid var(--accent);
+  }
+
+  .chat-msg.user {
+    background: #243552;
+    color: var(--text);
+    border-left: 4px solid var(--yellow);
+  }
+
+  .chat-msg.loading {
+    background: #1a3a5c;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .chat-answer-btns {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+
+  .chat-answer-btn {
+    padding: 12px 20px;
+    background: #243552;
+    border: 2px solid #2e4470;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .chat-answer-btn:hover:not(:disabled) {
+    background: #2e4d7a;
+    border-color: var(--accent);
+  }
+
+  .chat-answer-btn:disabled { opacity: 0.5; }
 </style>
 </head>
 <body>
 
 <h1>🐾 クロちゃんと FP2級 一問一答</h1>
 <p class="subtitle" id="main-subtitle">分野を選んでスタート！</p>
+
+<!-- モード切り替え（クイズ中だけ表示） -->
+<div class="mode-toggle" id="mode-toggle" style="display:none;">
+  <button class="mode-btn active" id="btn-app-mode" onclick="switchMode('app')">📱 アプリモード</button>
+  <button class="mode-btn" id="btn-chat-mode" onclick="switchMode('chat')">💬 チャットモード</button>
+</div>
 
 <!-- 分野選択画面 -->
 <div class="card" id="category-screen">
@@ -503,6 +650,15 @@
   </div>
 </div>
 
+<!-- チャットモード -->
+<div class="chat-mode-area" id="chat-mode-area">
+  <div class="chat-mode-messages" id="chat-mode-messages"></div>
+  <div class="chat-mode-input-row">
+    <input class="chat-mode-input" id="chat-mode-input" type="text" placeholder="クロちゃんに話しかけてや！" />
+    <button class="chat-mode-send-btn" id="chat-mode-send-btn" onclick="chatModeSend()">送信</button>
+  </div>
+</div>
+
 <script>
 let questions = [];
 let current = 0;
@@ -545,7 +701,12 @@ async function loadQuestions() {
     document.getElementById('loading-screen').style.display = 'none';
     document.getElementById('score-bar').style.display = 'flex';
     document.getElementById('quiz-card').style.display = 'block';
+    document.getElementById('mode-toggle').style.display = 'flex';
     document.getElementById('q-total').textContent = questions.length;
+    currentMode = 'app';
+    chatModeHistory = [];
+    document.getElementById('btn-app-mode').classList.add('active');
+    document.getElementById('btn-chat-mode').classList.remove('active');
 
     loadQuestion();
   } catch(e) {
@@ -717,9 +878,158 @@ function backToCategory() {
   document.getElementById('loading-screen').style.display = 'none';
   document.getElementById('quiz-card').style.display = 'none';
   document.getElementById('score-bar').style.display = 'none';
+  document.getElementById('mode-toggle').style.display = 'none';
+  document.getElementById('chat-mode-area').style.display = 'none';
   document.getElementById('category-screen').style.display = 'block';
   document.getElementById('main-subtitle').textContent = '分野を選んでスタート！';
 }
+
+// ===== モード切り替え =====
+let currentMode = 'app';
+let chatModeHistory = [];
+
+function switchMode(mode) {
+  currentMode = mode;
+  document.getElementById('btn-app-mode').classList.toggle('active', mode === 'app');
+  document.getElementById('btn-chat-mode').classList.toggle('active', mode === 'chat');
+
+  if (mode === 'app') {
+    document.getElementById('quiz-card').style.display = 'block';
+    document.getElementById('score-bar').style.display = 'flex';
+    document.getElementById('chat-mode-area').style.display = 'none';
+  } else {
+    document.getElementById('quiz-card').style.display = 'none';
+    document.getElementById('score-bar').style.display = 'none';
+    document.getElementById('chat-mode-area').style.display = 'flex';
+    if (chatModeHistory.length === 0) {
+      startChatMode();
+    }
+  }
+}
+
+function startChatMode() {
+  chatModeHistory = [];
+  const msgsDiv = document.getElementById('chat-mode-messages');
+  msgsDiv.innerHTML = '';
+  const q = questions[current];
+  addChatMsg('kuro', `よっしゃ！問題${current + 1}やで！🐾\n\n${q.q}\n\n1. ${q.opts[0]}\n2. ${q.opts[1]}\n3. ${q.opts[2]}\n4. ${q.opts[3]}\n\n番号で答えてや！または何でも質問してや！`);
+
+  // 選択肢ボタンも追加
+  const btnsDiv = document.createElement('div');
+  btnsDiv.className = 'chat-answer-btns';
+  btnsDiv.id = 'chat-answer-btns';
+  [1,2,3,4].forEach(n => {
+    const btn = document.createElement('button');
+    btn.className = 'chat-answer-btn';
+    btn.textContent = `${n}番`;
+    btn.onclick = () => chatModeAnswer(n - 1);
+    btnsDiv.appendChild(btn);
+  });
+  msgsDiv.appendChild(btnsDiv);
+  msgsDiv.scrollTop = msgsDiv.scrollHeight;
+
+  document.getElementById('chat-mode-input').onkeydown = (e) => {
+    if (e.key === 'Enter') chatModeSend();
+  };
+}
+
+function addChatMsg(type, text) {
+  const msgsDiv = document.getElementById('chat-mode-messages');
+  const div = document.createElement('div');
+  div.className = `chat-msg ${type}`;
+  div.textContent = text;
+  msgsDiv.appendChild(div);
+  msgsDiv.scrollTop = msgsDiv.scrollHeight;
+  return div;
+}
+
+function chatModeAnswer(idx) {
+  const q = questions[current];
+  const correctIdx = Number(q.ans);
+
+  // 選択肢ボタンを無効化
+  document.querySelectorAll('.chat-answer-btn').forEach(b => b.disabled = true);
+
+  addChatMsg('user', `${idx + 1}番！`);
+
+  if (idx === correctIdx) {
+    score++;
+    addChatMsg('kuro', `🎉 正解やで！さすが浩之さん！\n\n📝 解説：${q.ex}`);
+  } else {
+    addChatMsg('kuro', `😅 惜しい！正解は${correctIdx + 1}番やで！\n\n📝 解説：${q.ex}`);
+  }
+
+  document.getElementById('score').textContent = score;
+
+  // 次の問題ボタン
+  const nextDiv = document.createElement('div');
+  nextDiv.style.marginTop = '8px';
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'chat-answer-btn';
+  nextBtn.style.background = 'var(--yellow)';
+  nextBtn.style.color = '#0f1923';
+  nextBtn.style.borderColor = 'var(--yellow)';
+  nextBtn.textContent = current + 1 < questions.length ? '次の問題へ →' : '結果を見る！';
+  nextBtn.onclick = () => {
+    current++;
+    if (current >= questions.length) {
+      document.getElementById('chat-mode-area').style.display = 'none';
+      document.getElementById('mode-toggle').style.display = 'none';
+      showFinish();
+    } else {
+      chatModeHistory = [];
+      startChatMode();
+    }
+  };
+  nextDiv.appendChild(nextBtn);
+  document.getElementById('chat-mode-messages').appendChild(nextDiv);
+  document.getElementById('chat-mode-messages').scrollTop = 99999;
+}
+
+async function chatModeSend() {
+  const input = document.getElementById('chat-mode-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  // 数字で答えた場合
+  if (['1','2','3','4'].includes(text)) {
+    input.value = '';
+    chatModeAnswer(Number(text) - 1);
+    return;
+  }
+
+  addChatMsg('user', text);
+  input.value = '';
+
+  const sendBtn = document.getElementById('chat-mode-send-btn');
+  sendBtn.disabled = true;
+  const loading = addChatMsg('loading', 'クロちゃんが考え中やで～🐾');
+
+  const q = questions[current];
+  chatModeHistory.push({ role: 'user', content: text });
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system: `あなたは「クロちゃん」というキャラクターです。必ず関西弁で話す（「〜やで」「〜やん」「〜やな」など）。「です」「ます」は絶対使わない。絵文字を使って明るく！FP2級の先生として正確な知識を伝える。今の問題：「${q.q}」。解説：「${q.ex}」`,
+        messages: chatModeHistory
+      })
+    });
+    const data = await res.json();
+    loading.remove();
+    const reply = data.reply || 'ごめん、エラーやわ😅';
+    addChatMsg('kuro', reply);
+    chatModeHistory.push({ role: 'assistant', content: reply });
+  } catch(e) {
+    loading.remove();
+    addChatMsg('kuro', 'ごめん、エラーやわ😅もう一回聞いてや！');
+  }
+
+  sendBtn.disabled = false;
+}
+
 </script>
 </body>
 </html>
