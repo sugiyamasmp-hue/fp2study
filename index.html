@@ -558,6 +558,44 @@ function addKuroBubble(text, showAnswerBtns = false, q = null) {
   scrollBottom();
 }
 
+// ===== 解説付きバブル =====
+function addKuroBubbleWithEx(mainText, exText, afterText) {
+  const screen = document.getElementById('chat-screen');
+  const row = document.createElement('div');
+  row.className = 'msg-row';
+
+  const avatar = document.createElement('div');
+  avatar.className = 'avatar kuro';
+  avatar.textContent = '🐾';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble kuro';
+
+  // メインテキスト
+  const main = document.createElement('div');
+  main.textContent = mainText;
+  bubble.appendChild(main);
+
+  // 解説（色付き）
+  const ex = document.createElement('div');
+  ex.style.cssText = 'margin-top: 10px; padding: 10px 12px; background: rgba(88,166,255,0.08); border-left: 3px solid #58a6ff; border-radius: 4px; color: #79c0ff; font-size: 0.97rem; line-height: 1.75;';
+  ex.textContent = `📝 ${exText}`;
+  bubble.appendChild(ex);
+
+  // 後テキスト
+  if (afterText) {
+    const after = document.createElement('div');
+    after.style.marginTop = '10px';
+    after.textContent = afterText;
+    bubble.appendChild(after);
+  }
+
+  row.appendChild(avatar);
+  row.appendChild(bubble);
+  screen.appendChild(row);
+  scrollBottom();
+}
+
 // ===== ユーザーのバブル =====
 function addUserBubble(text) {
   const screen = document.getElementById('chat-screen');
@@ -594,13 +632,11 @@ function selectAnswer(idx, q) {
   if (idx === correctIdx) {
     score++;
     document.getElementById('score-disp').textContent = score;
-    const reply = `🎉 正解やで！さすが浩之さん！\n\n📝 ${q.ex}\n\n次の問題いく？`;
-    addKuroBubble(reply, false);
-    conversationHistory.push({ role: 'assistant', content: reply });
+    addKuroBubbleWithEx('🎉 正解やで！さすが浩之さん！', q.ex, '次の問題いく？');
+    conversationHistory.push({ role: 'assistant', content: `🎉 正解やで！さすが浩之さん！\n\n📝 ${q.ex}\n\n次の問題いく？` });
   } else {
-    const reply = `😅 惜しい！正解は${correctIdx+1}番やで！\n\n📝 ${q.ex}\n\n次の問題いく？`;
-    addKuroBubble(reply, false);
-    conversationHistory.push({ role: 'assistant', content: reply });
+    addKuroBubbleWithEx(`😅 惜しい！正解は${correctIdx+1}番やで！`, q.ex, '次の問題いく？');
+    conversationHistory.push({ role: 'assistant', content: `😅 惜しい！正解は${correctIdx+1}番やで！\n\n📝 ${q.ex}\n\n次の問題いく？` });
   }
 
   // 次へボタン
