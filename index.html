@@ -391,6 +391,249 @@
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
   }
+
+  /* ===== MODE TOGGLE ===== */
+  .mode-toggle {
+    display: flex;
+    gap: 6px;
+    padding: 12px 16px 0;
+    flex-shrink: 0;
+  }
+
+  .mode-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .mode-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0d1117;
+  }
+
+  /* ===== APP MODE ===== */
+  #app-mode-screen {
+    display: none;
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 14px;
+  }
+
+  .q-label {
+    font-size: 0.8rem;
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  .q-text {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+
+  .app-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .app-choice-btn {
+    padding: 16px 18px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--kuro-bg);
+    color: var(--text);
+    font-size: 1.05rem;
+    font-weight: 500;
+    font-family: 'Noto Sans JP', sans-serif;
+    text-align: left;
+    cursor: pointer;
+    line-height: 1.6;
+    transition: all 0.15s;
+  }
+
+  .app-choice-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: #1a2840;
+  }
+
+  .app-choice-btn.correct {
+    background: rgba(63,185,80,0.12);
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .app-choice-btn.wrong {
+    background: rgba(248,81,73,0.12);
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  .app-choice-btn.reveal {
+    background: rgba(63,185,80,0.12);
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .app-result {
+    display: none;
+    margin-top: 14px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .app-result.ok {
+    background: rgba(63,185,80,0.12);
+    border: 1px solid var(--green);
+    color: var(--green);
+  }
+
+  .app-result.ng {
+    background: rgba(210,153,34,0.12);
+    border: 1px solid var(--yellow);
+    color: var(--yellow);
+  }
+
+  .app-ex {
+    display: none;
+    margin-top: 10px;
+    padding: 12px 14px;
+    background: rgba(88,166,255,0.08);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    color: #79c0ff;
+    font-size: 0.97rem;
+    line-height: 1.75;
+  }
+
+  .app-next-btn {
+    display: none;
+    margin-top: 14px;
+    width: 100%;
+    padding: 16px;
+    border-radius: 10px;
+    border: none;
+    background: var(--yellow);
+    color: #0d1117;
+    font-size: 1.05rem;
+    font-weight: 700;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+  }
+
+  .app-score-bar {
+    display: flex;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  .app-score-bar span { color: var(--green); }
+
+  /* ===== CHARACTER SELECT ===== */
+  #char-screen {
+    display: none;
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 16px;
+  }
+
+  .char-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .char-sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .char-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .char-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    text-align: left;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--text);
+  }
+
+  .char-card:hover { border-color: var(--accent); background: var(--kuro-bg); }
+  .char-card.selected { border-color: var(--accent); background: rgba(88,166,255,0.08); }
+
+  .char-icon {
+    font-size: 2rem;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--kuro-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+
+  .char-info { flex: 1; }
+  .char-name { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+  .char-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+  .char-sample { font-size: 0.82rem; color: var(--accent); margin-top: 4px; font-style: italic; }
+
+  .char-confirm-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 16px;
+    border-radius: 10px;
+    border: none;
+    background: var(--accent);
+    color: #0d1117;
+    font-size: 1.05rem;
+    font-weight: 700;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .char-confirm-btn:hover { opacity: 0.85; }
 </style>
 </head>
 <body>
@@ -411,30 +654,100 @@
 
   <!-- 分野選択 -->
   <div id="category-screen">
-    <p class="cat-title">どの分野から練習する？</p>
-    <p class="cat-sub">浩之さん、今日もやってこ！💪</p>
 
-    <div class="cat-list">
-      <button class="cat-btn" onclick="startChat('all')"><span class="icon">🎲</span>全分野おまかせ</button>
-      <button class="cat-btn" onclick="startChat('ライフ・社会保険,ライフプランニング,社会保険,年金,職業倫理・関連法規')"><span class="icon">📋</span>ライフプランニング・社会保険</button>
-      <button class="cat-btn" onclick="startChat('保険')"><span class="icon">🛡️</span>リスク管理・保険</button>
-      <button class="cat-btn" onclick="startChat('金融資産運用,金融資産')"><span class="icon">📈</span>金融資産運用</button>
-      <button class="cat-btn" onclick="startChat('タックス')"><span class="icon">💰</span>タックスプランニング</button>
-      <button class="cat-btn" onclick="startChat('不動産')"><span class="icon">🏠</span>不動産</button>
-      <button class="cat-btn" onclick="startChat('相続・事業承継')"><span class="icon">🎁</span>相続・事業承継</button>
-      <button class="cat-btn" onclick="startChat('模擬試験')"><span class="icon">📝</span>模擬試験</button>
+    <!-- モード切り替え -->
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="mode-chat-btn" onclick="setMode('chat')">💬 チャットモード</button>
+      <button class="mode-btn" id="mode-app-btn" onclick="setMode('app')">📱 アプリモード</button>
     </div>
 
-    <p class="count-label">問題数</p>
-    <div class="count-row">
-      <button class="cnt-btn active" onclick="setCount(5, this)">5問</button>
-      <button class="cnt-btn" onclick="setCount(10, this)">10問</button>
-      <button class="cnt-btn" onclick="setCount(20, this)">20問</button>
+    <div style="padding: 16px 16px 0;">
+      <p class="cat-title">どの分野から練習する？</p>
+      <p class="cat-sub">浩之さん、今日もやってこ！💪</p>
+
+      <div class="cat-list">
+        <button class="cat-btn" onclick="startByMode('all')"><span class="icon">🎲</span>全分野おまかせ</button>
+        <button class="cat-btn" onclick="startByMode('ライフ・社会保険,ライフプランニング,社会保険,年金,職業倫理・関連法規')"><span class="icon">📋</span>ライフプランニング・社会保険</button>
+        <button class="cat-btn" onclick="startByMode('保険')"><span class="icon">🛡️</span>リスク管理・保険</button>
+        <button class="cat-btn" onclick="startByMode('金融資産運用,金融資産')"><span class="icon">📈</span>金融資産運用</button>
+        <button class="cat-btn" onclick="startByMode('タックス')"><span class="icon">💰</span>タックスプランニング</button>
+        <button class="cat-btn" onclick="startByMode('不動産')"><span class="icon">🏠</span>不動産</button>
+        <button class="cat-btn" onclick="startByMode('相続・事業承継')"><span class="icon">🎁</span>相続・事業承継</button>
+        <button class="cat-btn" onclick="startByMode('模擬試験')"><span class="icon">📝</span>模擬試験</button>
+      </div>
+
+      <p class="count-label">問題数</p>
+      <div class="count-row">
+        <button class="cnt-btn active" onclick="setCount(5, this)">5問</button>
+        <button class="cnt-btn" onclick="setCount(10, this)">10問</button>
+        <button class="cnt-btn" onclick="setCount(20, this)">20問</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- アプリモード画面 -->
+  <div id="app-mode-screen">
+    <div class="app-score-bar">
+      問題 <span id="app-q-num">1</span> / <span id="app-q-total">5</span>　正解 <span id="app-score">0</span> 問
+    </div>
+    <div class="q-card">
+      <div class="q-label" id="app-q-label">📋 問題 1</div>
+      <div class="q-text" id="app-q-text"></div>
+      <div class="app-choices" id="app-choices"></div>
+      <div class="app-result" id="app-result"></div>
+      <div class="app-ex" id="app-ex"></div>
+      <button class="app-next-btn" id="app-next-btn" onclick="appNextQuestion()">次の問題へ →</button>
     </div>
   </div>
 
   <!-- チャット画面 -->
   <div id="chat-screen"></div>
+
+  <!-- キャラクター選択画面 -->
+  <div id="char-screen">
+    <p class="char-title">先生を選んでや！</p>
+    <p class="char-sub">誰に教えてもらう？😄</p>
+    <div class="char-list">
+
+      <div class="char-card selected" id="char-kuro" onclick="selectChar('kuro')">
+        <div class="char-icon">🐾</div>
+        <div class="char-info">
+          <div class="char-name">クロちゃん</div>
+          <div class="char-desc">関西弁でフレンドリー！楽しく学べるで</div>
+          <div class="char-sample">「よっしゃ！正解やで！さすが浩之さん！🎉」</div>
+        </div>
+      </div>
+
+      <div class="char-card" id="char-bakabon" onclick="selectChar('bakabon')">
+        <div class="char-icon">🎩</div>
+        <div class="char-info">
+          <div class="char-name">バカボン風パパ先生</div>
+          <div class="char-desc">ゆるくてのほほん。これでいいのだ精神で学ぼう</div>
+          <div class="char-sample">「正解なのだ！これでいいのだ！次もいくのだ！」</div>
+        </div>
+      </div>
+
+      <div class="char-card" id="char-kinpachi" onclick="selectChar('kinpachi')">
+        <div class="char-icon">👨‍🏫</div>
+        <div class="char-info">
+          <div class="char-name">金八風先生</div>
+          <div class="char-desc">熱く人生訓を語りながら教えてくれる</div>
+          <div class="char-sample">「人として生きることとFP2級は…繋がっとるんや」</div>
+        </div>
+      </div>
+
+      <div class="char-card" id="char-muranishi" onclick="selectChar('muranishi')">
+        <div class="char-icon">🎬</div>
+        <div class="char-info">
+          <div class="char-name">村西風監督</div>
+          <div class="char-desc">大げさな褒め方と独特の口調で教えてくれる</div>
+          <div class="char-sample">「素晴らしい！あなたは天才です！世界一です！」</div>
+        </div>
+      </div>
+
+    </div>
+    <button class="char-confirm-btn" onclick="confirmChar()">この先生で始める！</button>
+  </div>
 
   <!-- 終了画面 -->
   <div id="finish-screen">
@@ -467,6 +780,203 @@ let answered = false;
 let selectedCount = 5;
 let selectedCategory = 'all';
 let conversationHistory = [];
+let currentMode = 'chat'; // 'chat' or 'app'
+let appAnswered = false;
+let appScore = 0;
+let appCurrent = 0;
+let selectedChar = 'kuro';
+let pendingCategory = '';
+
+// ===== キャラクター定義 =====
+const CHARS = {
+  kuro: {
+    name: 'クロちゃん',
+    icon: '🐾',
+    loading: '考え中やで～🐾',
+    prompt: `あなたは「クロちゃん」というFP2級の先生キャラクターです。
+必ず関西弁で話す。「〜やで」「〜やん」「〜やな」「〜やろ」「そうそう！」を使う。
+「です」「ます」は絶対使わない。絵文字を適度に使って明るく！
+FP2級の知識は正確に伝える。短めにわかりやすく答える。`
+  },
+  bakabon: {
+    name: 'バカボン風パパ先生',
+    icon: '🎩',
+    loading: '考えているのだ…🎩',
+    prompt: `あなたはバカボンのパパ風のFP2級の先生キャラクターです。
+語尾は必ず「〜なのだ」「〜のだ」をつける。
+ゆるくてのほほんとしている。失敗しても「これでいいのだ！」と前向き。
+絵文字を使う。FP2級の知識は正確に伝える。短めに答える。
+例：「正解なのだ！これでいいのだ！」「惜しいのだ！正解は〜なのだ！」`
+  },
+  kinpachi: {
+    name: '金八風先生',
+    icon: '👨‍🏫',
+    loading: '熱く考え中です…👨‍🏫',
+    prompt: `あなたは金八先生風のFP2級の先生キャラクターです。
+熱く語る。人生訓や道徳的な言葉をFPの知識に絡めて語る。
+「〜なんです」「〜ですよ」「〜じゃないですか」という口調。
+正解したら熱く褒める。間違えても「それでいい、挫折から人は学ぶんです」と励ます。
+FP2級の知識は正確に伝える。やや長めに熱く語る。絵文字は控えめに。`
+  },
+  muranishi: {
+    name: '村西風監督',
+    icon: '🎬',
+    loading: '天才的に考え中です…🎬',
+    prompt: `あなたは村西とおる監督風のFP2級の先生キャラクターです。
+独特の大げさな口調で話す。褒め方が極端に大げさ。
+「素晴らしい！」「天才です！」「世界一です！」「感動しました！」をよく使う。
+間違えても「それでいい、あなたはまだ伸びる！」と熱く励ます。
+語尾は「〜です」「〜ます」。独特の間（「…」）を使う。
+FP2級の知識は正確に伝える。絵文字は使わず独特の文体で。`
+  }
+};
+
+// ===== キャラクター選択 =====
+function selectChar(charId) {
+  selectedChar = charId;
+  document.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById(`char-${charId}`).classList.add('selected');
+}
+
+function confirmChar() {
+  document.getElementById('char-screen').style.display = 'none';
+  startChat(pendingCategory);
+}
+
+// ===== アバター取得 =====
+function getCharIcon() {
+  return CHARS[selectedChar]?.icon || '🐾';
+}
+
+function getLoadingText() {
+  return CHARS[selectedChar]?.loading || '考え中やで～';
+}
+
+function getSystemPrompt(q) {
+  const base = CHARS[selectedChar]?.prompt || CHARS.kuro.prompt;
+  return `${base}
+今取り組んでいる問題：「${q ? q.q : ''}」
+解説：「${q ? q.ex : ''}」`;
+}
+
+// ===== MODE SWITCH =====
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('mode-chat-btn').classList.toggle('active', mode === 'chat');
+  document.getElementById('mode-app-btn').classList.toggle('active', mode === 'app');
+}
+
+function startByMode(cat) {
+  if (currentMode === 'chat') {
+    // キャラ選択画面を表示
+    pendingCategory = cat;
+    document.getElementById('category-screen').style.display = 'none';
+    document.getElementById('char-screen').style.display = 'block';
+  } else {
+    startApp(cat);
+  }
+}
+
+// ===== APP MODE =====
+async function startApp(cat) {
+  selectedCategory = cat;
+  document.getElementById('category-screen').style.display = 'none';
+  document.getElementById('app-mode-screen').style.display = 'block';
+  document.getElementById('input-area').style.display = 'none';
+  document.getElementById('chat-screen').style.display = 'none';
+  document.getElementById('finish-screen').style.display = 'none';
+
+  appScore = 0;
+  appCurrent = 0;
+  document.getElementById('app-score').textContent = '0';
+  document.getElementById('score-disp').textContent = '0';
+
+  const catParam = cat === 'all' ? '' : `&category=${encodeURIComponent(cat)}`;
+  try {
+    const res = await fetch(`/api/questions?limit=${selectedCount}${catParam}`);
+    const data = await res.json();
+    if (!data.questions || data.questions.length === 0) {
+      alert('問題が見つからんかったわ！別の分野を試してや！');
+      backToMenu();
+      return;
+    }
+    questions = data.questions;
+    document.getElementById('app-q-total').textContent = questions.length;
+    appLoadQuestion();
+  } catch(e) {
+    alert('エラーが出たわ！もう一回試してや！');
+    backToMenu();
+  }
+}
+
+function appLoadQuestion() {
+  appAnswered = false;
+  const q = questions[appCurrent];
+  document.getElementById('app-q-label').textContent = `📋 問題 ${appCurrent + 1}`;
+  document.getElementById('app-q-text').textContent = q.q;
+  document.getElementById('app-q-num').textContent = appCurrent + 1;
+  document.getElementById('app-score').textContent = appScore;
+  document.getElementById('header-sub').textContent = `${appCurrent+1}問目 / ${questions.length}問`;
+
+  const choicesDiv = document.getElementById('app-choices');
+  choicesDiv.innerHTML = '';
+  q.opts.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'app-choice-btn';
+    btn.textContent = `${i+1}. ${c}`;
+    btn.onclick = () => appAnswer(i, q);
+    choicesDiv.appendChild(btn);
+  });
+
+  document.getElementById('app-result').style.display = 'none';
+  document.getElementById('app-ex').style.display = 'none';
+  document.getElementById('app-next-btn').style.display = 'none';
+}
+
+function appAnswer(idx, q) {
+  if (appAnswered) return;
+  appAnswered = true;
+
+  const correctIdx = Number(q.ans);
+  const btns = document.querySelectorAll('.app-choice-btn');
+  btns.forEach(b => b.disabled = true);
+
+  const resultEl = document.getElementById('app-result');
+  const exEl = document.getElementById('app-ex');
+
+  if (idx === correctIdx) {
+    appScore++;
+    document.getElementById('app-score').textContent = appScore;
+    document.getElementById('score-disp').textContent = appScore;
+    btns[idx].classList.add('correct');
+    resultEl.className = 'app-result ok';
+    resultEl.textContent = '🎉 正解！さすが浩之さん！';
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[correctIdx].classList.add('reveal');
+    resultEl.className = 'app-result ng';
+    resultEl.textContent = `😅 惜しい！正解は ${correctIdx + 1} 番やで！`;
+  }
+
+  resultEl.style.display = 'block';
+  exEl.textContent = `📝 ${q.ex}`;
+  exEl.style.display = 'block';
+
+  const nextBtn = document.getElementById('app-next-btn');
+  nextBtn.textContent = appCurrent + 1 < questions.length ? '次の問題へ →' : '結果を見る！';
+  nextBtn.style.display = 'block';
+}
+
+function appNextQuestion() {
+  appCurrent++;
+  if (appCurrent >= questions.length) {
+    document.getElementById('app-mode-screen').style.display = 'none';
+    score = appScore;
+    showFinish();
+  } else {
+    appLoadQuestion();
+  }
+}
 
 // ===== SETUP =====
 function setCount(n, btn) {
@@ -566,7 +1076,7 @@ function addKuroBubbleWithEx(mainText, exText, afterText) {
 
   const avatar = document.createElement('div');
   avatar.className = 'avatar kuro';
-  avatar.textContent = '🐾';
+  avatar.textContent = getCharIcon();
 
   const bubble = document.createElement('div');
   bubble.className = 'bubble kuro';
@@ -681,10 +1191,10 @@ async function sendMsg() {
   loadRow.id = 'loading-row';
   const loadAvatar = document.createElement('div');
   loadAvatar.className = 'avatar kuro';
-  loadAvatar.textContent = '🐾';
+  loadAvatar.textContent = getCharIcon();
   const loadBubble = document.createElement('div');
   loadBubble.className = 'bubble kuro loading';
-  loadBubble.textContent = '考え中やで～🐾';
+  loadBubble.textContent = getLoadingText();
   loadRow.appendChild(loadAvatar);
   loadRow.appendChild(loadBubble);
   screen.appendChild(loadRow);
@@ -693,12 +1203,7 @@ async function sendMsg() {
   conversationHistory.push({ role: 'user', content: text });
 
   const currentQ = questions[current] || questions[questions.length-1];
-  const systemPrompt = `あなたは「クロちゃん」というFP2級の先生キャラクターです。
-必ず関西弁で話す。「〜やで」「〜やん」「〜やな」「〜やろ」を使う。
-「です」「ます」は絶対使わない。絵文字を適度に使って明るく！
-FP2級の知識は正確に伝える。短めにわかりやすく答える。
-今取り組んでいる問題：「${currentQ ? currentQ.q : ''}」
-解説：「${currentQ ? currentQ.ex : ''}」`;
+  const systemPrompt = getSystemPrompt(currentQ);
 
   try {
     const res = await fetch('/api/chat', {
@@ -746,6 +1251,8 @@ function backToMenu() {
   document.getElementById('finish-screen').style.display = 'none';
   document.getElementById('chat-screen').style.display = 'none';
   document.getElementById('input-area').style.display = 'none';
+  document.getElementById('app-mode-screen').style.display = 'none';
+  document.getElementById('char-screen').style.display = 'none';
   document.getElementById('category-screen').style.display = 'block';
   document.getElementById('header-sub').textContent = 'FP2級 一緒に合格しよ！';
   document.getElementById('score-disp').textContent = '0';
