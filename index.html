@@ -939,10 +939,9 @@ function setMode(mode) {
 
 function startByMode(cat) {
   if (currentMode === 'chat') {
-    // キャラ選択画面を表示
     pendingCategory = cat;
     document.getElementById('category-screen').style.display = 'none';
-    document.getElementById('char-screen').style.display = 'block';
+    document.getElementById('char-screen').style.display = 'flex';
   } else {
     startApp(cat);
   }
@@ -952,7 +951,7 @@ function startByMode(cat) {
 async function startApp(cat) {
   selectedCategory = cat;
   document.getElementById('category-screen').style.display = 'none';
-  document.getElementById('app-mode-screen').style.display = 'block';
+  document.getElementById('app-mode-screen').style.display = 'flex';
   document.getElementById('input-area').style.display = 'none';
   document.getElementById('chat-screen').style.display = 'none';
   document.getElementById('finish-screen').style.display = 'none';
@@ -1060,7 +1059,7 @@ function setCount(n, btn) {
 async function startChat(cat) {
   selectedCategory = cat;
   document.getElementById('category-screen').style.display = 'none';
-  document.getElementById('chat-screen').style.display = 'block';
+  document.getElementById('chat-screen').style.display = 'flex';
   document.getElementById('input-area').style.display = 'block';
   document.getElementById('finish-screen').style.display = 'none';
   document.getElementById('chat-screen').innerHTML = '';
@@ -1479,7 +1478,7 @@ function backToMenu() {
   document.getElementById('input-area').style.display = 'none';
   document.getElementById('app-mode-screen').style.display = 'none';
   document.getElementById('char-screen').style.display = 'none';
-  document.getElementById('category-screen').style.display = 'block';
+  document.getElementById('category-screen').style.display = 'flex';
   document.getElementById('header-sub').textContent = 'FP2級 一緒に合格しよ！';
   document.getElementById('score-disp').textContent = '0';
 }
