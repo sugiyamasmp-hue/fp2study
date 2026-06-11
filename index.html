@@ -1280,7 +1280,7 @@ async function butchakeMode(q, btn) {
         system: `${CHARS[selectedChar].prompt}\n\n${charPrompt}`,
         messages: [{
           role: 'user',
-          content: `以下の問題をぶっちゃけてわかりやすく言い直して、同じ4択で出し直してください。\n\n問題：${q.q}\n\n${optsText}\n\n正解：${Number(q.ans)+1}番`
+          content: `以下の問題をぶっちゃけてわかりやすく言い直して、同じ4択で出し直してください。正解は絶対に教えないでください。\n\n問題：${q.q}\n\n${optsText}`
         }]
       })
     });
