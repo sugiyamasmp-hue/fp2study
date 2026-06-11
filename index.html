@@ -284,6 +284,45 @@
 
   .next-btn:hover { opacity: 0.85; }
 
+  /* ぶっちゃけボタン */
+  .butchake-btn {
+    margin-top: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #d29922;
+    background: rgba(210,153,34,0.12);
+    color: #d29922;
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-block;
+  }
+
+  .butchake-btn:hover { background: rgba(210,153,34,0.25); }
+  .butchake-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* やる気スイッチボタン */
+  .yaruki-btn {
+    margin-top: 8px;
+    margin-left: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #3fb950;
+    background: rgba(63,185,80,0.12);
+    color: #3fb950;
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-block;
+  }
+
+  .yaruki-btn:hover { background: rgba(63,185,80,0.25); }
+  .yaruki-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
   /* ===== INPUT AREA ===== */
   .input-area {
     display: none;
@@ -1061,20 +1100,20 @@ function askQuestion() {
   const optsText = q.opts.map((o, i) => `${i+1}. ${o}`).join('\n');
   const qText = `【問題 ${current+1}／${questions.length}】\n\n${q.q}\n\n${optsText}`;
 
-  addKuroBubble(qText, true, q);
+  addKuroBubble(qText, true, q, true);
   document.getElementById('header-sub').textContent = `${current+1}問目 / ${questions.length}問`;
   scrollBottom();
 }
 
 // ===== クロちゃんのバブル =====
-function addKuroBubble(text, showAnswerBtns = false, q = null) {
+function addKuroBubble(text, showAnswerBtns = false, q = null, showButchake = false) {
   const screen = document.getElementById('chat-screen');
   const row = document.createElement('div');
   row.className = 'msg-row';
 
   const avatar = document.createElement('div');
   avatar.className = 'avatar kuro';
-  avatar.textContent = '🐾';
+  avatar.textContent = getCharIcon();
 
   const bubble = document.createElement('div');
   bubble.className = 'bubble kuro';
@@ -1094,10 +1133,165 @@ function addKuroBubble(text, showAnswerBtns = false, q = null) {
     bubble.appendChild(btnsDiv);
   }
 
+  // ぶっちゃけボタン＋やる気スイッチ
+  if (showButchake && q) {
+    const bBtn = document.createElement('button');
+    bBtn.className = 'butchake-btn';
+    bBtn.id = 'butchake-btn';
+    bBtn.textContent = '🔥 ぶっちゃけて！';
+    bBtn.onclick = () => butchakeMode(q, bBtn);
+    bubble.appendChild(bBtn);
+
+    const yBtn = document.createElement('button');
+    yBtn.className = 'yaruki-btn';
+    yBtn.id = 'yaruki-btn';
+    yBtn.textContent = '💪 やる気スイッチ！';
+    yBtn.onclick = () => yarukiSwitch(yBtn);
+    bubble.appendChild(yBtn);
+  }
+
   row.appendChild(avatar);
   row.appendChild(bubble);
   screen.appendChild(row);
   scrollBottom();
+}
+}
+
+// ===== やる気スイッチ =====
+const YARUKI_PROMPTS = {
+  kuro: `浩之さんが問題を見て嫌になってる。関西弁で短く熱く励ましてや！
+「やる気スイッチ」を押してくれたから、一言ガツンと背中を押してや。
+絵文字使って明るく！2〜3文でOK。`,
+
+  bakabon: `浩之さんが問題を見て嫌になってるのだ。バカボンのパパ風に励ますのだ！
+「〜なのだ！」で短く励ますのだ。「これでいいのだ！」を必ず入れるのだ。2〜3文でOK。`,
+
+  kinpachi: `浩之さんが問題を見て嫌になっている。金八先生として熱く励ましてください。
+人生と重ねて短く力強く。「逃げるな」「向き合え」「お前ならできる」などを使う。
+絵文字なし。2〜3文で魂のこもった一言を。`,
+
+  muranishi: `浩之さんが問題を見て嫌になっている…。村西監督として励ましてください…。
+「…」を使って大げさに励ます…。「あなたは天才です…！」「感動しました…！」を入れる。
+2〜3文で。`,
+
+  yasushi: `浩之さんが問題を見て嫌になってる！やすし師匠として喝を入れてや！
+「なんでやねん！」から始めて、ガッとツッコミながら背中を押してや。
+「やれや！！」で締めてや。2〜3文でOK。`
+};
+
+async function yarukiSwitch(btn) {
+  btn.disabled = true;
+  btn.textContent = '充電中…';
+
+  addUserBubble('💪 やる気スイッチ！');
+
+  const screen = document.getElementById('chat-screen');
+  const loadRow = document.createElement('div');
+  loadRow.className = 'msg-row';
+  loadRow.id = 'loading-row';
+  const loadAvatar = document.createElement('div');
+  loadAvatar.className = 'avatar kuro';
+  loadAvatar.textContent = getCharIcon();
+  const loadBubble = document.createElement('div');
+  loadBubble.className = 'bubble kuro loading';
+  loadBubble.textContent = getLoadingText();
+  loadRow.appendChild(loadAvatar);
+  loadRow.appendChild(loadBubble);
+  screen.appendChild(loadRow);
+  scrollBottom();
+
+  const charPrompt = YARUKI_PROMPTS[selectedChar] || YARUKI_PROMPTS.kuro;
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system: `${CHARS[selectedChar].prompt}\n\n${charPrompt}`,
+        messages: [{ role: 'user', content: 'やる気スイッチを押しました！励ましてください！' }]
+      })
+    });
+    const data = await res.json();
+    document.getElementById('loading-row')?.remove();
+    const reply = data.reply || 'がんばれ！！';
+    addKuroBubble(reply);
+    btn.textContent = '💪 やる気スイッチ！';
+    btn.disabled = false;
+  } catch(e) {
+    document.getElementById('loading-row')?.remove();
+    addKuroBubble('ごめん、エラーやわ😅');
+    btn.disabled = false;
+  }
+}
+const BUTCHAKE_PROMPTS = {
+  kuro: `問題を関西弁でめちゃくちゃ簡単に言い直してや！
+「ぶっちゃけな〜、」から始めて、難しい言葉は全部やさしい言葉に変えて、
+同じ4択で出し直してや。選択肢もわかりやすく！「〜やで！」で締めてや。`,
+
+  bakabon: `問題を超わかりやすく言い直すのだ！
+「わかりやすく言うのだ！」から始めて、難しい言葉は全部やさしい言葉に変えるのだ。
+同じ4択で出し直すのだ。「これでいいのだ！」で締めるのだ。`,
+
+  kinpachi: `問題の本質だけを熱く語ってください。
+「いいか、本質を教えよう。」から始めて、難しい言葉を外して核心だけを伝える。
+同じ4択で出し直す。「わかるか！」で締める。絵文字なし。`,
+
+  muranishi: `問題を素晴らしく簡単に言い直してください…。
+「素晴らしい質問です…本質はですね…」から始めて、難しい言葉は全て簡単に…。
+同じ4択で出し直す…。「感動しました…！」で締める…。`,
+
+  yasushi: `問題をガッとわかりやすく言い直してや！
+「ややこしいこと言うな！要はな！」から始めて、難しい言葉は全部ぶっちゃけて、
+同じ4択で出し直してや。「わかったか！」で締めてや。`
+};
+
+async function butchakeMode(q, btn) {
+  btn.disabled = true;
+  btn.textContent = '考え中…';
+
+  addUserBubble('🔥 ぶっちゃけて！');
+
+  const screen = document.getElementById('chat-screen');
+  const loadRow = document.createElement('div');
+  loadRow.className = 'msg-row';
+  loadRow.id = 'loading-row';
+  const loadAvatar = document.createElement('div');
+  loadAvatar.className = 'avatar kuro';
+  loadAvatar.textContent = getCharIcon();
+  const loadBubble = document.createElement('div');
+  loadBubble.className = 'bubble kuro loading';
+  loadBubble.textContent = getLoadingText();
+  loadRow.appendChild(loadAvatar);
+  loadRow.appendChild(loadBubble);
+  screen.appendChild(loadRow);
+  scrollBottom();
+
+  const charPrompt = BUTCHAKE_PROMPTS[selectedChar] || BUTCHAKE_PROMPTS.kuro;
+  const optsText = q.opts.map((o, i) => `${i+1}. ${o}`).join('\n');
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system: `${CHARS[selectedChar].prompt}\n\n${charPrompt}`,
+        messages: [{
+          role: 'user',
+          content: `以下の問題をぶっちゃけてわかりやすく言い直して、同じ4択で出し直してください。\n\n問題：${q.q}\n\n${optsText}\n\n正解：${Number(q.ans)+1}番`
+        }]
+      })
+    });
+    const data = await res.json();
+    document.getElementById('loading-row')?.remove();
+    const reply = data.reply || 'ごめん、エラーやわ😅';
+
+    // ぶっちゃけバブルを追加（答えボタン付き）
+    addKuroBubble(reply, true, q, false);
+
+  } catch(e) {
+    document.getElementById('loading-row')?.remove();
+    addKuroBubble('ごめん、エラーやわ😅');
+  }
 }
 
 // ===== 解説付きバブル =====
