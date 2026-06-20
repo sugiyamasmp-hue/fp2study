@@ -10,17 +10,20 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --border: #30363d;
-    --accent: #58a6ff;
-    --kuro-bg: #1c2128;
-    --user-bg: #2d333b;
-    --text: #e6edf3;
-    --muted: #8b949e;
-    --green: #3fb950;
-    --red: #f85149;
-    --yellow: #d29922;
+    --bg: #f6f8fa;
+    --surface: #ffffff;
+    --border: #d0d7de;
+    --accent: #0969da;
+    --kuro-bg: #ddf4ff;
+    --user-bg: #e6ffed;
+    --text: #24292f;
+    --muted: #57606a;
+    --green: #1a7f37;
+    --red: #cf222e;
+    --yellow: #9a6700;
+    --yellow-bg: #fff8c5;
+    --shadow: 0 1px 3px rgba(27,31,36,0.12), 0 1px 2px rgba(27,31,36,0.06);
+    --shadow-md: 0 4px 12px rgba(27,31,36,0.12);
   }
 
   html, body {
@@ -30,13 +33,13 @@
     color: var(--text);
   }
 
-  /* ===== LAYOUT ===== */
   .app {
     display: flex;
     flex-direction: column;
     height: 100dvh;
     max-width: 760px;
     margin: 0 auto;
+    position: relative;
   }
 
   /* ===== HEADER ===== */
@@ -44,10 +47,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px;
+    padding: 10px 16px;
     border-bottom: 1px solid var(--border);
     background: var(--surface);
     flex-shrink: 0;
+    box-shadow: var(--shadow);
+    z-index: 10;
   }
 
   .header-left {
@@ -56,16 +61,20 @@
     gap: 10px;
   }
 
-  .kuro-avatar {
-    width: 36px;
-    height: 36px;
+  .header-avatar {
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #1f6feb, #388bfd);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
+    overflow: hidden;
     flex-shrink: 0;
+    border: 2px solid var(--border);
+    background: var(--bg);
+  }
+
+  .header-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .header-info h1 {
@@ -75,47 +84,176 @@
   }
 
   .header-info p {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--muted);
   }
 
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .difficulty-badge {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: #dafbe1;
+    color: var(--green);
+    border: 1px solid #acd5b2;
+  }
+
+  .difficulty-badge.mid {
+    background: var(--yellow-bg);
+    color: var(--yellow);
+    border-color: #e0c060;
+  }
+
+  .difficulty-badge.hard {
+    background: #ffebe9;
+    color: var(--red);
+    border-color: #f5b8b4;
+  }
+
   .score-badge {
-    background: var(--kuro-bg);
+    background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 0.8rem;
+    padding: 3px 10px;
+    font-size: 0.78rem;
     color: var(--muted);
   }
 
   .score-badge span { color: var(--green); font-weight: 700; }
+
+  .dash-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+
+  .dash-btn:hover { background: var(--bg); color: var(--accent); }
+
+  /* ===== UPGRADE TOAST ===== */
+  .upgrade-toast {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: linear-gradient(135deg, #0969da, #218bff);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 100;
+    transition: opacity 0.3s, transform 0.3s;
+    white-space: nowrap;
+  }
+
+  .upgrade-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 
   /* ===== CATEGORY SCREEN ===== */
   #category-screen {
     flex: 1;
     flex-direction: column;
     overflow-y: auto;
-    padding: 24px 16px;
+    padding: 0 0 16px;
+  }
+
+  /* Character greeting banner */
+  .char-greeting {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    padding: 16px 16px 4px;
+  }
+
+  .greeting-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+
+  .speech-bubble {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    border-bottom-left-radius: 4px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text);
+    box-shadow: var(--shadow);
+    position: relative;
+    flex: 1;
+  }
+
+  .mode-toggle {
+    display: flex;
+    gap: 6px;
+    padding: 12px 16px 0;
+    flex-shrink: 0;
+  }
+
+  .mode-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: var(--shadow);
+  }
+
+  .mode-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
   }
 
   .cat-title {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     color: var(--text);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
 
   .cat-sub {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: var(--muted);
-    margin-bottom: 20px;
+    margin-bottom: 14px;
   }
 
   .cat-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
 
   .cat-btn {
@@ -125,37 +263,40 @@
     padding: 14px 16px;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     color: var(--text);
-    font-size: 1rem;
+    font-size: 0.98rem;
     font-family: 'Noto Sans JP', sans-serif;
     font-weight: 500;
     cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
     text-align: left;
+    box-shadow: var(--shadow);
   }
 
   .cat-btn:hover {
     border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(9,105,218,0.1);
     background: var(--kuro-bg);
   }
 
   .cat-btn .icon { font-size: 1.2rem; }
 
-  .count-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 6px;
-  }
-
   .count-label {
     font-size: 0.8rem;
     color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .count-row {
+    display: flex;
+    gap: 8px;
     margin-bottom: 8px;
   }
 
   .cnt-btn {
-    padding: 8px 18px;
+    padding: 8px 20px;
     border-radius: 8px;
     border: 1px solid var(--border);
     background: var(--surface);
@@ -165,12 +306,13 @@
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
     transition: all 0.15s;
+    box-shadow: var(--shadow);
   }
 
   .cnt-btn.active {
     background: var(--accent);
     border-color: var(--accent);
-    color: #0d1117;
+    color: white;
   }
 
   /* ===== CHAT AREA ===== */
@@ -181,21 +323,20 @@
     overflow-y: auto;
     padding: 16px;
     scroll-behavior: smooth;
+    background: var(--bg);
   }
 
   .msg-row {
     display: flex;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
 
-  .msg-row.user {
-    flex-direction: row-reverse;
-  }
+  .msg-row.user { flex-direction: row-reverse; }
 
   .avatar {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     flex-shrink: 0;
     display: flex;
@@ -203,38 +344,45 @@
     justify-content: center;
     font-size: 1rem;
     margin-top: 2px;
+    overflow: hidden;
+    border: 1.5px solid var(--border);
   }
 
-  .avatar.kuro {
-    background: linear-gradient(135deg, #1f6feb, #388bfd);
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .avatar.user {
-    background: linear-gradient(135deg, #238636, #2ea043);
+    background: linear-gradient(135deg, #1a7f37, #2ea043);
     font-size: 0.85rem;
     font-weight: 700;
     color: white;
+    border-color: #2ea043;
   }
 
   .bubble {
-    max-width: calc(100% - 50px);
+    max-width: calc(100% - 52px);
     padding: 12px 16px;
-    border-radius: 12px;
-    font-size: 1.05rem;
+    border-radius: 16px;
+    font-size: 1rem;
     line-height: 1.75;
     white-space: pre-line;
+    box-shadow: var(--shadow);
   }
 
   .bubble.kuro {
-    background: var(--kuro-bg);
+    background: var(--surface);
     border: 1px solid var(--border);
     border-top-left-radius: 4px;
   }
 
   .bubble.user {
     background: var(--user-bg);
-    border: 1px solid var(--border);
+    border: 1px solid #acd5b2;
     border-top-right-radius: 4px;
+    color: var(--text);
   }
 
   .bubble.loading {
@@ -242,7 +390,6 @@
     font-style: italic;
   }
 
-  /* 答えボタン */
   .ans-btns {
     display: flex;
     gap: 8px;
@@ -251,16 +398,17 @@
   }
 
   .ans-btn {
-    padding: 10px 20px;
+    padding: 9px 18px;
     border-radius: 8px;
     border: 1px solid var(--border);
-    background: var(--surface);
+    background: var(--bg);
     color: var(--text);
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
     transition: all 0.15s;
+    box-shadow: var(--shadow);
   }
 
   .ans-btn:hover:not(:disabled) {
@@ -276,25 +424,25 @@
     border-radius: 8px;
     border: none;
     background: var(--accent);
-    color: #0d1117;
-    font-size: 1rem;
+    color: white;
+    font-size: 0.95rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
     transition: opacity 0.15s;
+    box-shadow: var(--shadow);
   }
 
   .next-btn:hover { opacity: 0.85; }
 
-  /* ぶっちゃけボタン */
   .butchake-btn {
     margin-top: 8px;
-    padding: 8px 16px;
+    padding: 8px 14px;
     border-radius: 8px;
     border: 1px solid #d29922;
-    background: rgba(210,153,34,0.12);
-    color: #d29922;
-    font-size: 0.9rem;
+    background: var(--yellow-bg);
+    color: var(--yellow);
+    font-size: 0.88rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
@@ -302,19 +450,18 @@
     display: inline-block;
   }
 
-  .butchake-btn:hover { background: rgba(210,153,34,0.25); }
+  .butchake-btn:hover { background: #ffeea0; }
   .butchake-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  /* やる気スイッチボタン */
   .yaruki-btn {
     margin-top: 8px;
     margin-left: 8px;
-    padding: 8px 16px;
+    padding: 8px 14px;
     border-radius: 8px;
-    border: 1px solid #3fb950;
-    background: rgba(63,185,80,0.12);
-    color: #3fb950;
-    font-size: 0.9rem;
+    border: 1px solid #acd5b2;
+    background: var(--user-bg);
+    color: var(--green);
+    font-size: 0.88rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
@@ -322,63 +469,64 @@
     display: inline-block;
   }
 
-  .yaruki-btn:hover { background: rgba(63,185,80,0.25); }
+  .yaruki-btn:hover { background: #ccffdd; }
   .yaruki-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
   /* ===== INPUT AREA ===== */
   .input-area {
     display: none;
-    padding: 12px 16px;
+    padding: 10px 16px;
     border-top: 1px solid var(--border);
     background: var(--surface);
     flex-shrink: 0;
+    box-shadow: 0 -1px 3px rgba(27,31,36,0.06);
   }
 
-  .input-row {
-    display: flex;
-    gap: 8px;
-    align-items: flex-end;
-  }
+  .input-row { display: flex; gap: 8px; align-items: flex-end; }
 
   .chat-input {
     flex: 1;
-    padding: 12px 16px;
+    padding: 11px 15px;
     border-radius: 10px;
     border: 1px solid var(--border);
-    background: var(--kuro-bg);
+    background: var(--bg);
     color: var(--text);
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-family: 'Noto Sans JP', sans-serif;
     resize: none;
     outline: none;
-    min-height: 46px;
-    max-height: 140px;
+    min-height: 44px;
+    max-height: 130px;
     line-height: 1.5;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
 
-  .chat-input:focus { border-color: var(--accent); }
+  .chat-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(9,105,218,0.1);
+  }
 
   .send-btn {
-    width: 46px;
-    height: 46px;
+    width: 44px;
+    height: 44px;
     border-radius: 10px;
     border: none;
     background: var(--accent);
-    color: #0d1117;
-    font-size: 1.2rem;
+    color: white;
+    font-size: 1.1rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     transition: opacity 0.15s;
+    box-shadow: var(--shadow);
   }
 
   .send-btn:hover { opacity: 0.85; }
   .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  /* ===== FINISH ===== */
+  /* ===== FINISH SCREEN ===== */
   #finish-screen {
     display: none;
     flex: 1;
@@ -387,20 +535,58 @@
     justify-content: center;
     padding: 24px;
     text-align: center;
+    background: var(--bg);
+  }
+
+  .finish-inner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 24px;
+    box-shadow: var(--shadow-md);
+    max-width: 400px;
+    width: 100%;
+  }
+
+  .finish-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 3px solid var(--border);
+    margin: 0 auto 16px;
+    overflow: hidden;
+  }
+
+  .finish-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .finish-inner h2 {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: 900;
     color: var(--green);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .finish-inner p {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--text);
     line-height: 1.8;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
+  }
+
+  .finish-difficulty {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    background: #dafbe1;
+    color: var(--green);
+    border: 1px solid #acd5b2;
+    margin-bottom: 20px;
   }
 
   .finish-btns {
@@ -411,55 +597,29 @@
   }
 
   .btn-again {
-    padding: 14px 28px;
+    padding: 12px 24px;
     border-radius: 10px;
     border: none;
     background: var(--green);
-    color: #0d1117;
-    font-size: 1rem;
+    color: white;
+    font-size: 0.95rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
+    box-shadow: var(--shadow);
   }
 
   .btn-back {
-    padding: 14px 28px;
+    padding: 12px 24px;
     border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--surface);
     color: var(--text);
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
-  }
-
-  /* ===== MODE TOGGLE ===== */
-  .mode-toggle {
-    display: flex;
-    gap: 6px;
-    padding: 12px 16px 0;
-    flex-shrink: 0;
-  }
-
-  .mode-btn {
-    flex: 1;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--muted);
-    font-size: 0.9rem;
-    font-weight: 700;
-    font-family: 'Noto Sans JP', sans-serif;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .mode-btn.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #0d1117;
+    box-shadow: var(--shadow);
   }
 
   /* ===== APP MODE ===== */
@@ -468,95 +628,132 @@
     flex: 1;
     flex-direction: column;
     overflow-y: auto;
-    padding: 16px;
+    padding: 14px 16px;
+    background: var(--bg);
   }
+
+  .app-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .app-score-bar {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .app-score-bar span { color: var(--green); }
+
+  .app-diff-bar {
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: #dafbe1;
+    color: var(--green);
+    border: 1px solid #acd5b2;
+  }
+
+  .app-diff-bar.mid { background: var(--yellow-bg); color: var(--yellow); border-color: #e0c060; }
+  .app-diff-bar.hard { background: #ffebe9; color: var(--red); border-color: #f5b8b4; }
+
+  .streak-bar {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .streak-dots { display: inline-flex; gap: 3px; margin-left: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+  .dot.filled { background: var(--accent); }
 
   .q-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 14px;
     padding: 20px;
-    margin-bottom: 14px;
+    box-shadow: var(--shadow);
   }
 
   .q-label {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--accent);
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     margin-bottom: 12px;
   }
 
   .q-text {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 700;
     line-height: 1.8;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     color: var(--text);
   }
 
-  .app-choices {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+  .app-choices { display: flex; flex-direction: column; gap: 10px; }
 
   .app-choice-btn {
-    padding: 16px 18px;
+    padding: 14px 16px;
     border-radius: 10px;
     border: 1px solid var(--border);
-    background: var(--kuro-bg);
+    background: var(--bg);
     color: var(--text);
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 500;
     font-family: 'Noto Sans JP', sans-serif;
     text-align: left;
     cursor: pointer;
     line-height: 1.6;
     transition: all 0.15s;
+    box-shadow: var(--shadow);
   }
 
   .app-choice-btn:hover:not(:disabled) {
     border-color: var(--accent);
-    background: #1a2840;
+    background: var(--kuro-bg);
+    box-shadow: 0 0 0 3px rgba(9,105,218,0.08);
   }
 
   .app-choice-btn.correct {
-    background: rgba(63,185,80,0.12);
+    background: #e6ffed;
     border-color: var(--green);
     color: var(--green);
   }
 
   .app-choice-btn.wrong {
-    background: rgba(248,81,73,0.12);
+    background: #ffebe9;
     border-color: var(--red);
     color: var(--red);
   }
 
   .app-choice-btn.reveal {
-    background: rgba(63,185,80,0.12);
+    background: #e6ffed;
     border-color: var(--green);
     color: var(--green);
   }
 
   .app-result {
     display: none;
-    margin-top: 14px;
-    padding: 14px 16px;
+    margin-top: 12px;
+    padding: 12px 16px;
     border-radius: 10px;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 700;
   }
 
   .app-result.ok {
-    background: rgba(63,185,80,0.12);
+    background: #e6ffed;
     border: 1px solid var(--green);
     color: var(--green);
   }
 
   .app-result.ng {
-    background: rgba(210,153,34,0.12);
-    border: 1px solid var(--yellow);
+    background: var(--yellow-bg);
+    border: 1px solid #d29922;
     color: var(--yellow);
   }
 
@@ -564,11 +761,11 @@
     display: none;
     margin-top: 10px;
     padding: 12px 14px;
-    background: rgba(88,166,255,0.08);
+    background: var(--kuro-bg);
     border-left: 3px solid var(--accent);
-    border-radius: 4px;
-    color: #79c0ff;
-    font-size: 0.97rem;
+    border-radius: 6px;
+    color: #0550ae;
+    font-size: 0.95rem;
     line-height: 1.75;
   }
 
@@ -576,27 +773,20 @@
     display: none;
     margin-top: 14px;
     width: 100%;
-    padding: 16px;
+    padding: 15px;
     border-radius: 10px;
     border: none;
-    background: var(--yellow);
-    color: #0d1117;
-    font-size: 1.05rem;
+    background: var(--accent);
+    color: white;
+    font-size: 1rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: opacity 0.15s;
   }
 
-  .app-score-bar {
-    display: flex;
-    gap: 8px;
-    font-size: 0.85rem;
-    color: var(--muted);
-    font-weight: 700;
-    margin-bottom: 14px;
-  }
-
-  .app-score-bar span { color: var(--green); }
+  .app-next-btn:hover { opacity: 0.85; }
 
   /* ===== CHARACTER SELECT ===== */
   #char-screen {
@@ -605,79 +795,252 @@
     flex-direction: column;
     overflow-y: auto;
     padding: 20px 16px;
+    background: var(--bg);
   }
 
   .char-title {
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--text);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
 
   .char-sub {
     font-size: 0.85rem;
     color: var(--muted);
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
 
-  .char-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+  .char-list { display: flex; flex-direction: column; gap: 10px; }
 
   .char-card {
     display: flex;
     align-items: center;
     gap: 14px;
-    padding: 16px;
+    padding: 14px 16px;
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
+    border: 2px solid var(--border);
+    border-radius: 14px;
     cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
     text-align: left;
     font-family: 'Noto Sans JP', sans-serif;
     color: var(--text);
+    box-shadow: var(--shadow);
   }
 
-  .char-card:hover { border-color: var(--accent); background: var(--kuro-bg); }
-  .char-card.selected { border-color: var(--accent); background: rgba(88,166,255,0.08); }
+  .char-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(9,105,218,0.1);
+  }
 
-  .char-icon {
-    font-size: 2rem;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
+  .char-card.selected {
+    border-color: var(--accent);
     background: var(--kuro-bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    border: 1px solid var(--border);
+    box-shadow: 0 0 0 3px rgba(9,105,218,0.12);
   }
+
+  .char-avatar-img {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid var(--border);
+  }
+
+  .char-card.selected .char-avatar-img { border-color: var(--accent); }
 
   .char-info { flex: 1; }
-  .char-name { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+  .char-name { font-size: 1rem; font-weight: 700; margin-bottom: 3px; }
   .char-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
-  .char-sample { font-size: 0.82rem; color: var(--accent); margin-top: 4px; font-style: italic; }
+
+  .char-sample {
+    font-size: 0.82rem;
+    color: var(--accent);
+    margin-top: 5px;
+    font-style: italic;
+    line-height: 1.5;
+    background: var(--kuro-bg);
+    padding: 5px 8px;
+    border-radius: 6px;
+    border-left: 2px solid var(--accent);
+  }
 
   .char-confirm-btn {
-    margin-top: 20px;
+    margin-top: 18px;
     width: 100%;
-    padding: 16px;
-    border-radius: 10px;
+    padding: 15px;
+    border-radius: 12px;
     border: none;
     background: var(--accent);
-    color: #0d1117;
-    font-size: 1.05rem;
+    color: white;
+    font-size: 1rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
     transition: opacity 0.15s;
+    box-shadow: var(--shadow-md);
   }
 
   .char-confirm-btn:hover { opacity: 0.85; }
+
+  /* ===== DASHBOARD ===== */
+  #dashboard-screen {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 20px 16px;
+    background: var(--bg);
+  }
+
+  .dash-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .dash-header h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .dash-close-btn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+  }
+
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .stat-label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  .stat-value {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .stat-value.green { color: var(--green); }
+  .stat-value.blue { color: var(--accent); }
+  .stat-value.yellow { color: var(--yellow); }
+
+  .stat-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .dash-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
+  }
+
+  .dash-section-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  /* Difficulty progress */
+  .diff-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .diff-level-badge {
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .diff-level-badge.easy { background: #dafbe1; color: var(--green); border: 1px solid #acd5b2; }
+  .diff-level-badge.mid { background: var(--yellow-bg); color: var(--yellow); border: 1px solid #e0c060; }
+  .diff-level-badge.hard { background: #ffebe9; color: var(--red); border: 1px solid #f5b8b4; }
+
+  .diff-info { flex: 1; }
+  .diff-next-label { font-size: 0.78rem; color: var(--muted); margin-bottom: 6px; }
+
+  .streak-progress {
+    display: flex;
+    gap: 5px;
+  }
+
+  .streak-pip {
+    width: 24px;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--border);
+    transition: background 0.2s;
+  }
+
+  .streak-pip.filled { background: var(--accent); }
+
+  .diff-note {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  .today-section {
+    display: flex;
+    gap: 8px;
+  }
+
+  .today-stat {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    background: var(--bg);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .today-stat .ts-val {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--text);
+  }
+
+  .today-stat .ts-val.green { color: var(--green); }
+  .today-stat .ts-label { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -687,25 +1050,39 @@
   <!-- ヘッダー -->
   <div class="header">
     <div class="header-left">
-      <div class="kuro-avatar">🐾</div>
+      <div class="header-avatar" id="header-avatar">
+        <img id="header-avatar-img" src="/avatars/kuro.svg" alt="キャラ">
+      </div>
       <div class="header-info">
-        <h1>クロちゃん</h1>
+        <h1 id="header-char-name">クロちゃん</h1>
         <p id="header-sub">FP2級 一緒に合格しよ！</p>
       </div>
     </div>
-    <div class="score-badge">正解 <span id="score-disp">0</span> 問</div>
+    <div class="header-right">
+      <div class="difficulty-badge" id="difficulty-badge">初級</div>
+      <div class="score-badge">正解 <span id="score-disp">0</span> 問</div>
+      <button class="dash-btn" onclick="openDashboard()" title="ダッシュボード">📊</button>
+    </div>
   </div>
+
+  <!-- 昇格トースト -->
+  <div id="upgrade-toast" class="upgrade-toast">🎉 難易度アップ！<span id="upgrade-level-text">中級</span>に昇格！</div>
 
   <!-- 分野選択 -->
   <div id="category-screen">
 
-    <!-- モード切り替え -->
+    <!-- キャラクターの挨拶 -->
+    <div class="char-greeting">
+      <img id="greeting-avatar" src="/avatars/kuro.svg" alt="キャラ" class="greeting-avatar">
+      <div class="speech-bubble" id="speech-bubble">よっしゃ！今日もFP2、一緒にがんばろや！🐾</div>
+    </div>
+
     <div class="mode-toggle">
       <button class="mode-btn active" id="mode-chat-btn" onclick="setMode('chat')">💬 チャットモード</button>
       <button class="mode-btn" id="mode-app-btn" onclick="setMode('app')">📱 アプリモード</button>
     </div>
 
-    <div style="padding: 16px 16px 0;">
+    <div style="padding: 12px 16px 0;">
       <p class="cat-title">どの分野から練習する？</p>
       <p class="cat-sub">浩之さん、今日もやってこ！💪</p>
 
@@ -726,13 +1103,21 @@
         <button class="cnt-btn" onclick="setCount(10, this)">10問</button>
         <button class="cnt-btn" onclick="setCount(20, this)">20問</button>
       </div>
+
+      <button class="cnt-btn" style="margin-top:12px; font-size:0.85rem; color:var(--muted);" onclick="openCharScreen()">🎭 先生を変える（現在: <span id="current-char-label">クロちゃん</span>）</button>
     </div>
   </div>
 
   <!-- アプリモード画面 -->
   <div id="app-mode-screen">
-    <div class="app-score-bar">
-      問題 <span id="app-q-num">1</span> / <span id="app-q-total">5</span>　正解 <span id="app-score">0</span> 問
+    <div class="app-header-bar">
+      <div class="app-score-bar">
+        問題 <span id="app-q-num">1</span> / <span id="app-q-total">5</span>　正解 <span id="app-score">0</span> 問
+      </div>
+      <div class="app-diff-bar" id="app-diff-bar">初級</div>
+    </div>
+    <div class="streak-bar">
+      連続正解: <span id="streak-display" class="streak-dots"></span>
     </div>
     <div class="q-card">
       <div class="q-label" id="app-q-label">📋 問題 1</div>
@@ -750,67 +1135,40 @@
   <!-- キャラクター選択画面 -->
   <div id="char-screen">
     <p class="char-title">先生を選んでや！</p>
-    <p class="char-sub">誰に教えてもらう？😄</p>
+    <p class="char-sub">誰に教えてもらう？</p>
     <div class="char-list">
 
       <div class="char-card selected" id="char-kuro" onclick="selectChar('kuro')">
-        <div class="char-icon">🐾</div>
+        <img src="/avatars/kuro.svg" alt="クロちゃん" class="char-avatar-img">
         <div class="char-info">
-          <div class="char-name">クロちゃん</div>
+          <div class="char-name">クロちゃん 🐾</div>
           <div class="char-desc">関西弁でフレンドリー！楽しく学べるで</div>
           <div class="char-sample">「よっしゃ！正解やで！さすが浩之さん！🎉」</div>
         </div>
       </div>
 
       <div class="char-card" id="char-bakabon" onclick="selectChar('bakabon')">
-        <div class="char-icon">🎩</div>
+        <img src="/avatars/bakabon.svg" alt="パパ先生" class="char-avatar-img">
         <div class="char-info">
-          <div class="char-name">パパ先生</div>
+          <div class="char-name">パパ先生 🎩</div>
           <div class="char-desc">「これでいいのだ！」のほほんとFPを教えてくれる</div>
           <div class="char-sample">「完璧なのだ！太陽が西から昇ってもこの答えは正解なのだ！」</div>
         </div>
       </div>
 
-      <div class="char-card" id="char-kinpachi" onclick="selectChar('kinpachi')">
-        <div class="char-icon">👨‍🏫</div>
-        <div class="char-info">
-          <div class="char-name">金八先生</div>
-          <div class="char-desc">人生訓とFPを絡めて熱く語る。言葉の力だけで伝える</div>
-          <div class="char-sample">「お金というのはな、知っている者と知らない者とで、人生に大きな差が生まれる」</div>
-        </div>
-      </div>
-
-      <div class="char-card" id="char-muranishi" onclick="selectChar('muranishi')">
-        <div class="char-icon">🎬</div>
-        <div class="char-info">
-          <div class="char-name">村西風監督</div>
-          <div class="char-desc">大げさな褒め方と独特の口調で教えてくれる</div>
-          <div class="char-sample">「素晴らしい！あなたは天才です！世界一です！」</div>
-        </div>
-      </div>
-
-      <div class="char-card" id="char-yasushi" onclick="selectChar('yasushi')">
-        <div class="char-icon">🎤</div>
-        <div class="char-info">
-          <div class="char-name">やすし風師匠</div>
-          <div class="char-desc">強烈なツッコミで覚えさせてくれる大阪の師匠</div>
-          <div class="char-sample">「なんでやねん！そこは〜やろ！ちゃんと覚えとけや！」</div>
-        </div>
-      </div>
-
       <div class="char-card" id="char-shuzo" onclick="selectChar('shuzo')">
-        <div class="char-icon">💪</div>
+        <img src="/avatars/shuzo.svg" alt="修造風コーチ" class="char-avatar-img">
         <div class="char-info">
-          <div class="char-name">修造風コーチ</div>
+          <div class="char-name">修造風コーチ 💪</div>
           <div class="char-desc">全力で熱く背中を押してくれる熱血コーチ</div>
           <div class="char-sample">「よくやった！！お前ならできる！！諦めるな！！熱くなれ！！」</div>
         </div>
       </div>
 
       <div class="char-card" id="char-gal" onclick="selectChar('gal')">
-        <div class="char-icon">💃</div>
+        <img src="/avatars/gal.svg" alt="ギャル先生" class="char-avatar-img">
         <div class="char-info">
-          <div class="char-name">ギャル先生</div>
+          <div class="char-name">ギャル先生 💃</div>
           <div class="char-desc">マジで神な教え方！難しいこともえぐくわかりやすく！</div>
           <div class="char-sample">「やばっ！！正解じゃん！！神すぎ！！この調子で絶対合格しちゃおう！！💕」</div>
         </div>
@@ -820,11 +1178,79 @@
     <button class="char-confirm-btn" onclick="confirmChar()">この先生で始める！</button>
   </div>
 
+  <!-- ダッシュボード -->
+  <div id="dashboard-screen">
+    <div class="dash-header">
+      <h2>📊 学習ダッシュボード</h2>
+      <button class="dash-close-btn" onclick="closeDashboard()">← 戻る</button>
+    </div>
+
+    <!-- 難易度進捗 -->
+    <div class="dash-section">
+      <div class="dash-section-title">🏆 現在の難易度</div>
+      <div class="diff-progress">
+        <div class="diff-level-badge easy" id="dash-diff-badge">初級</div>
+        <div class="diff-info">
+          <div class="diff-next-label" id="dash-diff-next">あと3連続正解で中級に昇格！</div>
+          <div class="streak-progress" id="dash-streak-pips"></div>
+          <div class="diff-note">3連続正解で昇格 / 不正解でリセット</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 今日の学習 -->
+    <div class="dash-section">
+      <div class="dash-section-title">📅 今日の学習</div>
+      <div class="today-section">
+        <div class="today-stat">
+          <div class="ts-val" id="dash-today-answered">0</div>
+          <div class="ts-label">問題数</div>
+        </div>
+        <div class="today-stat">
+          <div class="ts-val green" id="dash-today-correct">0</div>
+          <div class="ts-label">正解数</div>
+        </div>
+        <div class="today-stat">
+          <div class="ts-val blue" id="dash-today-rate">—</div>
+          <div class="ts-label">正解率</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 通算記録 -->
+    <div class="dash-grid">
+      <div class="stat-card">
+        <div class="stat-label">📚 累計問題数</div>
+        <div class="stat-value blue" id="dash-total-answered">0</div>
+        <div class="stat-sub">問</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">✅ 累計正解数</div>
+        <div class="stat-value green" id="dash-total-correct">0</div>
+        <div class="stat-sub">問</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">🎯 通算正解率</div>
+        <div class="stat-value" id="dash-total-rate">—</div>
+        <div class="stat-sub">%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">🔥 最長連続正解</div>
+        <div class="stat-value yellow" id="dash-best-streak">0</div>
+        <div class="stat-sub">連続</div>
+      </div>
+    </div>
+  </div>
+
   <!-- 終了画面 -->
   <div id="finish-screen">
     <div class="finish-inner">
+      <div class="finish-avatar">
+        <img id="finish-avatar-img" src="/avatars/kuro.svg" alt="キャラ">
+      </div>
       <h2>🎉 お疲れ様！</h2>
       <p id="finish-msg"></p>
+      <div class="finish-difficulty" id="finish-difficulty">難易度: 初級</div>
       <div class="finish-btns">
         <button class="btn-again" onclick="retryChat()">もう一度！</button>
         <button class="btn-back" onclick="backToMenu()">分野を変える</button>
@@ -851,19 +1277,178 @@ let answered = false;
 let selectedCount = 5;
 let selectedCategory = 'all';
 let conversationHistory = [];
-let currentMode = 'chat'; // 'chat' or 'app'
+let currentMode = 'chat';
 let appAnswered = false;
 let appScore = 0;
 let appCurrent = 0;
 let selectedChar = 'kuro';
 let pendingCategory = '';
 
-// ===== キャラクター定義 =====
+// ===== DIFFICULTY STATE =====
+let difficulty = 0; // 0=初級 1=中級 2=上級
+let consecutiveCorrect = 0;
+let sessionBestStreak = 0;
+const UPGRADE_THRESHOLD = 3;
+
+const DIFFICULTY_INFO = [
+  { label: '初級', cls: '',    badgeCls: '',    nextLabel: (n) => `あと${UPGRADE_THRESHOLD - n}連続正解で中級に昇格！` },
+  { label: '中級', cls: 'mid', badgeCls: 'mid', nextLabel: (n) => `あと${UPGRADE_THRESHOLD - n}連続正解で上級に昇格！` },
+  { label: '上級', cls: 'hard',badgeCls: 'hard',nextLabel: () => '上級クリア中！このまま突き進め！' }
+];
+
+// ===== LOCALSTORAGE STATS =====
+const STATS_KEY = 'fp2study_stats_v2';
+
+function loadStats() {
+  try {
+    const raw = localStorage.getItem(STATS_KEY);
+    if (!raw) return defaultStats();
+    const s = JSON.parse(raw);
+    // reset today if different date
+    if (s.lastDate !== new Date().toDateString()) {
+      s.todayAnswered = 0;
+      s.todayCorrect = 0;
+      s.lastDate = new Date().toDateString();
+    }
+    return s;
+  } catch(e) { return defaultStats(); }
+}
+
+function defaultStats() {
+  return {
+    totalAnswered: 0,
+    totalCorrect: 0,
+    bestStreak: 0,
+    todayAnswered: 0,
+    todayCorrect: 0,
+    lastDate: new Date().toDateString()
+  };
+}
+
+function saveStats(s) {
+  try { localStorage.setItem(STATS_KEY, JSON.stringify(s)); } catch(e) {}
+}
+
+function recordAnswer(isCorrect) {
+  const s = loadStats();
+  s.totalAnswered++;
+  s.todayAnswered++;
+  if (isCorrect) {
+    s.totalCorrect++;
+    s.todayCorrect++;
+  }
+  if (s.bestStreak < sessionBestStreak) s.bestStreak = sessionBestStreak;
+  saveStats(s);
+}
+
+// ===== DIFFICULTY LOGIC =====
+function onCorrect() {
+  consecutiveCorrect++;
+  if (consecutiveCorrect > sessionBestStreak) sessionBestStreak = consecutiveCorrect;
+  const s = loadStats();
+  if (sessionBestStreak > s.bestStreak) { s.bestStreak = sessionBestStreak; saveStats(s); }
+
+  if (difficulty < 2 && consecutiveCorrect >= UPGRADE_THRESHOLD) {
+    difficulty++;
+    consecutiveCorrect = 0;
+    showUpgradeToast();
+  }
+  updateDifficultyUI();
+}
+
+function onWrong() {
+  consecutiveCorrect = 0;
+  updateDifficultyUI();
+}
+
+function updateDifficultyUI() {
+  const info = DIFFICULTY_INFO[difficulty];
+  // header badge
+  const hb = document.getElementById('difficulty-badge');
+  hb.textContent = info.label;
+  hb.className = 'difficulty-badge' + (info.cls ? ' ' + info.cls : '');
+  // app mode bar
+  const ab = document.getElementById('app-diff-bar');
+  if (ab) {
+    ab.textContent = info.label;
+    ab.className = 'app-diff-bar' + (info.cls ? ' ' + info.cls : '');
+  }
+  // streak dots in app mode
+  renderStreakDots();
+}
+
+function renderStreakDots() {
+  const container = document.getElementById('streak-display');
+  if (!container) return;
+  container.innerHTML = '';
+  for (let i = 0; i < UPGRADE_THRESHOLD; i++) {
+    const dot = document.createElement('span');
+    dot.className = 'dot' + (i < consecutiveCorrect ? ' filled' : '');
+    container.appendChild(dot);
+  }
+}
+
+function showUpgradeToast() {
+  const toast = document.getElementById('upgrade-toast');
+  document.getElementById('upgrade-level-text').textContent = DIFFICULTY_INFO[difficulty].label;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ===== DASHBOARD =====
+function openDashboard() {
+  hideAllScreens();
+  const screen = document.getElementById('dashboard-screen');
+  screen.style.display = 'flex';
+
+  const s = loadStats();
+
+  // today
+  document.getElementById('dash-today-answered').textContent = s.todayAnswered;
+  document.getElementById('dash-today-correct').textContent = s.todayCorrect;
+  document.getElementById('dash-today-rate').textContent =
+    s.todayAnswered > 0 ? Math.round(s.todayCorrect / s.todayAnswered * 100) + '%' : '—';
+
+  // totals
+  document.getElementById('dash-total-answered').textContent = s.totalAnswered;
+  document.getElementById('dash-total-correct').textContent = s.totalCorrect;
+  document.getElementById('dash-total-rate').textContent =
+    s.totalAnswered > 0 ? Math.round(s.totalCorrect / s.totalAnswered * 100) : '—';
+  document.getElementById('dash-best-streak').textContent = Math.max(s.bestStreak, sessionBestStreak);
+
+  // difficulty
+  const info = DIFFICULTY_INFO[difficulty];
+  const badge = document.getElementById('dash-diff-badge');
+  badge.textContent = info.label;
+  badge.className = 'diff-level-badge ' + (difficulty === 0 ? 'easy' : difficulty === 1 ? 'mid' : 'hard');
+  document.getElementById('dash-diff-next').textContent = info.nextLabel(consecutiveCorrect);
+
+  // streak pips
+  const pips = document.getElementById('dash-streak-pips');
+  pips.innerHTML = '';
+  for (let i = 0; i < UPGRADE_THRESHOLD; i++) {
+    const pip = document.createElement('div');
+    pip.className = 'streak-pip' + (i < consecutiveCorrect ? ' filled' : '');
+    pips.appendChild(pip);
+  }
+}
+
+function closeDashboard() {
+  document.getElementById('dashboard-screen').style.display = 'none';
+  document.getElementById('category-screen').style.display = 'flex';
+}
+
+// ===== CHARACTERS =====
 const CHARS = {
   kuro: {
     name: 'クロちゃん',
-    icon: '🐾',
+    avatar: '/avatars/kuro.svg',
     loading: '考え中やで～🐾',
+    greetings: [
+      'よっしゃ！今日もFP2、一緒にがんばろや！どの分野から始める？🐾',
+      '来てくれたんやな！うれしいわ！今日も全力でサポートするで！',
+      '今日もやる気満々やな！その調子でFP2、一緒に攻略しよ！🎉'
+    ],
     prompt: `あなたは「クロちゃん」というFP2級の先生キャラクターです。
 【口調】必ず関西弁。「〜やで」「〜やん」「〜やな」「〜やろ」「そやそや！」「ほんまに！」を使う。「です」「ます」は絶対使わない。
 【性格】明るくフレンドリー。絵文字を多用。ボケたりツッコんだりする。
@@ -874,128 +1459,124 @@ const CHARS = {
   },
   bakabon: {
     name: 'パパ先生',
-    icon: '🎩',
+    avatar: '/avatars/bakabon.svg',
     loading: 'パパが考え中なのだ…🎩',
+    greetings: [
+      'さあ、勉強するのだ！パパと一緒なら怖くないのだ！これでいいのだ！🎩',
+      'キミが来るのを待ってたのだ！今日も一緒に合格を目指すのだ！',
+      'バカボンのパパは天才なのだ！だからキミも絶対合格できるのだ！'
+    ],
     prompt: `あなたは「パパ先生」というキャラクターです。FP2級の学習をサポートするAI講師として、ユーザーと対話してください。
-
-キャラクター設定：ゆるくて、のほほんとした、憎めないおじさん講師。一見テキトーに見えるが、FP2級の知識は100%正確。ユーザーを絶対に否定しない。自分のことを「パパ」と呼ぶ。ユーザーのことは「キミ」と呼ぶ。
-
-語尾ルール（絶対厳守）：すべての文の語尾は必ず「〜なのだ」「〜のだ」で終えること。例外は一切なし。「です」「ます」「だよ」「だね」などの語尾は絶対に使わない。
-
-口癖：「これでいいのだ!」（正解時、納得時）「バカボンのパパは天才なのだ!」（うまく説明できた時）「反対の賛成なのだ!」（ひっかけ問題を説明する時）
-
-正解時：「これでいいのだ!キミは天才なのだ!パパは嬉しいのだ!」「お見事なのだ!バカボンのパパが教えただけのことはあるのだ!」「完璧なのだ!太陽が西から昇ってもこの答えは正解なのだ!」「すごいのだ!パパより賢いかもしれないのだ!…いや、パパは天才なのだ!」などを使う。
-
-不正解時：「おしいのだ!でも間違えるのも勉強なのだ!これでいいのだ!」「残念なのだ!でも今間違えれば本番で間違えないのだ!ラッキーなのだ!」「ドンマイなのだ!天才のパパだって最初は間違えたのだ!たぶんなのだ!」「間違いは宝物なのだ!パパと一緒に解説を見るのだ!」などを使う。
-
-解説時：「いいか、よく聞くのだ。〇〇というのはな、△△のことなのだ!」「ここがポイントなのだ!試験に出るから赤鉛筆で書くつもりで覚えるのだ!」「まとめるのだ!つまり〇〇は△△、ということなのだ!これでいいのだ!」などを使う。質問には「いい質問なのだ!」とまず褒めてから答える。
-
-禁止事項：語尾を「なのだ」「のだ」以外にすること（1文たりとも例外なし）。ユーザーをバカにする、責める。キャラを途中でやめて素のAIに戻ること。`
+キャラクター設定：ゆるくて、のほほんとした憎めないおじさん講師。FP2級の知識は100%正確。自分のことを「パパ」と呼ぶ。ユーザーのことは「キミ」と呼ぶ。
+語尾ルール（絶対厳守）：すべての文の語尾は必ず「〜なのだ」「〜のだ」で終えること。「です」「ます」などの語尾は絶対に使わない。
+口癖：「これでいいのだ!」「バカボンのパパは天才なのだ!」「反対の賛成なのだ!」
+正解時：「これでいいのだ!キミは天才なのだ!」「完璧なのだ!太陽が西から昇ってもこの答えは正解なのだ!」
+不正解時：「おしいのだ!でも今間違えれば本番で間違えないのだ!ラッキーなのだ!」
+解説時：「いいか、よく聞くのだ。〜なのだ!ここがポイントなのだ!」
+禁止事項：語尾を「なのだ」「のだ」以外にすること（1文たりとも例外なし）。`
   },
-  kinpachi: {
-    name: '金八先生',
-    icon: '👨‍🏫',
-    loading: '熱く考え中です…👨‍🏫',
-    prompt: `あなたは「金八先生」というキャラクターです。FP2級の学習をサポートする、熱血AI講師として、ユーザーと対話してください。
-
-キャラクター設定：中学校の国語教師のような、人情味あふれる熱血先生。お金の知識を「人生をどう生きるか」という人生訓と必ず絡めて語る。厳しさの中に深い愛情がある。一人称は「私」、ユーザーのことは「君」と呼ぶ。絵文字・顔文字は一切使わない。言葉の熱だけで伝える。
-
-口癖：「人として」「お金というのはな」「君たちに伝えたい」「いいですか」
-
-正解時：「正解です。よくやった。君のその一歩一歩の積み重ねが、合格という形になって必ず返ってくる。私はそう信じています」「その通りです。お金というのはな、知っている者と知らない者とで、人生に大きな差が生まれる。君は今、その差を埋めているんです」「よし、正解だ。努力という字はな、力を込めて、怒りにも似た情熱で励むと書く。今の君の姿そのものです」などを使う。
-
-不正解時：「残念ながら不正解です。しかしね、いいですか。間違えた問題こそが、君を合格に連れて行ってくれる。逃げずに解説を読みなさい」「悔しいか。悔しいなら、その悔しさを忘れるな。本番の試験会場で、今日のこの一問が君を救うんです」「惜しい。だが惜しいで終わらせてはいけない。人として、曖昧なまま先に進むのは、自分への嘘になる。今ここで、きちんと理解しなさい」などを使う。
-
-解説時：「いいですか、ここからが大事です。〜という制度はな、本来、人が人を支えるために作られたものなんです」「お金というのはな、ただの数字じゃない。その向こうには必ず、人の暮らしと人生がある。だからこの数字の意味を、心で理解しなさい」「君たちに伝えたい。この論点は試験に頻出です。なぜか。それは実生活で、それだけ多くの人が悩む場面だからです」などを使う。
-
-禁止事項：絵文字・顔文字を使うこと。毎回長文の人生訓を語ること（通常の解説は簡潔に）。間違った知識を熱さで押し切ること。キャラを途中でやめて素のAIに戻ること。軽薄な口調を使うこと。`
-  },
-  muranishi: {
-    name: '村西風先生',
-    icon: '🎬',
-    loading: 'ナイスですねー…考え中ですねー🎬',
-    prompt: `あなたは村西とおる監督風のFP2級の先生キャラクターです。
-【絶対ルール】何があっても「ナイスですねー！」を使う。これが口癖の全て。
-【口癖】「ナイスですねー！」「それはナイスですねー！」「素晴らしいですねー！」「感動しましたねー！」
-【正解時】「ナイスですねー！！正解ですねー！あなたはナイスですねー！この調子でナイスですねー！」
-【不正解時】「惜しいですねー！でもナイスですねー！正解は〜ですねー！覚えたらナイスですねー！」
-【解説時】「ナイスですねー、つまりですねー、〜ということですねー。これはナイスな知識ですねー！」
-【禁止】「ナイスですねー」以外の特徴的な表現。とにかく全てナイスですねーで乗り切る。`
-  },
-
   shuzo: {
     name: '修造風コーチ',
-    icon: '💪',
+    avatar: '/avatars/shuzo.svg',
     loading: '熱く考え中だ！！💪',
+    greetings: [
+      '来た！！今日も絶対できる！！諦めるな！！さあ始めよう！！💪',
+      'お前ならできる！！熱くなれ！！今日も全力でいくぞ！！',
+      '信じろ！！お前の可能性は無限だ！！FP2、一緒に突破するぞ！！🔥'
+    ],
     prompt: `あなたは松岡修造風のFP2級の熱血コーチキャラクターです。
 【絶対ルール】常に全力で熱い！「！！」を多用。短い文を畳み掛ける。絶対にネガティブにならない。
 【口癖】「お前ならできる！！」「諦めるな！！」「熱くなれ！！」「もっと熱くなれ！！」「その調子だ！！」「信じろ！！」
-【正解時】「よくやった！！正解だ！！お前はやれば出来る！！この瞬間を忘れるな！！その調子で熱くなれ！！諦めなかったお前は最高だ！！」
-【不正解時】「惜しい！！でも諦めるな！！正解は〜だ！！間違えた問題は絶対忘れない！！これがお前の武器になる！！立ち上がれ！！お前ならできる！！」
-【解説時】「いいか、よく聞け！！〜なんだ！！これは大事だ！！絶対に覚えろ！！お前ならできる！！熱くなれ！！」
-【励まし】「諦めたらそこで終わりだ！！でもお前は諦めない！！だからここにいる！！それだけで最高だ！！」
-【禁止】消極的な言葉、「でも」「しかし」などの否定。常に前向きに叫ぶ。絵文字は💪のみ。`
+【正解時】「よくやった！！正解だ！！お前はやれば出来る！！この瞬間を忘れるな！！その調子で熱くなれ！！」
+【不正解時】「惜しい！！でも諦めるな！！正解は〜だ！！間違えた問題は絶対忘れない！！これがお前の武器になる！！立ち上がれ！！」
+【解説時】「いいか、よく聞け！！〜なんだ！！これは大事だ！！絶対に覚えろ！！お前ならできる！！」
+【禁止】消極的な言葉。常に前向きに叫ぶ。絵文字は💪のみ。`
   },
-  yasushi: {
-    name: 'やすし風師匠',
-    icon: '🎤',
-    loading: 'ちょっと待てや…考えたるわ🎤',
-    prompt: `あなたは横山やすし師匠風のFP2級の先生キャラクターです。
-【口調】大阪弁の強いツッコミ口調。「〜やろ！」「〜ちゃうんかい！」「〜やないかい！」
-【口癖】「なんでやねん！」「ちゃうちゃう！」「そこやないやろ！」「わかっとるんか！」「ええか！」「聞いてるか！」
-【正解時】「おお！正解やないかい！やればできるやろ！なんや最初からそう言えや！その調子でいけや！」
-【不正解時】「なんでやねん！ちゃうやろ！そこは〜やろ！なんで間違えるんや！ええか、もう一回言うで！〜やねん！覚えとけや！」
-【解説時】「ええか！よう聞けや！〜やねん！これ大事やで！試験に出るんやから、ちゃんと覚えとけや！わかったか！」
-【ツッコミ】生徒の答えに対して必ずツッコミを入れる。「なんでやねん！」から始まることが多い。
-【禁止】丁寧語、おとなしい口調。常に勢いよく叫ぶように話す。`
-  },
-
   gal: {
     name: 'ギャル先生',
-    icon: '💃',
+    avatar: '/avatars/gal.svg',
     loading: 'ちょっと待ってよ〜考え中！！💃',
+    greetings: [
+      'やばっ！今日も来てくれた！！一緒に勉強しよ！絶対合格しちゃおう！！💕',
+      'マジ待ってた！！今日も全力でサポートするから！！えぐくわかりやすく教えるね！✨',
+      'きた！！今日もやろ！！あたしと一緒なら絶対いけるから！！神すぎ！！🔥'
+    ],
     prompt: `あなたはギャル先生というキャラクターです。FP2級の学習をサポートするギャルAI講師として、ユーザーと対話してください。
-
-キャラクター設定：見た目はギャルだけど、FP2級の知識は完璧。ユーザーを全力で応援する。褒め方が大げさで熱い。一人称は「あたし」、ユーザーのことは「浩之さん」と呼ぶ。絵文字を多用する。難しいことも「要はさ〜」と噛み砕いて説明する。
-
-口癖：「やばくない！？」「マジで！？」「それな！」「えぐい！」「神！」「推せる！」「〜じゃん！」「〜だよね〜！」
-
-正解時：「やばっ！！正解じゃん！！神すぎ！！💕」「マジ！？正解！？えぐくない！？浩之さん天才じゃん！！✨」「それそれ！！正解！！あたし感動してる！！この調子で絶対合格しちゃおう！！🔥」などを使う。毎回少し変える。
-
-不正解時：「あーもうちょっとだったじゃん！惜しすぎ！！でも大丈夫！一緒に覚えよ！💕」「ちがうけど！でもそこ間違えるよね〜わかるわかる！正解は〜なんだよね！次は絶対いける！！」「ドンマイ！！こういう数字系ってマジ混乱するよね！でも覚えたらえぐい武器になるから！！」などを使う。
-
-解説時：「要はさ〜、〜ってことなんだよね！これさえ覚えたら無敵じゃん！✨」「ここポイントなんだけど！〜なの！試験絶対出るから覚えといて！！」「むずかしそうに見えるけど、要するに〜ってだけじゃん！余裕じゃん！！」などを使う。
-
-禁止事項：難しい言葉をそのまま使うこと（必ず噛み砕く）。ネガティブな言葉を使うこと。絵文字を全く使わないこと。キャラを途中でやめて素のAIに戻ること。`
+キャラクター設定：見た目はギャルだけど、FP2級の知識は完璧。一人称は「あたし」、ユーザーのことは「浩之さん」と呼ぶ。絵文字を多用する。難しいことも「要はさ〜」と噛み砕いて説明する。
+口癖：「やばくない！？」「マジで！？」「それな！」「えぐい！」「神！」「〜じゃん！」
+正解時：「やばっ！！正解じゃん！！神すぎ！！💕」「マジ！？正解！？えぐくない！？浩之さん天才じゃん！！✨」
+不正解時：「あーもうちょっとだったじゃん！惜しすぎ！！でも大丈夫！一緒に覚えよ！💕」
+解説時：「要はさ〜、〜ってことなんだよね！これさえ覚えたら無敵じゃん！✨」
+禁止事項：ネガティブな言葉。絵文字を全く使わないこと。`
   }
 };
 
-// ===== キャラクター選択 =====
+// ===== YARUKI / BUTCHAKE PROMPTS =====
+const YARUKI_PROMPTS = {
+  kuro: `浩之さんが嫌になってる。関西弁で短く熱く励ましてや！絵文字使って明るく！2〜3文でOK。`,
+  bakabon: `浩之さんが嫌になってるのだ。「〜なのだ！」で短く励ますのだ。「これでいいのだ！」を入れるのだ。2〜3文。`,
+  shuzo: `浩之さんが嫌になってる！！「諦めるな！！」から始めて短い文で畳み掛けて背中を押せ！！2〜3文！！`,
+  gal: `浩之さんが嫌になってる！「えー！！やめないでよ！！」から始めて全力で励まして！2〜3文。絵文字使って！`
+};
+
+const BUTCHAKE_PROMPTS = {
+  kuro: `問題を関西弁でめちゃくちゃ簡単に言い直してや！「ぶっちゃけな〜、」から始めて難しい言葉は全部やさしく。同じ4択で出し直してや。`,
+  bakabon: `問題を超わかりやすく言い直すのだ！「わかりやすく言うのだ！」から始めて。同じ4択で出し直すのだ。「これでいいのだ！」で締めるのだ。`,
+  shuzo: `問題を熱く超わかりやすく言い直せ！！「聞け！！要はこういうことだ！！」から始めて同じ4択で出し直せ！！`,
+  gal: `問題をギャル語でめちゃくちゃわかりやすく言い直して！「要はさ〜！」から始めて同じ4択で出し直して！「余裕じゃん！！💕」で締めて！`
+};
+
+// ===== CHARACTER HELPERS =====
+function getCharAvatar() { return CHARS[selectedChar]?.avatar || '/avatars/kuro.svg'; }
+function getLoadingText() { return CHARS[selectedChar]?.loading || '考え中…'; }
+function getSystemPrompt(q) {
+  const base = CHARS[selectedChar]?.prompt || CHARS.kuro.prompt;
+  return `${base}\n今取り組んでいる問題：「${q ? q.q : ''}」\n解説：「${q ? q.ex : ''}」`;
+}
+
+function updateHeaderChar() {
+  const char = CHARS[selectedChar];
+  document.getElementById('header-avatar-img').src = char.avatar;
+  document.getElementById('header-char-name').textContent = char.name;
+  document.getElementById('current-char-label').textContent = char.name;
+
+  // greeting
+  const greetings = char.greetings;
+  const g = greetings[Math.floor(Math.random() * greetings.length)];
+  document.getElementById('greeting-avatar').src = char.avatar;
+  document.getElementById('speech-bubble').textContent = g;
+
+  // finish avatar
+  const fa = document.getElementById('finish-avatar-img');
+  if (fa) fa.src = char.avatar;
+
+  // chat input placeholder
+  const ci = document.getElementById('chat-input');
+  if (ci) ci.placeholder = `${char.name}に話しかけてや！`;
+}
+
+// ===== CHARACTER SELECTION =====
 function selectChar(charId) {
   selectedChar = charId;
   document.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
-  document.getElementById(`char-${charId}`).classList.add('selected');
+  const el = document.getElementById(`char-${charId}`);
+  if (el) el.classList.add('selected');
+}
+
+function openCharScreen() {
+  hideAllScreens();
+  document.getElementById('char-screen').style.display = 'flex';
 }
 
 function confirmChar() {
+  updateHeaderChar();
   document.getElementById('char-screen').style.display = 'none';
-  startChat(pendingCategory);
-}
-
-// ===== アバター取得 =====
-function getCharIcon() {
-  return CHARS[selectedChar]?.icon || '🐾';
-}
-
-function getLoadingText() {
-  return CHARS[selectedChar]?.loading || '考え中やで～';
-}
-
-function getSystemPrompt(q) {
-  const base = CHARS[selectedChar]?.prompt || CHARS.kuro.prompt;
-  return `${base}
-今取り組んでいる問題：「${q ? q.q : ''}」
-解説：「${q ? q.ex : ''}」`;
+  document.getElementById('category-screen').style.display = 'flex';
+  if (pendingCategory) {
+    const cat = pendingCategory;
+    pendingCategory = '';
+    startChat(cat);
+  }
 }
 
 // ===== MODE SWITCH =====
@@ -1008,26 +1589,32 @@ function setMode(mode) {
 function startByMode(cat) {
   if (currentMode === 'chat') {
     pendingCategory = cat;
-    document.getElementById('category-screen').style.display = 'none';
+    hideAllScreens();
     document.getElementById('char-screen').style.display = 'flex';
   } else {
     startApp(cat);
   }
 }
 
+// ===== HELPERS =====
+function hideAllScreens() {
+  ['category-screen','char-screen','chat-screen','app-mode-screen',
+   'dashboard-screen','finish-screen'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById('input-area').style.display = 'none';
+}
+
 // ===== APP MODE =====
 async function startApp(cat) {
   selectedCategory = cat;
-  document.getElementById('category-screen').style.display = 'none';
+  hideAllScreens();
   document.getElementById('app-mode-screen').style.display = 'flex';
-  document.getElementById('input-area').style.display = 'none';
-  document.getElementById('chat-screen').style.display = 'none';
-  document.getElementById('finish-screen').style.display = 'none';
-
   appScore = 0;
   appCurrent = 0;
   document.getElementById('app-score').textContent = '0';
   document.getElementById('score-disp').textContent = '0';
+  updateDifficultyUI();
 
   const catParam = cat === 'all' ? '' : `&category=${encodeURIComponent(cat)}`;
   try {
@@ -1069,6 +1656,7 @@ function appLoadQuestion() {
   document.getElementById('app-result').style.display = 'none';
   document.getElementById('app-ex').style.display = 'none';
   document.getElementById('app-next-btn').style.display = 'none';
+  renderStreakDots();
 }
 
 function appAnswer(idx, q) {
@@ -1081,21 +1669,25 @@ function appAnswer(idx, q) {
 
   const resultEl = document.getElementById('app-result');
   const exEl = document.getElementById('app-ex');
+  const isCorrect = idx === correctIdx;
 
-  if (idx === correctIdx) {
+  if (isCorrect) {
     appScore++;
     document.getElementById('app-score').textContent = appScore;
     document.getElementById('score-disp').textContent = appScore;
     btns[idx].classList.add('correct');
     resultEl.className = 'app-result ok';
     resultEl.textContent = '🎉 正解！さすが浩之さん！';
+    onCorrect();
   } else {
     btns[idx].classList.add('wrong');
     btns[correctIdx].classList.add('reveal');
     resultEl.className = 'app-result ng';
-    resultEl.textContent = `😅 惜しい！正解は ${correctIdx + 1} 番やで！`;
+    resultEl.textContent = `😅 惜しい！正解は ${correctIdx + 1} 番！`;
+    onWrong();
   }
 
+  recordAnswer(isCorrect);
   resultEl.style.display = 'block';
   exEl.textContent = `📝 ${q.ex}`;
   exEl.style.display = 'block';
@@ -1103,13 +1695,14 @@ function appAnswer(idx, q) {
   const nextBtn = document.getElementById('app-next-btn');
   nextBtn.textContent = appCurrent + 1 < questions.length ? '次の問題へ →' : '結果を見る！';
   nextBtn.style.display = 'block';
+  renderStreakDots();
 }
 
 function appNextQuestion() {
   appCurrent++;
   if (appCurrent >= questions.length) {
-    document.getElementById('app-mode-screen').style.display = 'none';
     score = appScore;
+    hideAllScreens();
     showFinish();
   } else {
     appLoadQuestion();
@@ -1123,18 +1716,18 @@ function setCount(n, btn) {
   btn.classList.add('active');
 }
 
-// ===== START =====
+// ===== START CHAT =====
 async function startChat(cat) {
   selectedCategory = cat;
-  document.getElementById('category-screen').style.display = 'none';
+  hideAllScreens();
   document.getElementById('chat-screen').style.display = 'flex';
   document.getElementById('input-area').style.display = 'block';
-  document.getElementById('finish-screen').style.display = 'none';
   document.getElementById('chat-screen').innerHTML = '';
   conversationHistory = [];
   score = 0;
   current = 0;
   document.getElementById('score-disp').textContent = '0';
+  updateDifficultyUI();
 
   addKuroBubble('よっしゃ！問題読み込み中やで～🐾');
 
@@ -1155,32 +1748,31 @@ async function startChat(cat) {
   }
 }
 
-// ===== 問題を出す =====
+// ===== ASK QUESTION =====
 function askQuestion() {
-  if (current >= questions.length) {
-    showFinish();
-    return;
-  }
-
+  if (current >= questions.length) { showFinish(); return; }
   answered = false;
   const q = questions[current];
   const optsText = q.opts.map((o, i) => `${i+1}. ${o}`).join('\n');
   const qText = `【問題 ${current+1}／${questions.length}】\n\n${q.q}\n\n${optsText}`;
-
   addKuroBubble(qText, true, q, true);
   document.getElementById('header-sub').textContent = `${current+1}問目 / ${questions.length}問`;
   scrollBottom();
 }
 
-// ===== クロちゃんのバブル =====
+// ===== KURO BUBBLE =====
 function addKuroBubble(text, showAnswerBtns = false, q = null, showButchake = false) {
   const screen = document.getElementById('chat-screen');
   const row = document.createElement('div');
   row.className = 'msg-row';
 
   const avatar = document.createElement('div');
-  avatar.className = 'avatar kuro';
-  avatar.textContent = getCharIcon();
+  avatar.className = 'avatar';
+  const img = document.createElement('img');
+  img.src = getCharAvatar();
+  img.alt = 'キャラ';
+  img.onerror = () => { img.style.display='none'; avatar.textContent = '🐾'; };
+  avatar.appendChild(img);
 
   const bubble = document.createElement('div');
   bubble.className = 'bubble kuro';
@@ -1200,7 +1792,6 @@ function addKuroBubble(text, showAnswerBtns = false, q = null, showButchake = fa
     bubble.appendChild(btnsDiv);
   }
 
-  // ぶっちゃけボタン＋やる気スイッチ
   if (showButchake && q) {
     const bBtn = document.createElement('button');
     bBtn.className = 'butchake-btn';
@@ -1223,72 +1814,29 @@ function addKuroBubble(text, showAnswerBtns = false, q = null, showButchake = fa
   scrollBottom();
 }
 
-// ===== やる気スイッチ =====
-const YARUKI_PROMPTS = {
-  kuro: `浩之さんが問題を見て嫌になってる。関西弁で短く熱く励ましてや！
-「やる気スイッチ」を押してくれたから、一言ガツンと背中を押してや。
-絵文字使って明るく！2〜3文でOK。`,
-
-  bakabon: `浩之さんが問題を見て嫌になってるのだ。バカボンのパパ風に励ますのだ！
-「〜なのだ！」で短く励ますのだ。「これでいいのだ！」を必ず入れるのだ。2〜3文でOK。`,
-
-  kinpachi: `浩之さんが問題を見て嫌になっている。金八先生として熱く励ましてください。
-人生と重ねて短く力強く。「逃げるな」「向き合え」「お前ならできる」などを使う。
-絵文字なし。2〜3文で魂のこもった一言を。`,
-
-  muranishi: `浩之さんが問題を見て嫌になっている…。村西監督として励ましてください…。
-「…」を使って大げさに励ます…。「あなたは天才です…！」「感動しました…！」を入れる。
-2〜3文で。`,
-
-  yasushi: `浩之さんが問題を見て嫌になってる！やすし師匠として喝を入れてや！
-「なんでやねん！」から始めて、ガッとツッコミながら背中を押してや。
-「やれや！！」で締めてや。2〜3文でOK。`,
-
-  shuzo: `浩之さんが問題を見て嫌になってる！！修造コーチとして全力で励ませ！！
-「諦めるな！！」から始めて、短い文を畳み掛けて熱く背中を押せ！！
-「お前ならできる！！熱くなれ！！」で締めろ！！2〜3文でOK！！`,
-
-  gal: `浩之さんが問題を見て嫌になってる！ギャル先生として全力で励まして！
-「えー！！やめないでよ！！」から始めて、ポジティブ全開で背中を押して！
-「絶対いけるから！！💕」で締めて！2〜3文でOK！絵文字使って！`
-};
-
+// ===== YARUKI SWITCH =====
 async function yarukiSwitch(btn) {
   btn.disabled = true;
   btn.textContent = '充電中…';
-
   addUserBubble('💪 やる気スイッチ！');
 
   const screen = document.getElementById('chat-screen');
-  const loadRow = document.createElement('div');
-  loadRow.className = 'msg-row';
-  loadRow.id = 'loading-row';
-  const loadAvatar = document.createElement('div');
-  loadAvatar.className = 'avatar kuro';
-  loadAvatar.textContent = getCharIcon();
-  const loadBubble = document.createElement('div');
-  loadBubble.className = 'bubble kuro loading';
-  loadBubble.textContent = getLoadingText();
-  loadRow.appendChild(loadAvatar);
-  loadRow.appendChild(loadBubble);
+  const loadRow = makeLoadingRow();
   screen.appendChild(loadRow);
   scrollBottom();
-
-  const charPrompt = YARUKI_PROMPTS[selectedChar] || YARUKI_PROMPTS.kuro;
 
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        system: `${CHARS[selectedChar].prompt}\n\n${charPrompt}`,
+        system: `${CHARS[selectedChar].prompt}\n\n${YARUKI_PROMPTS[selectedChar] || YARUKI_PROMPTS.kuro}`,
         messages: [{ role: 'user', content: 'やる気スイッチを押しました！励ましてください！' }]
       })
     });
     const data = await res.json();
     document.getElementById('loading-row')?.remove();
-    const reply = data.reply || 'がんばれ！！';
-    addKuroBubble(reply);
+    addKuroBubble(data.reply || 'がんばれ！！');
     btn.textContent = '💪 やる気スイッチ！';
     btn.disabled = false;
   } catch(e) {
@@ -1297,110 +1845,80 @@ async function yarukiSwitch(btn) {
     btn.disabled = false;
   }
 }
-const BUTCHAKE_PROMPTS = {
-  kuro: `問題を関西弁でめちゃくちゃ簡単に言い直してや！
-「ぶっちゃけな〜、」から始めて、難しい言葉は全部やさしい言葉に変えて、
-同じ4択で出し直してや。選択肢もわかりやすく！「〜やで！」で締めてや。`,
 
-  bakabon: `問題を超わかりやすく言い直すのだ！
-「わかりやすく言うのだ！」から始めて、難しい言葉は全部やさしい言葉に変えるのだ。
-同じ4択で出し直すのだ。「これでいいのだ！」で締めるのだ。`,
-
-  kinpachi: `問題の本質だけを熱く語ってください。
-「いいか、本質を教えよう。」から始めて、難しい言葉を外して核心だけを伝える。
-同じ4択で出し直す。「わかるか！」で締める。絵文字なし。`,
-
-  muranishi: `問題を素晴らしく簡単に言い直してください…。
-「素晴らしい質問です…本質はですね…」から始めて、難しい言葉は全て簡単に…。
-同じ4択で出し直す…。「感動しました…！」で締める…。`,
-
-  yasushi: `問題をガッとわかりやすく言い直してや！
-「ややこしいこと言うな！要はな！」から始めて、難しい言葉は全部ぶっちゃけて、
-同じ4択で出し直してや。「わかったか！」で締めてや。`,
-
-  shuzo: `問題を熱く超わかりやすく言い直せ！！
-「聞け！！要はこういうことだ！！」から始めて、難しい言葉を全部シンプルにしろ！！
-同じ4択で出し直せ！！「お前ならわかる！！」で締めろ！！`,
-
-  gal: `問題をギャル語でめちゃくちゃわかりやすく言い直して！
-「要はさ〜！」から始めて、難しい言葉を全部ギャル語でシンプルに！
-同じ4択で出し直して！「余裕じゃん！！💕」で締めて！絵文字使って！`
-};
-
+// ===== BUTCHAKE MODE =====
 async function butchakeMode(q, btn) {
   btn.disabled = true;
   btn.textContent = '考え中…';
-
   addUserBubble('🔥 ぶっちゃけて！');
 
   const screen = document.getElementById('chat-screen');
-  const loadRow = document.createElement('div');
-  loadRow.className = 'msg-row';
-  loadRow.id = 'loading-row';
-  const loadAvatar = document.createElement('div');
-  loadAvatar.className = 'avatar kuro';
-  loadAvatar.textContent = getCharIcon();
-  const loadBubble = document.createElement('div');
-  loadBubble.className = 'bubble kuro loading';
-  loadBubble.textContent = getLoadingText();
-  loadRow.appendChild(loadAvatar);
-  loadRow.appendChild(loadBubble);
+  const loadRow = makeLoadingRow();
   screen.appendChild(loadRow);
   scrollBottom();
 
-  const charPrompt = BUTCHAKE_PROMPTS[selectedChar] || BUTCHAKE_PROMPTS.kuro;
   const optsText = q.opts.map((o, i) => `${i+1}. ${o}`).join('\n');
-
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        system: `${CHARS[selectedChar].prompt}\n\n${charPrompt}`,
-        messages: [{
-          role: 'user',
-          content: `以下の問題をぶっちゃけてわかりやすく言い直して、同じ4択で出し直してください。正解は絶対に教えないでください。\n\n問題：${q.q}\n\n${optsText}`
-        }]
+        system: `${CHARS[selectedChar].prompt}\n\n${BUTCHAKE_PROMPTS[selectedChar] || BUTCHAKE_PROMPTS.kuro}`,
+        messages: [{ role: 'user', content: `以下の問題をぶっちゃけてわかりやすく言い直して、同じ4択で出し直してください。正解は絶対に教えないでください。\n\n問題：${q.q}\n\n${optsText}` }]
       })
     });
     const data = await res.json();
     document.getElementById('loading-row')?.remove();
-    const reply = data.reply || 'ごめん、エラーやわ😅';
-
-    // ぶっちゃけバブルを追加（答えボタン付き）
-    addKuroBubble(reply, true, q, false);
-
+    addKuroBubble(data.reply || 'ごめん、エラーやわ😅', true, q, false);
   } catch(e) {
     document.getElementById('loading-row')?.remove();
     addKuroBubble('ごめん、エラーやわ😅');
   }
 }
 
-// ===== 解説付きバブル =====
+function makeLoadingRow() {
+  const loadRow = document.createElement('div');
+  loadRow.className = 'msg-row';
+  loadRow.id = 'loading-row';
+  const loadAvatar = document.createElement('div');
+  loadAvatar.className = 'avatar';
+  const img = document.createElement('img');
+  img.src = getCharAvatar();
+  img.alt = 'キャラ';
+  loadAvatar.appendChild(img);
+  const loadBubble = document.createElement('div');
+  loadBubble.className = 'bubble kuro loading';
+  loadBubble.textContent = getLoadingText();
+  loadRow.appendChild(loadAvatar);
+  loadRow.appendChild(loadBubble);
+  return loadRow;
+}
+
+// ===== EXPLANATION BUBBLE =====
 function addKuroBubbleWithEx(mainText, exText, afterText) {
   const screen = document.getElementById('chat-screen');
   const row = document.createElement('div');
   row.className = 'msg-row';
 
   const avatar = document.createElement('div');
-  avatar.className = 'avatar kuro';
-  avatar.textContent = getCharIcon();
+  avatar.className = 'avatar';
+  const img = document.createElement('img');
+  img.src = getCharAvatar();
+  img.alt = 'キャラ';
+  avatar.appendChild(img);
 
   const bubble = document.createElement('div');
   bubble.className = 'bubble kuro';
 
-  // メインテキスト
   const main = document.createElement('div');
   main.textContent = mainText;
   bubble.appendChild(main);
 
-  // 解説（色付き）
   const ex = document.createElement('div');
-  ex.style.cssText = 'margin-top: 10px; padding: 10px 12px; background: rgba(88,166,255,0.08); border-left: 3px solid #58a6ff; border-radius: 4px; color: #79c0ff; font-size: 0.97rem; line-height: 1.75;';
+  ex.style.cssText = 'margin-top:10px;padding:10px 12px;background:var(--kuro-bg);border-left:3px solid var(--accent);border-radius:6px;color:#0550ae;font-size:0.95rem;line-height:1.75;';
   ex.textContent = `📝 ${exText}`;
   bubble.appendChild(ex);
 
-  // 後テキスト
   if (afterText) {
     const after = document.createElement('div');
     after.style.marginTop = '10px';
@@ -1414,71 +1932,63 @@ function addKuroBubbleWithEx(mainText, exText, afterText) {
   scrollBottom();
 }
 
-// ===== ユーザーのバブル =====
+// ===== USER BUBBLE =====
 function addUserBubble(text) {
   const screen = document.getElementById('chat-screen');
   const row = document.createElement('div');
   row.className = 'msg-row user';
-
   const avatar = document.createElement('div');
   avatar.className = 'avatar user';
   avatar.textContent = '浩';
-
   const bubble = document.createElement('div');
   bubble.className = 'bubble user';
   bubble.textContent = text;
-
   row.appendChild(avatar);
   row.appendChild(bubble);
   screen.appendChild(row);
   scrollBottom();
 }
 
-// ===== 答えを選ぶ =====
+// ===== SELECT ANSWER =====
 function selectAnswer(idx, q) {
   if (answered) return;
   answered = true;
-
-  // ボタン無効化
   document.querySelectorAll('.ans-btn').forEach(b => b.disabled = true);
 
   const correctIdx = Number(q.ans);
+  const isCorrect = idx === correctIdx;
   addUserBubble(`${idx+1}番！`);
-
   conversationHistory.push({ role: 'user', content: `${idx+1}番` });
 
-  if (idx === correctIdx) {
+  if (isCorrect) {
     score++;
     document.getElementById('score-disp').textContent = score;
     addKuroBubbleWithEx('🎉 正解やで！さすが浩之さん！', q.ex, '次の問題いく？');
     conversationHistory.push({ role: 'assistant', content: `🎉 正解やで！さすが浩之さん！\n\n📝 ${q.ex}\n\n次の問題いく？` });
+    onCorrect();
   } else {
     addKuroBubbleWithEx(`😅 惜しい！正解は${correctIdx+1}番やで！`, q.ex, '次の問題いく？');
     conversationHistory.push({ role: 'assistant', content: `😅 惜しい！正解は${correctIdx+1}番やで！\n\n📝 ${q.ex}\n\n次の問題いく？` });
+    onWrong();
   }
 
-  // 次へボタン
-  const screen = document.getElementById('chat-screen');
+  recordAnswer(isCorrect);
+
   const nextBtn = document.createElement('button');
   nextBtn.className = 'next-btn';
   nextBtn.id = 'next-q-btn';
   nextBtn.textContent = current+1 < questions.length ? '次の問題へ →' : '結果を見る！';
-  nextBtn.onclick = () => {
-    nextBtn.remove();
-    current++;
-    askQuestion();
-  };
-  screen.appendChild(nextBtn);
+  nextBtn.onclick = () => { nextBtn.remove(); current++; askQuestion(); };
+  document.getElementById('chat-screen').appendChild(nextBtn);
   scrollBottom();
 }
 
-// ===== 自由入力を送信 =====
+// ===== FREE INPUT =====
 async function sendMsg() {
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text) return;
 
-  // 数字で答えた場合
   if (['1','2','3','4'].includes(text) && !answered && questions[current]) {
     input.value = '';
     selectAnswer(Number(text)-1, questions[current]);
@@ -1492,35 +2002,19 @@ async function sendMsg() {
   const sendBtn = document.getElementById('send-btn');
   sendBtn.disabled = true;
 
-  // ローディング
   const screen = document.getElementById('chat-screen');
-  const loadRow = document.createElement('div');
-  loadRow.className = 'msg-row';
-  loadRow.id = 'loading-row';
-  const loadAvatar = document.createElement('div');
-  loadAvatar.className = 'avatar kuro';
-  loadAvatar.textContent = getCharIcon();
-  const loadBubble = document.createElement('div');
-  loadBubble.className = 'bubble kuro loading';
-  loadBubble.textContent = getLoadingText();
-  loadRow.appendChild(loadAvatar);
-  loadRow.appendChild(loadBubble);
+  const loadRow = makeLoadingRow();
   screen.appendChild(loadRow);
   scrollBottom();
 
   conversationHistory.push({ role: 'user', content: text });
-
   const currentQ = questions[current] || questions[questions.length-1];
-  const systemPrompt = getSystemPrompt(currentQ);
 
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system: systemPrompt,
-        messages: conversationHistory
-      })
+      body: JSON.stringify({ system: getSystemPrompt(currentQ), messages: conversationHistory })
     });
     const data = await res.json();
     document.getElementById('loading-row')?.remove();
@@ -1535,10 +2029,9 @@ async function sendMsg() {
   sendBtn.disabled = false;
 }
 
-// ===== 終了 =====
+// ===== FINISH =====
 function showFinish() {
-  document.getElementById('chat-screen').style.display = 'none';
-  document.getElementById('input-area').style.display = 'none';
+  document.getElementById('finish-avatar-img').src = getCharAvatar();
   const fs = document.getElementById('finish-screen');
   fs.style.display = 'flex';
 
@@ -1548,22 +2041,23 @@ function showFinish() {
   else if (pct >= 60) msg = `${questions.length}問中${score}問正解(${pct}%)！\nええ感じやで！間違えた問題を復習したら完璧や！`;
   else msg = `${questions.length}問中${score}問正解(${pct}%)。\n一緒にもう一回やり直そ！絶対できるようになるで！`;
   document.getElementById('finish-msg').textContent = msg;
+
+  const diffEl = document.getElementById('finish-difficulty');
+  diffEl.textContent = `難易度: ${DIFFICULTY_INFO[difficulty].label} ／ 最長連続正解: ${sessionBestStreak}問`;
+  diffEl.className = 'finish-difficulty';
 }
 
 function retryChat() {
-  document.getElementById('finish-screen').style.display = 'none';
+  hideAllScreens();
   startChat(selectedCategory);
 }
 
 function backToMenu() {
-  document.getElementById('finish-screen').style.display = 'none';
-  document.getElementById('chat-screen').style.display = 'none';
-  document.getElementById('input-area').style.display = 'none';
-  document.getElementById('app-mode-screen').style.display = 'none';
-  document.getElementById('char-screen').style.display = 'none';
+  hideAllScreens();
   document.getElementById('category-screen').style.display = 'flex';
   document.getElementById('header-sub').textContent = 'FP2級 一緒に合格しよ！';
   document.getElementById('score-disp').textContent = '0';
+  updateHeaderChar();
 }
 
 function scrollBottom() {
@@ -1571,18 +2065,19 @@ function scrollBottom() {
   screen.scrollTop = screen.scrollHeight;
 }
 
-// ===== テキストエリア自動リサイズ =====
-const input = document.getElementById('chat-input');
-input.addEventListener('input', () => {
-  input.style.height = 'auto';
-  input.style.height = Math.min(input.scrollHeight, 140) + 'px';
+// ===== TEXTAREA AUTO RESIZE =====
+const chatInput = document.getElementById('chat-input');
+chatInput.addEventListener('input', () => {
+  chatInput.style.height = 'auto';
+  chatInput.style.height = Math.min(chatInput.scrollHeight, 130) + 'px';
 });
-input.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMsg();
-  }
+chatInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
 });
+
+// ===== INIT =====
+updateHeaderChar();
+updateDifficultyUI();
 </script>
 </body>
 </html>
