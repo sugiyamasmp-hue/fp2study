@@ -1044,6 +1044,30 @@
 
   .today-stat .ts-val.green { color: var(--green); }
   .today-stat .ts-label { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+
+  .cat-level-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+  }
+  .cat-level-row:last-child { border-bottom: none; }
+  .cat-level-name { flex: 1; color: var(--text); }
+  .cat-level-badge {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: #dafbe1;
+    color: var(--green);
+    border: 1px solid #acd5b2;
+    flex-shrink: 0;
+  }
+  .cat-level-badge.hard { background: #ffebe9; color: var(--red); border-color: #f5b8b4; }
+  .cat-level-rate { color: var(--muted); font-size: 0.8rem; flex-shrink: 0; }
+  .cat-level-empty { font-size: 0.85rem; color: var(--muted); }
 </style>
 </head>
 <body>
@@ -1069,7 +1093,7 @@
   </div>
 
   <!-- 昇格トースト -->
-  <div id="upgrade-toast" class="upgrade-toast">🎉 難易度アップ！<span id="upgrade-level-text">中級</span>に昇格！</div>
+  <div id="upgrade-toast" class="upgrade-toast"></div>
 
   <!-- 分野選択 -->
   <div id="category-screen">
@@ -1091,6 +1115,7 @@
 
       <div class="cat-list">
         <button class="cat-btn" onclick="startByMode('all')"><span class="icon">🎲</span>全分野おまかせ</button>
+        <button class="cat-btn" onclick="startByMode('review')"><span class="icon">🔁</span>復習モード（間違えた問題）</button>
         <button class="cat-btn" onclick="startByMode('ライフ・社会保険,ライフプランニング,社会保険,年金,職業倫理・関連法規')"><span class="icon">📋</span>ライフプランニング・社会保険</button>
         <button class="cat-btn" onclick="startByMode('保険')"><span class="icon">🛡️</span>リスク管理・保険</button>
         <button class="cat-btn" onclick="startByMode('金融資産運用,金融資産')"><span class="icon">📈</span>金融資産運用</button>
@@ -1244,6 +1269,12 @@
         <div class="stat-sub">連続</div>
       </div>
     </div>
+
+    <!-- 分野別レベル -->
+    <div class="dash-section">
+      <div class="dash-section-title">📚 分野別レベル</div>
+      <div id="dash-category-levels"></div>
+    </div>
   </div>
 
   <!-- 終了画面 -->
@@ -1346,6 +1377,32 @@ function recordAnswer(isCorrect) {
   saveStats(s);
 }
 
+// ===== SERVER-SIDE ANSWER HISTORY (Firebase) =====
+async function recordAnswerToServer(q, isCorrect) {
+  if (!q || !q.id || !q.cat) return;
+  try {
+    const res = await fetch('/api/answer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        questionId: q.id,
+        cat: q.cat,
+        isCorrect,
+        level: q.level || 1,
+        mode: currentMode,
+        q: q.q,
+        opts: q.opts,
+        ans: q.ans,
+        ex: q.ex
+      })
+    });
+    const data = await res.json();
+    if (data.leveledUp) showToast(`🎉 ${q.cat}が上級に昇格！`);
+  } catch (e) {
+    // 履歴保存に失敗しても出題は止めない
+  }
+}
+
 // ===== DIFFICULTY LOGIC =====
 function onCorrect() {
   consecutiveCorrect++;
@@ -1393,15 +1450,19 @@ function renderStreakDots() {
   }
 }
 
-function showUpgradeToast() {
+function showToast(message) {
   const toast = document.getElementById('upgrade-toast');
-  document.getElementById('upgrade-level-text').textContent = DIFFICULTY_INFO[difficulty].label;
+  toast.textContent = message;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
+function showUpgradeToast() {
+  showToast(`🎉 難易度アップ！${DIFFICULTY_INFO[difficulty].label}に昇格！`);
+}
+
 // ===== DASHBOARD =====
-function openDashboard() {
+async function openDashboard() {
   hideAllScreens();
   const screen = document.getElementById('dashboard-screen');
   screen.style.display = 'flex';
@@ -1436,6 +1497,56 @@ function openDashboard() {
     pip.className = 'streak-pip' + (i < consecutiveCorrect ? ' filled' : '');
     pips.appendChild(pip);
   }
+
+  // 分野別レベル
+  try {
+    const res = await fetch('/api/category-stats');
+    const data = await res.json();
+    renderCategoryLevels(data.stats || {});
+  } catch (e) {
+    renderCategoryLevels({});
+  }
+}
+
+function renderCategoryLevels(stats) {
+  const container = document.getElementById('dash-category-levels');
+  container.innerHTML = '';
+  const cats = Object.keys(stats);
+
+  if (cats.length === 0) {
+    const p = document.createElement('p');
+    p.className = 'cat-level-empty';
+    p.textContent = 'まだ記録がないで。問題を解いてみてや！';
+    container.appendChild(p);
+    return;
+  }
+
+  cats.sort((a, b) => (stats[b].totalAnswered || 0) - (stats[a].totalAnswered || 0));
+  cats.forEach(cat => {
+    const s = stats[cat];
+    const rate = s.totalAnswered > 0 ? Math.round(s.totalCorrect / s.totalAnswered * 100) : 0;
+    const isHard = s.level >= 2;
+
+    const row = document.createElement('div');
+    row.className = 'cat-level-row';
+
+    const nameEl = document.createElement('span');
+    nameEl.className = 'cat-level-name';
+    nameEl.textContent = cat;
+
+    const badgeEl = document.createElement('span');
+    badgeEl.className = 'cat-level-badge' + (isHard ? ' hard' : '');
+    badgeEl.textContent = isHard ? '上級' : '初級';
+
+    const rateEl = document.createElement('span');
+    rateEl.className = 'cat-level-rate';
+    rateEl.textContent = `${rate}%（${s.totalCorrect}/${s.totalAnswered}）`;
+
+    row.appendChild(nameEl);
+    row.appendChild(badgeEl);
+    row.appendChild(rateEl);
+    container.appendChild(row);
+  });
 }
 
 function closeDashboard() {
@@ -1610,6 +1721,13 @@ function hideAllScreens() {
   document.getElementById('input-area').style.display = 'none';
 }
 
+// ===== QUESTION FETCH HELPER =====
+function buildQuestionsUrl(cat, limitNum) {
+  if (cat === 'review') return `/api/questions?limit=${limitNum}&mode=review`;
+  const catParam = cat === 'all' ? '' : `&category=${encodeURIComponent(cat)}`;
+  return `/api/questions?limit=${limitNum}${catParam}`;
+}
+
 // ===== APP MODE =====
 async function startApp(cat) {
   selectedCategory = cat;
@@ -1624,12 +1742,11 @@ async function startApp(cat) {
   document.getElementById('score-disp').textContent = '0';
   updateDifficultyUI();
 
-  const catParam = cat === 'all' ? '' : `&category=${encodeURIComponent(cat)}`;
   try {
-    const res = await fetch(`/api/questions?limit=${selectedCount}${catParam}`);
+    const res = await fetch(buildQuestionsUrl(cat, selectedCount));
     const data = await res.json();
     if (!data.questions || data.questions.length === 0) {
-      alert('問題が見つからんかったわ！別の分野を試してや！');
+      alert(data.reviewEmpty ? 'まだ間違えた問題がないで！えらいやん！😆' : '問題が見つからんかったわ！別の分野を試してや！');
       backToMenu();
       return;
     }
@@ -1696,6 +1813,7 @@ function appAnswer(idx, q) {
   }
 
   recordAnswer(isCorrect);
+  recordAnswerToServer(q, isCorrect);
   resultEl.style.display = 'block';
   exEl.textContent = `📝 ${q.ex}`;
   exEl.style.display = 'block';
@@ -1739,12 +1857,11 @@ async function startChat(cat) {
 
   addKuroBubble('よっしゃ！問題読み込み中やで～🐾');
 
-  const catParam = cat === 'all' ? '' : `&category=${encodeURIComponent(cat)}`;
   try {
-    const res = await fetch(`/api/questions?limit=${selectedCount}${catParam}`);
+    const res = await fetch(buildQuestionsUrl(cat, selectedCount));
     const data = await res.json();
     if (!data.questions || data.questions.length === 0) {
-      addKuroBubble('あれ、問題が見つからんかったわ😅 別の分野を試してや！');
+      addKuroBubble(data.reviewEmpty ? 'まだ間違えた問題がないで！えらいやん！😆 ' : 'あれ、問題が見つからんかったわ😅 別の分野を試してや！');
       return;
     }
     questions = data.questions;
@@ -1985,6 +2102,7 @@ function selectAnswer(idx, q) {
   }
 
   recordAnswer(isCorrect);
+  recordAnswerToServer(q, isCorrect);
 
   const nextBtn = document.createElement('button');
   nextBtn.className = 'next-btn';
