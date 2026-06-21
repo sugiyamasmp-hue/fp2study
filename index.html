@@ -1513,9 +1513,24 @@ function showUpgradeToast() {
 
 // ===== AMADO WIDGET =====
 const AMADO_IMAGES = {
-  correct: '/images/amado/amado_seikai.png',
+  correct: [
+    '/images/amado/amado_seikai.png',
+    '/images/amado/amado_seikai_1.png',
+    '/images/amado/amado_seikai_2.png',
+    '/images/amado/amado_seikai_3.png',
+    '/images/amado/amado_seikai_4.png',
+    '/images/amado/amado_seikai_5.png',
+    '/images/amado/amado_seikai_6.png',
+    '/images/amado/amado_seikai_7.png',
+    '/images/amado/amado_seikai_8.png'
+  ],
   wrong: '/images/amado/amado_fusseikai.png'
 };
+
+function pickRandomCorrectImage() {
+  const images = AMADO_IMAGES.correct;
+  return images[Math.floor(Math.random() * images.length)];
+}
 
 let amadoFadeTimer = null;
 
@@ -1524,7 +1539,7 @@ function showAmadoReaction(isCorrect) {
   const widget = document.getElementById('amado-widget');
   const bubble = document.getElementById('amado-bubble');
 
-  document.getElementById('amado-img').src = isCorrect ? AMADO_IMAGES.correct : AMADO_IMAGES.wrong;
+  document.getElementById('amado-img').src = isCorrect ? pickRandomCorrectImage() : AMADO_IMAGES.wrong;
   bubble.textContent = isCorrect ? '🎉 正解！よく頑張った！' : '😴 惜しい！もう一回チャレンジ！';
   bubble.classList.add('show');
   widget.classList.remove('show');
