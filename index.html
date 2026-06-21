@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>クロちゃんとFP2級</title>
+<title>FP2級スタディ</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #f6f8fa;
+    --bg: #ffffff;
     --surface: #ffffff;
-    --border: #d0d7de;
+    --border: #e4e8ec;
     --accent: #0969da;
-    --kuro-bg: #ddf4ff;
+    --hover-bg: #eef6ff;
     --user-bg: #e6ffed;
     --text: #24292f;
     --muted: #57606a;
@@ -22,8 +22,8 @@
     --red: #cf222e;
     --yellow: #9a6700;
     --yellow-bg: #fff8c5;
-    --shadow: 0 1px 3px rgba(27,31,36,0.12), 0 1px 2px rgba(27,31,36,0.06);
-    --shadow-md: 0 4px 12px rgba(27,31,36,0.12);
+    --shadow: 0 1px 3px rgba(27,31,36,0.08), 0 1px 2px rgba(27,31,36,0.04);
+    --shadow-md: 0 4px 14px rgba(27,31,36,0.10);
   }
 
   html, body {
@@ -47,7 +47,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 16px;
+    padding: 14px 20px;
     border-bottom: 1px solid var(--border);
     background: var(--surface);
     flex-shrink: 0;
@@ -58,12 +58,12 @@
   .header-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
   }
 
   .header-avatar {
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
@@ -174,20 +174,20 @@
     flex: 1;
     flex-direction: column;
     overflow-y: auto;
-    padding: 0 0 16px;
+    padding: 0 0 24px;
   }
 
   /* Character greeting banner */
   .char-greeting {
     display: flex;
     align-items: flex-end;
-    gap: 10px;
-    padding: 16px 16px 4px;
+    gap: 14px;
+    padding: 22px 20px 6px;
   }
 
   .greeting-avatar {
-    width: 52px;
-    height: 52px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
     border: 2px solid var(--border);
     flex-shrink: 0;
@@ -197,11 +197,11 @@
   .speech-bubble {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 16px;
+    border-radius: 18px;
     border-bottom-left-radius: 4px;
-    padding: 10px 14px;
-    font-size: 0.9rem;
-    line-height: 1.6;
+    padding: 14px 18px;
+    font-size: 0.95rem;
+    line-height: 1.7;
     color: var(--text);
     box-shadow: var(--shadow);
     position: relative;
@@ -210,19 +210,19 @@
 
   .mode-toggle {
     display: flex;
-    gap: 6px;
-    padding: 12px 16px 0;
+    gap: 10px;
+    padding: 18px 20px 0;
     flex-shrink: 0;
   }
 
   .mode-btn {
     flex: 1;
-    padding: 10px;
-    border-radius: 10px;
+    padding: 14px;
+    border-radius: 12px;
     border: 1px solid var(--border);
     background: var(--surface);
     color: var(--muted);
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
@@ -237,35 +237,35 @@
   }
 
   .cat-title {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--text);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
 
   .cat-sub {
-    font-size: 0.82rem;
+    font-size: 0.88rem;
     color: var(--muted);
-    margin-bottom: 14px;
+    margin-bottom: 18px;
   }
 
   .cat-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-bottom: 18px;
+    gap: 12px;
+    margin-bottom: 22px;
   }
 
   .cat-btn {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
+    gap: 14px;
+    padding: 18px 20px;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 14px;
     color: var(--text);
-    font-size: 0.98rem;
+    font-size: 1.05rem;
     font-family: 'Noto Sans JP', sans-serif;
     font-weight: 500;
     cursor: pointer;
@@ -277,31 +277,31 @@
   .cat-btn:hover {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(9,105,218,0.1);
-    background: var(--kuro-bg);
+    background: var(--hover-bg);
   }
 
-  .cat-btn .icon { font-size: 1.2rem; }
+  .cat-btn .icon { font-size: 1.3rem; }
 
   .count-label {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: var(--muted);
     font-weight: 500;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
 
   .count-row {
     display: flex;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 10px;
+    margin-bottom: 10px;
   }
 
   .cnt-btn {
-    padding: 8px 20px;
-    border-radius: 8px;
+    padding: 12px 26px;
+    border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--surface);
     color: var(--muted);
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
@@ -321,28 +321,28 @@
     flex: 1;
     flex-direction: column;
     overflow-y: auto;
-    padding: 16px;
+    padding: 20px;
     scroll-behavior: smooth;
     background: var(--bg);
   }
 
   .msg-row {
     display: flex;
-    gap: 10px;
-    margin-bottom: 18px;
+    gap: 12px;
+    margin-bottom: 20px;
   }
 
   .msg-row.user { flex-direction: row-reverse; }
 
   .avatar {
-    width: 34px;
-    height: 34px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
+    font-size: 1.1rem;
     margin-top: 2px;
     overflow: hidden;
     border: 1.5px solid var(--border);
@@ -363,11 +363,11 @@
   }
 
   .bubble {
-    max-width: calc(100% - 52px);
-    padding: 12px 16px;
-    border-radius: 16px;
-    font-size: 1rem;
-    line-height: 1.75;
+    max-width: calc(100% - 56px);
+    padding: 14px 18px;
+    border-radius: 18px;
+    font-size: 1.05rem;
+    line-height: 1.8;
     white-space: pre-line;
     box-shadow: var(--shadow);
   }
@@ -392,18 +392,18 @@
 
   .ans-btns {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     flex-wrap: wrap;
-    margin-top: 12px;
+    margin-top: 14px;
   }
 
   .ans-btn {
-    padding: 9px 18px;
-    border-radius: 8px;
+    padding: 12px 22px;
+    border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--bg);
     color: var(--text);
-    font-size: 0.95rem;
+    font-size: 1.02rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
@@ -413,19 +413,19 @@
 
   .ans-btn:hover:not(:disabled) {
     border-color: var(--accent);
-    background: var(--kuro-bg);
+    background: var(--hover-bg);
   }
 
   .ans-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .next-btn {
-    margin-top: 12px;
-    padding: 10px 24px;
-    border-radius: 8px;
+    margin-top: 14px;
+    padding: 14px 30px;
+    border-radius: 10px;
     border: none;
     background: var(--accent);
     color: white;
-    font-size: 0.95rem;
+    font-size: 1.02rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
@@ -436,13 +436,13 @@
   .next-btn:hover { opacity: 0.85; }
 
   .butchake-btn {
-    margin-top: 8px;
-    padding: 8px 14px;
-    border-radius: 8px;
+    margin-top: 10px;
+    padding: 11px 18px;
+    border-radius: 10px;
     border: 1px solid #d29922;
     background: var(--yellow-bg);
     color: var(--yellow);
-    font-size: 0.88rem;
+    font-size: 0.92rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
@@ -454,14 +454,14 @@
   .butchake-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .yaruki-btn {
-    margin-top: 8px;
-    margin-left: 8px;
-    padding: 8px 14px;
-    border-radius: 8px;
+    margin-top: 10px;
+    margin-left: 10px;
+    padding: 11px 18px;
+    border-radius: 10px;
     border: 1px solid #acd5b2;
     background: var(--user-bg);
     color: var(--green);
-    font-size: 0.88rem;
+    font-size: 0.92rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
@@ -475,27 +475,27 @@
   /* ===== INPUT AREA ===== */
   .input-area {
     display: none;
-    padding: 10px 16px;
+    padding: 14px 18px;
     border-top: 1px solid var(--border);
     background: var(--surface);
     flex-shrink: 0;
     box-shadow: 0 -1px 3px rgba(27,31,36,0.06);
   }
 
-  .input-row { display: flex; gap: 8px; align-items: flex-end; }
+  .input-row { display: flex; gap: 10px; align-items: flex-end; }
 
   .chat-input {
     flex: 1;
-    padding: 11px 15px;
-    border-radius: 10px;
+    padding: 14px 18px;
+    border-radius: 12px;
     border: 1px solid var(--border);
     background: var(--bg);
     color: var(--text);
-    font-size: 1rem;
+    font-size: 1.02rem;
     font-family: 'Noto Sans JP', sans-serif;
     resize: none;
     outline: none;
-    min-height: 44px;
+    min-height: 50px;
     max-height: 130px;
     line-height: 1.5;
     transition: border-color 0.15s, box-shadow 0.15s;
@@ -507,13 +507,13 @@
   }
 
   .send-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
     border: none;
     background: var(--accent);
     color: white;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -533,7 +533,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 24px;
+    padding: 28px;
     text-align: center;
     background: var(--bg);
   }
@@ -541,19 +541,19 @@
   .finish-inner {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 32px 24px;
+    border-radius: 20px;
+    padding: 40px 28px;
     box-shadow: var(--shadow-md);
-    max-width: 400px;
+    max-width: 420px;
     width: 100%;
   }
 
   .finish-avatar {
-    width: 72px;
-    height: 72px;
+    width: 88px;
+    height: 88px;
     border-radius: 50%;
     border: 3px solid var(--border);
-    margin: 0 auto 16px;
+    margin: 0 auto 18px;
     overflow: hidden;
   }
 
@@ -597,12 +597,12 @@
   }
 
   .btn-again {
-    padding: 12px 24px;
-    border-radius: 10px;
+    padding: 14px 28px;
+    border-radius: 12px;
     border: none;
     background: var(--green);
     color: white;
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
@@ -610,12 +610,12 @@
   }
 
   .btn-back {
-    padding: 12px 24px;
-    border-radius: 10px;
+    padding: 14px 28px;
+    border-radius: 12px;
     border: 1px solid var(--border);
     background: var(--surface);
     color: var(--text);
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
@@ -628,7 +628,7 @@
     flex: 1;
     flex-direction: column;
     overflow-y: auto;
-    padding: 14px 16px;
+    padding: 20px 20px;
     background: var(--bg);
   }
 
@@ -673,36 +673,36 @@
   .q-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px;
+    border-radius: 16px;
+    padding: 24px;
     box-shadow: var(--shadow);
   }
 
   .q-label {
-    font-size: 0.78rem;
+    font-size: 0.8rem;
     color: var(--accent);
     font-weight: 700;
     letter-spacing: 0.06em;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
   }
 
   .q-text {
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     font-weight: 700;
-    line-height: 1.8;
-    margin-bottom: 18px;
+    line-height: 1.85;
+    margin-bottom: 20px;
     color: var(--text);
   }
 
-  .app-choices { display: flex; flex-direction: column; gap: 10px; }
+  .app-choices { display: flex; flex-direction: column; gap: 12px; }
 
   .app-choice-btn {
-    padding: 14px 16px;
-    border-radius: 10px;
+    padding: 16px 20px;
+    border-radius: 12px;
     border: 1px solid var(--border);
     background: var(--bg);
     color: var(--text);
-    font-size: 1rem;
+    font-size: 1.03rem;
     font-weight: 500;
     font-family: 'Noto Sans JP', sans-serif;
     text-align: left;
@@ -714,7 +714,7 @@
 
   .app-choice-btn:hover:not(:disabled) {
     border-color: var(--accent);
-    background: var(--kuro-bg);
+    background: var(--hover-bg);
     box-shadow: 0 0 0 3px rgba(9,105,218,0.08);
   }
 
@@ -761,7 +761,7 @@
     display: none;
     margin-top: 10px;
     padding: 12px 14px;
-    background: var(--kuro-bg);
+    background: var(--hover-bg);
     border-left: 3px solid var(--accent);
     border-radius: 6px;
     color: #0550ae;
@@ -771,14 +771,14 @@
 
   .app-next-btn {
     display: none;
-    margin-top: 14px;
+    margin-top: 16px;
     width: 100%;
-    padding: 15px;
-    border-radius: 10px;
+    padding: 17px;
+    border-radius: 12px;
     border: none;
     background: var(--accent);
     color: white;
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
@@ -794,33 +794,33 @@
     flex: 1;
     flex-direction: column;
     overflow-y: auto;
-    padding: 20px 16px;
+    padding: 24px 20px;
     background: var(--bg);
   }
 
   .char-title {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: var(--text);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
 
   .char-sub {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: var(--muted);
-    margin-bottom: 18px;
+    margin-bottom: 22px;
   }
 
-  .char-list { display: flex; flex-direction: column; gap: 10px; }
+  .char-list { display: flex; flex-direction: column; gap: 14px; }
 
   .char-card {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 14px 16px;
+    gap: 16px;
+    padding: 18px 20px;
     background: var(--surface);
     border: 2px solid var(--border);
-    border-radius: 14px;
+    border-radius: 16px;
     cursor: pointer;
     transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
     text-align: left;
@@ -836,13 +836,13 @@
 
   .char-card.selected {
     border-color: var(--accent);
-    background: var(--kuro-bg);
+    background: var(--hover-bg);
     box-shadow: 0 0 0 3px rgba(9,105,218,0.12);
   }
 
   .char-avatar-img {
-    width: 56px;
-    height: 56px;
+    width: 68px;
+    height: 68px;
     border-radius: 50%;
     object-fit: cover;
     flex-shrink: 0;
@@ -852,30 +852,30 @@
   .char-card.selected .char-avatar-img { border-color: var(--accent); }
 
   .char-info { flex: 1; }
-  .char-name { font-size: 1rem; font-weight: 700; margin-bottom: 3px; }
-  .char-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+  .char-name { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
+  .char-desc { font-size: 0.86rem; color: var(--muted); line-height: 1.55; }
 
   .char-sample {
-    font-size: 0.82rem;
+    font-size: 0.86rem;
     color: var(--accent);
-    margin-top: 5px;
+    margin-top: 6px;
     font-style: italic;
-    line-height: 1.5;
-    background: var(--kuro-bg);
-    padding: 5px 8px;
-    border-radius: 6px;
+    line-height: 1.55;
+    background: var(--hover-bg);
+    padding: 7px 10px;
+    border-radius: 8px;
     border-left: 2px solid var(--accent);
   }
 
   .char-confirm-btn {
-    margin-top: 18px;
+    margin-top: 22px;
     width: 100%;
-    padding: 15px;
-    border-radius: 12px;
+    padding: 18px;
+    border-radius: 14px;
     border: none;
     background: var(--accent);
     color: white;
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 700;
     font-family: 'Noto Sans JP', sans-serif;
     cursor: pointer;
@@ -891,7 +891,7 @@
     flex: 1;
     flex-direction: column;
     overflow-y: auto;
-    padding: 20px 16px;
+    padding: 24px 20px;
     background: var(--bg);
   }
 
@@ -924,15 +924,15 @@
   .dash-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 14px;
+    margin-bottom: 18px;
   }
 
   .stat-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
+    border-radius: 14px;
+    padding: 18px;
     box-shadow: var(--shadow);
   }
 
@@ -963,10 +963,10 @@
   .dash-section {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
+    border-radius: 14px;
+    padding: 18px;
     box-shadow: var(--shadow);
-    margin-bottom: 12px;
+    margin-bottom: 14px;
   }
 
   .dash-section-title {
@@ -1051,10 +1051,10 @@
   <div class="header">
     <div class="header-left">
       <div class="header-avatar" id="header-avatar">
-        <img id="header-avatar-img" src="/avatars/kuro.svg" alt="キャラ">
+        <img id="header-avatar-img" src="/images/characters/yassan.png" alt="キャラ">
       </div>
       <div class="header-info">
-        <h1 id="header-char-name">クロちゃん</h1>
+        <h1 id="header-char-name">やっさん先生</h1>
         <p id="header-sub">FP2級 一緒に合格しよ！</p>
       </div>
     </div>
@@ -1073,8 +1073,8 @@
 
     <!-- キャラクターの挨拶 -->
     <div class="char-greeting">
-      <img id="greeting-avatar" src="/avatars/kuro.svg" alt="キャラ" class="greeting-avatar">
-      <div class="speech-bubble" id="speech-bubble">よっしゃ！今日もFP2、一緒にがんばろや！🐾</div>
+      <img id="greeting-avatar" src="/images/characters/yassan.png" alt="キャラ" class="greeting-avatar">
+      <div class="speech-bubble" id="speech-bubble">よっしゃ！今日もFP2、一緒にがんばろや！</div>
     </div>
 
     <div class="mode-toggle">
@@ -1082,7 +1082,7 @@
       <button class="mode-btn" id="mode-app-btn" onclick="setMode('app')">📱 アプリモード</button>
     </div>
 
-    <div style="padding: 12px 16px 0;">
+    <div style="padding: 18px 20px 0;">
       <p class="cat-title">どの分野から練習する？</p>
       <p class="cat-sub">浩之さん、今日もやってこ！💪</p>
 
@@ -1104,7 +1104,7 @@
         <button class="cnt-btn" onclick="setCount(20, this)">20問</button>
       </div>
 
-      <button class="cnt-btn" style="margin-top:12px; font-size:0.85rem; color:var(--muted);" onclick="openCharScreen()">🎭 先生を変える（現在: <span id="current-char-label">クロちゃん</span>）</button>
+      <button class="cnt-btn" style="margin-top:14px; font-size:0.88rem; color:var(--muted);" onclick="openCharScreen()">🎭 先生を変える（現在: <span id="current-char-label">やっさん先生</span>）</button>
     </div>
   </div>
 
@@ -1138,39 +1138,39 @@
     <p class="char-sub">誰に教えてもらう？</p>
     <div class="char-list">
 
-      <div class="char-card selected" id="char-kuro" onclick="selectChar('kuro')">
-        <img src="/avatars/kuro.svg" alt="クロちゃん" class="char-avatar-img">
+      <div class="char-card selected" id="char-yassan" onclick="selectChar('yassan')">
+        <img src="/images/characters/yassan.png" alt="やっさん先生" class="char-avatar-img">
         <div class="char-info">
-          <div class="char-name">クロちゃん 🐾</div>
+          <div class="char-name">やっさん先生 🐾</div>
           <div class="char-desc">関西弁でフレンドリー！楽しく学べるで</div>
           <div class="char-sample">「よっしゃ！正解やで！さすが浩之さん！🎉」</div>
         </div>
       </div>
 
-      <div class="char-card" id="char-bakabon" onclick="selectChar('bakabon')">
-        <img src="/avatars/bakabon.svg" alt="パパ先生" class="char-avatar-img">
+      <div class="char-card" id="char-bon" onclick="selectChar('bon')">
+        <img src="/images/characters/bon.png" alt="ボン先生" class="char-avatar-img">
         <div class="char-info">
-          <div class="char-name">パパ先生 🎩</div>
-          <div class="char-desc">「これでいいのだ！」のほほんとFPを教えてくれる</div>
-          <div class="char-sample">「完璧なのだ！太陽が西から昇ってもこの答えは正解なのだ！」</div>
+          <div class="char-name">ボン先生 🎩</div>
+          <div class="char-desc">上品な大阪弁の若旦那！ほんわかやさしく教えてくれる</div>
+          <div class="char-sample">「ようできましたなぁ！さすがでおます！」</div>
         </div>
       </div>
 
-      <div class="char-card" id="char-shuzo" onclick="selectChar('shuzo')">
-        <img src="/avatars/shuzo.svg" alt="修造風コーチ" class="char-avatar-img">
-        <div class="char-info">
-          <div class="char-name">修造風コーチ 💪</div>
-          <div class="char-desc">全力で熱く背中を押してくれる熱血コーチ</div>
-          <div class="char-sample">「よくやった！！お前ならできる！！諦めるな！！熱くなれ！！」</div>
-        </div>
-      </div>
-
-      <div class="char-card" id="char-gal" onclick="selectChar('gal')">
-        <img src="/avatars/gal.svg" alt="ギャル先生" class="char-avatar-img">
+      <div class="char-card" id="char-gyal" onclick="selectChar('gyal')">
+        <img src="/images/characters/gyal.png" alt="ギャル先生" class="char-avatar-img">
         <div class="char-info">
           <div class="char-name">ギャル先生 💃</div>
           <div class="char-desc">マジで神な教え方！難しいこともえぐくわかりやすく！</div>
           <div class="char-sample">「やばっ！！正解じゃん！！神すぎ！！この調子で絶対合格しちゃおう！！💕」</div>
+        </div>
+      </div>
+
+      <div class="char-card" id="char-sebas" onclick="selectChar('sebas')">
+        <img src="/images/characters/sebas.png" alt="セバス先生" class="char-avatar-img">
+        <div class="char-info">
+          <div class="char-name">セバス先生 🎻</div>
+          <div class="char-desc">執事のように上品で丁寧！落ち着いた敬語でしっかり教えてくれる</div>
+          <div class="char-sample">「さすがでございます、浩之様。正解にございます」</div>
         </div>
       </div>
 
@@ -1246,7 +1246,7 @@
   <div id="finish-screen">
     <div class="finish-inner">
       <div class="finish-avatar">
-        <img id="finish-avatar-img" src="/avatars/kuro.svg" alt="キャラ">
+        <img id="finish-avatar-img" src="/images/characters/yassan.png" alt="キャラ">
       </div>
       <h2>🎉 お疲れ様！</h2>
       <p id="finish-msg"></p>
@@ -1261,7 +1261,7 @@
   <!-- 入力エリア -->
   <div class="input-area" id="input-area">
     <div class="input-row">
-      <textarea class="chat-input" id="chat-input" placeholder="クロちゃんに話しかけてや！" rows="1"></textarea>
+      <textarea class="chat-input" id="chat-input" placeholder="先生に話しかけてや！" rows="1"></textarea>
       <button class="send-btn" id="send-btn" onclick="sendMsg()">↑</button>
     </div>
   </div>
@@ -1281,7 +1281,7 @@ let currentMode = 'chat';
 let appAnswered = false;
 let appScore = 0;
 let appCurrent = 0;
-let selectedChar = 'kuro';
+let selectedChar = 'yassan';
 let pendingCategory = '';
 
 // ===== DIFFICULTY STATE =====
@@ -1440,61 +1440,43 @@ function closeDashboard() {
 
 // ===== CHARACTERS =====
 const CHARS = {
-  kuro: {
-    name: 'クロちゃん',
-    avatar: '/avatars/kuro.svg',
+  yassan: {
+    name: 'やっさん先生',
+    avatar: '/images/characters/yassan.png',
     loading: '考え中やで～🐾',
     greetings: [
       'よっしゃ！今日もFP2、一緒にがんばろや！どの分野から始める？🐾',
       '来てくれたんやな！うれしいわ！今日も全力でサポートするで！',
       '今日もやる気満々やな！その調子でFP2、一緒に攻略しよ！🎉'
     ],
-    prompt: `あなたは「クロちゃん」というFP2級の先生キャラクターです。
+    prompt: `あなたは「やっさん先生」というFP2級の先生キャラクターです。
 【口調】必ず関西弁。「〜やで」「〜やん」「〜やな」「〜やろ」「そやそや！」「ほんまに！」を使う。「です」「ます」は絶対使わない。
-【性格】明るくフレンドリー。絵文字を多用。ボケたりツッコんだりする。
+【性格】明るくフレンドリーな近所のおっちゃん。絵文字を多用。ボケたりツッコんだりする。
 【正解時】「よっしゃ！正解やで！🎉 さすが浩之さん！この調子やで！」
 【不正解時】「惜しい！あと一歩やったのに！😅 でも大丈夫、今覚えたら本番はバッチリや！」
 【解説時】「ポイントはな〜、〜やねん。これ試験によく出るから覚えといてや！」
 【質問への返答】関西弁で短くわかりやすく。たまにボケを入れてもOK。`
   },
-  bakabon: {
-    name: 'パパ先生',
-    avatar: '/avatars/bakabon.svg',
-    loading: 'パパが考え中なのだ…🎩',
+  bon: {
+    name: 'ボン先生',
+    avatar: '/images/characters/bon.png',
+    loading: 'ボンも考えてますでおます…🎩',
     greetings: [
-      'さあ、勉強するのだ！パパと一緒なら怖くないのだ！これでいいのだ！🎩',
-      'キミが来るのを待ってたのだ！今日も一緒に合格を目指すのだ！',
-      'バカボンのパパは天才なのだ！だからキミも絶対合格できるのだ！'
+      'おはようございます！今日も一緒にFP2、励みまひょなぁ！🎩',
+      '来てくれはったんですなぁ！うれしいでおます！今日も気張りまっしょ！',
+      'ええ調子でおますな！この調子でFP2、攻略しまひょ！✨'
     ],
-    prompt: `あなたは「パパ先生」というキャラクターです。FP2級の学習をサポートするAI講師として、ユーザーと対話してください。
-キャラクター設定：ゆるくて、のほほんとした憎めないおじさん講師。FP2級の知識は100%正確。自分のことを「パパ」と呼ぶ。ユーザーのことは「キミ」と呼ぶ。
-語尾ルール（絶対厳守）：すべての文の語尾は必ず「〜なのだ」「〜のだ」で終えること。「です」「ます」などの語尾は絶対に使わない。
-口癖：「これでいいのだ!」「バカボンのパパは天才なのだ!」「反対の賛成なのだ!」
-正解時：「これでいいのだ!キミは天才なのだ!」「完璧なのだ!太陽が西から昇ってもこの答えは正解なのだ!」
-不正解時：「おしいのだ!でも今間違えれば本番で間違えないのだ!ラッキーなのだ!」
-解説時：「いいか、よく聞くのだ。〜なのだ!ここがポイントなのだ!」
-禁止事項：語尾を「なのだ」「のだ」以外にすること（1文たりとも例外なし）。`
+    prompt: `あなたは「ボン先生」という、ええとこの若旦那風FP2級の先生キャラクターです。
+【口調】上品な大阪の商家言葉。「〜でおます」「〜はんなぁ」「〜まひょ」「気張ってくださいなぁ」を多用。「です」「ます」だけの硬い言葉は使わず、必ず柔らかい大阪言葉に変換する。
+【性格】のんびり上品でやさしい。怒らずいつもニコニコ。ちょっと抜けてるところも愛嬌。
+【正解時】「ようできましたなぁ！さすがでおます！その調子でいきまっしょ！」
+【不正解時】「おしおしでおますなぁ！でも大丈夫、今のうちに覚えといたらよろしいですわ！」
+【解説時】「ここがポイントでおますよ〜。〜ということでおます。覚えといてくださいなぁ！」
+【質問への返答】上品な大阪言葉で短くやさしく。`
   },
-  shuzo: {
-    name: '修造風コーチ',
-    avatar: '/avatars/shuzo.svg',
-    loading: '熱く考え中だ！！💪',
-    greetings: [
-      '来た！！今日も絶対できる！！諦めるな！！さあ始めよう！！💪',
-      'お前ならできる！！熱くなれ！！今日も全力でいくぞ！！',
-      '信じろ！！お前の可能性は無限だ！！FP2、一緒に突破するぞ！！🔥'
-    ],
-    prompt: `あなたは松岡修造風のFP2級の熱血コーチキャラクターです。
-【絶対ルール】常に全力で熱い！「！！」を多用。短い文を畳み掛ける。絶対にネガティブにならない。
-【口癖】「お前ならできる！！」「諦めるな！！」「熱くなれ！！」「もっと熱くなれ！！」「その調子だ！！」「信じろ！！」
-【正解時】「よくやった！！正解だ！！お前はやれば出来る！！この瞬間を忘れるな！！その調子で熱くなれ！！」
-【不正解時】「惜しい！！でも諦めるな！！正解は〜だ！！間違えた問題は絶対忘れない！！これがお前の武器になる！！立ち上がれ！！」
-【解説時】「いいか、よく聞け！！〜なんだ！！これは大事だ！！絶対に覚えろ！！お前ならできる！！」
-【禁止】消極的な言葉。常に前向きに叫ぶ。絵文字は💪のみ。`
-  },
-  gal: {
+  gyal: {
     name: 'ギャル先生',
-    avatar: '/avatars/gal.svg',
+    avatar: '/images/characters/gyal.png',
     loading: 'ちょっと待ってよ〜考え中！！💃',
     greetings: [
       'やばっ！今日も来てくれた！！一緒に勉強しよ！絶対合格しちゃおう！！💕',
@@ -1508,29 +1490,46 @@ const CHARS = {
 不正解時：「あーもうちょっとだったじゃん！惜しすぎ！！でも大丈夫！一緒に覚えよ！💕」
 解説時：「要はさ〜、〜ってことなんだよね！これさえ覚えたら無敵じゃん！✨」
 禁止事項：ネガティブな言葉。絵文字を全く使わないこと。`
+  },
+  sebas: {
+    name: 'セバス先生',
+    avatar: '/images/characters/sebas.png',
+    loading: '少々お待ちくださいませ…🎻',
+    greetings: [
+      'おはようございます、浩之様。本日もFP2級の学習をお手伝いいたします。',
+      'お待ちしておりました。今日も着実に進めてまいりましょう。',
+      'ようこそお越しくださいました。この調子で合格まで導いてまいります。'
+    ],
+    prompt: `あなたは「セバス先生」という、執事のように上品で落ち着いたFP2級の先生キャラクターです。
+【口調】常に丁寧な敬語。「〜でございます」「〜でございますね」「かしこまりました」を多用。砕けた言葉やくだけた絵文字は使わない。ユーザーのことは「浩之様」と呼ぶ。
+【性格】冷静で知的、物腰がやわらかい。決して声を荒げず、常に紳士的に励ます。
+【正解時】「さすがでございます、浩之様。正解にございます。その調子でまいりましょう。」
+【不正解時】「惜しゅうございますね。正解は〜でございます。次に活かしましょう。」
+【解説時】「畏れながら、ここがポイントでございます。〜ということにございます。」
+【質問への返答】敬語で簡潔に、上品にお答えする。`
   }
 };
 
 // ===== YARUKI / BUTCHAKE PROMPTS =====
 const YARUKI_PROMPTS = {
-  kuro: `浩之さんが嫌になってる。関西弁で短く熱く励ましてや！絵文字使って明るく！2〜3文でOK。`,
-  bakabon: `浩之さんが嫌になってるのだ。「〜なのだ！」で短く励ますのだ。「これでいいのだ！」を入れるのだ。2〜3文。`,
-  shuzo: `浩之さんが嫌になってる！！「諦めるな！！」から始めて短い文で畳み掛けて背中を押せ！！2〜3文！！`,
-  gal: `浩之さんが嫌になってる！「えー！！やめないでよ！！」から始めて全力で励まして！2〜3文。絵文字使って！`
+  yassan: `浩之さんが嫌になってる。関西弁で短く熱く励ましてや！絵文字使って明るく！2〜3文でOK。`,
+  bon: `浩之さんが嫌になってますでおます。上品な大阪言葉で短く励ましてくださいなぁ。「気張ってくださいなぁ！」を入れておくれやす。2〜3文。`,
+  gyal: `浩之さんが嫌になってる！「えー！！やめないでよ！！」から始めて全力で励まして！2〜3文。絵文字使って！`,
+  sebas: `浩之様がやる気を失っておられます。落ち着いた敬語で短く励ましてください。「諦めてはなりません」のような言葉を入れてください。2〜3文。`
 };
 
 const BUTCHAKE_PROMPTS = {
-  kuro: `問題を関西弁でめちゃくちゃ簡単に言い直してや！「ぶっちゃけな〜、」から始めて難しい言葉は全部やさしく。同じ4択で出し直してや。`,
-  bakabon: `問題を超わかりやすく言い直すのだ！「わかりやすく言うのだ！」から始めて。同じ4択で出し直すのだ。「これでいいのだ！」で締めるのだ。`,
-  shuzo: `問題を熱く超わかりやすく言い直せ！！「聞け！！要はこういうことだ！！」から始めて同じ4択で出し直せ！！`,
-  gal: `問題をギャル語でめちゃくちゃわかりやすく言い直して！「要はさ〜！」から始めて同じ4択で出し直して！「余裕じゃん！！💕」で締めて！`
+  yassan: `問題を関西弁でめちゃくちゃ簡単に言い直してや！「ぶっちゃけな〜、」から始めて難しい言葉は全部やさしく。同じ4択で出し直してや。`,
+  bon: `問題を上品な大阪言葉で超わかりやすく言い直してくださいなぁ。「わかりやすく言いますとなぁ〜」から始めて。同じ4択で出し直してくださいなぁ。`,
+  gyal: `問題をギャル語でめちゃくちゃわかりやすく言い直して！「要はさ〜！」から始めて同じ4択で出し直して！「余裕じゃん！！💕」で締めて！`,
+  sebas: `問題を敬語で丁寧にわかりやすく言い直してください。「噛み砕いて申し上げますと」から始めて、同じ4択で出し直してください。`
 };
 
 // ===== CHARACTER HELPERS =====
-function getCharAvatar() { return CHARS[selectedChar]?.avatar || '/avatars/kuro.svg'; }
+function getCharAvatar() { return CHARS[selectedChar]?.avatar || CHARS.yassan.avatar; }
 function getLoadingText() { return CHARS[selectedChar]?.loading || '考え中…'; }
 function getSystemPrompt(q) {
-  const base = CHARS[selectedChar]?.prompt || CHARS.kuro.prompt;
+  const base = CHARS[selectedChar]?.prompt || CHARS.yassan.prompt;
   return `${base}\n今取り組んでいる問題：「${q ? q.q : ''}」\n解説：「${q ? q.ex : ''}」`;
 }
 
@@ -1830,7 +1829,7 @@ async function yarukiSwitch(btn) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        system: `${CHARS[selectedChar].prompt}\n\n${YARUKI_PROMPTS[selectedChar] || YARUKI_PROMPTS.kuro}`,
+        system: `${CHARS[selectedChar].prompt}\n\n${YARUKI_PROMPTS[selectedChar] || YARUKI_PROMPTS.yassan}`,
         messages: [{ role: 'user', content: 'やる気スイッチを押しました！励ましてください！' }]
       })
     });
@@ -1863,7 +1862,7 @@ async function butchakeMode(q, btn) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        system: `${CHARS[selectedChar].prompt}\n\n${BUTCHAKE_PROMPTS[selectedChar] || BUTCHAKE_PROMPTS.kuro}`,
+        system: `${CHARS[selectedChar].prompt}\n\n${BUTCHAKE_PROMPTS[selectedChar] || BUTCHAKE_PROMPTS.yassan}`,
         messages: [{ role: 'user', content: `以下の問題をぶっちゃけてわかりやすく言い直して、同じ4択で出し直してください。正解は絶対に教えないでください。\n\n問題：${q.q}\n\n${optsText}` }]
       })
     });
@@ -1915,7 +1914,7 @@ function addKuroBubbleWithEx(mainText, exText, afterText) {
   bubble.appendChild(main);
 
   const ex = document.createElement('div');
-  ex.style.cssText = 'margin-top:10px;padding:10px 12px;background:var(--kuro-bg);border-left:3px solid var(--accent);border-radius:6px;color:#0550ae;font-size:0.95rem;line-height:1.75;';
+  ex.style.cssText = 'margin-top:10px;padding:10px 12px;background:var(--hover-bg);border-left:3px solid var(--accent);border-radius:6px;color:#0550ae;font-size:0.95rem;line-height:1.75;';
   ex.textContent = `📝 ${exText}`;
   bubble.appendChild(ex);
 
