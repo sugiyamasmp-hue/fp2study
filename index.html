@@ -788,6 +788,9 @@
 
   .app-next-btn:hover { opacity: 0.85; }
 
+  .app-chat-log { margin-top: 16px; }
+  .app-chat-log:empty { margin-top: 0; }
+
   /* ===== CHARACTER SELECT ===== */
   #char-screen {
     display: none;
@@ -1127,6 +1130,7 @@
       <div class="app-ex" id="app-ex"></div>
       <button class="app-next-btn" id="app-next-btn" onclick="appNextQuestion()">次の問題へ →</button>
     </div>
+    <div id="app-chat-log" class="app-chat-log"></div>
   </div>
 
   <!-- チャット画面 -->
@@ -1277,6 +1281,7 @@ let answered = false;
 let selectedCount = 5;
 let selectedCategory = 'all';
 let conversationHistory = [];
+let appConversationHistory = [];
 let currentMode = 'chat';
 let appAnswered = false;
 let appScore = 0;
@@ -1610,6 +1615,9 @@ async function startApp(cat) {
   selectedCategory = cat;
   hideAllScreens();
   document.getElementById('app-mode-screen').style.display = 'flex';
+  document.getElementById('input-area').style.display = 'block';
+  document.getElementById('app-chat-log').innerHTML = '';
+  appConversationHistory = [];
   appScore = 0;
   appCurrent = 0;
   document.getElementById('app-score').textContent = '0';
@@ -1761,8 +1769,12 @@ function askQuestion() {
 }
 
 // ===== KURO BUBBLE =====
+function getActiveLogScreen() {
+  return document.getElementById(currentMode === 'app' ? 'app-chat-log' : 'chat-screen');
+}
+
 function addKuroBubble(text, showAnswerBtns = false, q = null, showButchake = false) {
-  const screen = document.getElementById('chat-screen');
+  const screen = getActiveLogScreen();
   const row = document.createElement('div');
   row.className = 'msg-row';
 
@@ -1934,7 +1946,7 @@ function addKuroBubbleWithEx(mainText, exText, afterText) {
 
 // ===== USER BUBBLE =====
 function addUserBubble(text) {
-  const screen = document.getElementById('chat-screen');
+  const screen = getActiveLogScreen();
   const row = document.createElement('div');
   row.className = 'msg-row user';
   const avatar = document.createElement('div');
@@ -1989,11 +2001,14 @@ async function sendMsg() {
   const text = input.value.trim();
   if (!text) return;
 
-  if (['1','2','3','4'].includes(text) && !answered && questions[current]) {
+  if (currentMode === 'chat' && ['1','2','3','4'].includes(text) && !answered && questions[current]) {
     input.value = '';
     selectAnswer(Number(text)-1, questions[current]);
     return;
   }
+
+  const history = currentMode === 'app' ? appConversationHistory : conversationHistory;
+  const activeIdx = currentMode === 'app' ? appCurrent : current;
 
   addUserBubble(text);
   input.value = '';
@@ -2002,25 +2017,25 @@ async function sendMsg() {
   const sendBtn = document.getElementById('send-btn');
   sendBtn.disabled = true;
 
-  const screen = document.getElementById('chat-screen');
+  const screen = getActiveLogScreen();
   const loadRow = makeLoadingRow();
   screen.appendChild(loadRow);
   scrollBottom();
 
-  conversationHistory.push({ role: 'user', content: text });
-  const currentQ = questions[current] || questions[questions.length-1];
+  history.push({ role: 'user', content: text });
+  const currentQ = questions[activeIdx] || questions[questions.length-1];
 
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ system: getSystemPrompt(currentQ), messages: conversationHistory })
+      body: JSON.stringify({ system: getSystemPrompt(currentQ), messages: history })
     });
     const data = await res.json();
     document.getElementById('loading-row')?.remove();
     const reply = data.reply || 'ごめん、エラーやわ😅';
     addKuroBubble(reply);
-    conversationHistory.push({ role: 'assistant', content: reply });
+    history.push({ role: 'assistant', content: reply });
   } catch(e) {
     document.getElementById('loading-row')?.remove();
     addKuroBubble('ごめん、エラーやわ😅もう一回聞いてや！');
@@ -2061,7 +2076,7 @@ function backToMenu() {
 }
 
 function scrollBottom() {
-  const screen = document.getElementById('chat-screen');
+  const screen = document.getElementById(currentMode === 'app' ? 'app-mode-screen' : 'chat-screen');
   screen.scrollTop = screen.scrollHeight;
 }
 
