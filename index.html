@@ -1132,6 +1132,7 @@
     <div class="header-right">
       <div class="difficulty-badge" id="difficulty-badge">初級</div>
       <div class="score-badge">正解 <span id="score-disp">0</span> 問</div>
+      <button class="dash-btn" id="voice-toggle-btn" onclick="toggleVoice()" title="音声読み上げ">🔊</button>
       <button class="dash-btn" onclick="openDashboard()" title="ダッシュボード">📊</button>
     </div>
   </div>
@@ -1369,6 +1370,58 @@ let appScore = 0;
 let appCurrent = 0;
 let selectedChar = 'yassan';
 let pendingCategory = '';
+
+// ===== VOICE (TTS) STATE =====
+let voiceEnabled = localStorage.getItem('voiceEnabled') !== 'false';
+let currentAudio = null;
+
+function updateVoiceBtn() {
+  const btn = document.getElementById('voice-toggle-btn');
+  if (btn) btn.textContent = voiceEnabled ? '🔊' : '🔇';
+}
+
+function toggleVoice() {
+  voiceEnabled = !voiceEnabled;
+  localStorage.setItem('voiceEnabled', voiceEnabled);
+  updateVoiceBtn();
+  if (!voiceEnabled && currentAudio) {
+    currentAudio.pause();
+    currentAudio = null;
+  }
+}
+
+function buildQuestionSpeechText(q) {
+  const optsText = q.opts.map((o, i) => `${i + 1}番、${o}`).join('。');
+  return `${q.q}。${optsText}`;
+}
+
+function buildAnswerSpeechText(isCorrect, correctIdx, ex) {
+  const head = isCorrect ? '正解です。' : `不正解です。正解は${correctIdx + 1}番です。`;
+  return `${head}${ex || ''}`;
+}
+
+async function speakText(text) {
+  if (!voiceEnabled || !text) return;
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio = null;
+  }
+  try {
+    const res = await fetch('/api/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, voice: 'alloy' })
+    });
+    if (!res.ok) return;
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    currentAudio = new Audio(url);
+    currentAudio.onended = () => URL.revokeObjectURL(url);
+    currentAudio.play().catch(() => {});
+  } catch (e) {
+    // 読み上げ失敗時は無視（学習の妨げにならないように）
+  }
+}
 
 // ===== DIFFICULTY STATE =====
 let difficulty = 0; // 0=初級 1=中級 2=上級
@@ -1883,6 +1936,7 @@ function appLoadQuestion() {
   document.getElementById('app-ex').style.display = 'none';
   document.getElementById('app-next-btn').style.display = 'none';
   renderStreakDots();
+  speakText(buildQuestionSpeechText(q));
 }
 
 function appAnswer(idx, q) {
@@ -1924,6 +1978,7 @@ function appAnswer(idx, q) {
   nextBtn.textContent = appCurrent + 1 < questions.length ? '次の問題へ →' : '結果を見る！';
   nextBtn.style.display = 'block';
   renderStreakDots();
+  speakText(buildAnswerSpeechText(isCorrect, correctIdx, q.ex));
 }
 
 function appNextQuestion() {
@@ -1985,6 +2040,7 @@ function askQuestion() {
   addKuroBubble(qText, true, q, true);
   document.getElementById('header-sub').textContent = `${current+1}問目 / ${questions.length}問`;
   scrollBottom();
+  speakText(buildQuestionSpeechText(q));
 }
 
 // ===== KURO BUBBLE =====
@@ -2206,6 +2262,7 @@ function selectAnswer(idx, q) {
 
   recordAnswer(isCorrect);
   recordAnswerToServer(q, isCorrect);
+  speakText(buildAnswerSpeechText(isCorrect, correctIdx, q.ex));
 
   const nextBtn = document.createElement('button');
   nextBtn.className = 'next-btn';
@@ -2314,6 +2371,7 @@ chatInput.addEventListener('keydown', (e) => {
 // ===== INIT =====
 updateHeaderChar();
 updateDifficultyUI();
+updateVoiceBtn();
 </script>
 </body>
 </html>

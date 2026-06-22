@@ -3,3 +3,5 @@
 node_modules/
 questions_export.json
 questions_generated.json
+questions_generated_reviewed.json
+questions_generated_excluded.json
