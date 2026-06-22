@@ -1,0 +1,5 @@
+.vercel
+.env
+node_modules/
+questions_export.json
+questions_generated.json
