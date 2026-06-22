@@ -1373,21 +1373,51 @@ let pendingCategory = '';
 
 // ===== VOICE (TTS) STATE =====
 let voiceEnabled = localStorage.getItem('voiceEnabled') !== 'false';
-let currentAudio = null;
+let audioCtx = null;
+let audioCtxUnlocked = false;
+let currentSource = null;
+
+function getAudioContext() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioCtx;
+}
+
+// iOS等は最初のユーザー操作内で同期的にAudioContextを使わないとロックされたままになるため、
+// ページ最初のタップ／クリックで無音バッファを再生してアンロックし、以後はこのContextを使い回す
+function unlockAudioContext() {
+  if (audioCtxUnlocked) return;
+  const ctx = getAudioContext();
+  if (ctx.state === 'suspended') ctx.resume();
+  const buffer = ctx.createBuffer(1, 1, 22050);
+  const source = ctx.createBufferSource();
+  source.buffer = buffer;
+  source.connect(ctx.destination);
+  source.start(0);
+  audioCtxUnlocked = true;
+}
+['touchend', 'click'].forEach(evt => {
+  document.addEventListener(evt, unlockAudioContext, { once: true, passive: true });
+});
 
 function updateVoiceBtn() {
   const btn = document.getElementById('voice-toggle-btn');
   if (btn) btn.textContent = voiceEnabled ? '🔊' : '🔇';
 }
 
+function stopCurrentAudio() {
+  if (currentSource) {
+    try { currentSource.stop(); } catch (e) {}
+    currentSource = null;
+  }
+}
+
 function toggleVoice() {
   voiceEnabled = !voiceEnabled;
   localStorage.setItem('voiceEnabled', voiceEnabled);
   updateVoiceBtn();
-  if (!voiceEnabled && currentAudio) {
-    currentAudio.pause();
-    currentAudio = null;
-  }
+  if (!voiceEnabled) stopCurrentAudio();
 }
 
 function buildQuestionSpeechText(q) {
@@ -1402,10 +1432,7 @@ function buildAnswerSpeechText(isCorrect, correctIdx, ex) {
 
 async function speakText(text) {
   if (!voiceEnabled || !text) return;
-  if (currentAudio) {
-    currentAudio.pause();
-    currentAudio = null;
-  }
+  stopCurrentAudio();
   try {
     const res = await fetch('/api/tts', {
       method: 'POST',
@@ -1413,11 +1440,16 @@ async function speakText(text) {
       body: JSON.stringify({ text, voice: 'alloy' })
     });
     if (!res.ok) return;
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    currentAudio = new Audio(url);
-    currentAudio.onended = () => URL.revokeObjectURL(url);
-    currentAudio.play().catch(() => {});
+    const arrayBuffer = await res.arrayBuffer();
+    const ctx = getAudioContext();
+    if (ctx.state === 'suspended') await ctx.resume();
+    const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+    const source = ctx.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(ctx.destination);
+    source.onended = () => { if (currentSource === source) currentSource = null; };
+    source.start(0);
+    currentSource = source;
   } catch (e) {
     // 読み上げ失敗時は無視（学習の妨げにならないように）
   }
