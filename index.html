@@ -1446,7 +1446,10 @@ async function speakText(text) {
     const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
     const source = ctx.createBufferSource();
     source.buffer = audioBuffer;
-    source.connect(ctx.destination);
+    const gainNode = ctx.createGain();
+    gainNode.gain.value = 3;
+    source.connect(gainNode);
+    gainNode.connect(ctx.destination);
     source.onended = () => { if (currentSource === source) currentSource = null; };
     source.start(0);
     currentSource = source;
