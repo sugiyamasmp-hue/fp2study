@@ -36,8 +36,9 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { category, limit = 10, mode } = req.query;
+    const { category, limit = 10, mode, set } = req.query;
     const limitNum = Number(limit);
+    const collectionName = set === 'ox' ? 'questions_ox' : 'questions';
 
     // 復習モード：間違えた問題を優先して出題
     if (mode === 'review') {
@@ -54,11 +55,11 @@ module.exports = async function handler(req, res) {
 
     if (!category || category === 'all') {
       // 全分野
-      const snapshot = await db.collection('questions').limit(limitNum * 3).get();
+      const snapshot = await db.collection(collectionName).limit(limitNum * 3).get();
       snapshot.forEach(doc => questions.push({ id: doc.id, ...doc.data() }));
     } else if (category === '模擬試験') {
       // 模擬試験系は前方一致
-      const snapshot = await db.collection('questions').get();
+      const snapshot = await db.collection(collectionName).get();
       snapshot.forEach(doc => {
         const data = doc.data();
         if (data.cat && data.cat.startsWith('模擬試験')) {
@@ -69,7 +70,7 @@ module.exports = async function handler(req, res) {
       // 複数cat対応（カンマ区切り）。分野ごとの現在のレベルに応じて出題を絞り込む
       const cats = category.split(',').map(c => c.trim());
       for (const cat of cats) {
-        const snapshot = await db.collection('questions').where('cat', '==', cat).limit(limitNum * 3).get();
+        const snapshot = await db.collection(collectionName).where('cat', '==', cat).limit(limitNum * 3).get();
         const docs = [];
         snapshot.forEach(doc => docs.push({ id: doc.id, ...doc.data() }));
         const level = await getCategoryLevel(cat);

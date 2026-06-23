@@ -835,6 +835,23 @@
   .app-chat-log { margin-top: 16px; }
   .app-chat-log:empty { margin-top: 0; }
 
+  /* ===== HANDS-FREE MODE (○×) ===== */
+  #hf-mode-screen {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 20px 20px;
+    background: var(--bg);
+  }
+
+  .hf-status {
+    margin-top: 14px;
+    font-size: 0.95rem;
+    color: var(--muted);
+    text-align: center;
+  }
+
   /* ===== CHARACTER SELECT ===== */
   #char-screen {
     display: none;
@@ -1158,6 +1175,7 @@
     <div class="mode-toggle">
       <button class="mode-btn active" id="mode-chat-btn" onclick="setMode('chat')">💬 チャットモード</button>
       <button class="mode-btn" id="mode-app-btn" onclick="setMode('app')">📱 アプリモード</button>
+      <button class="mode-btn" id="mode-hf-btn" onclick="setMode('hf')">🎙️ ハンズフリー</button>
     </div>
 
     <div style="padding: 18px 20px 0;">
@@ -1207,6 +1225,24 @@
       <button class="app-next-btn" id="app-next-btn" onclick="appNextQuestion()">次の問題へ →</button>
     </div>
     <div id="app-chat-log" class="app-chat-log"></div>
+  </div>
+
+  <!-- ハンズフリーモード画面（○×） -->
+  <div id="hf-mode-screen">
+    <div class="app-header-bar">
+      <div class="app-score-bar">
+        問題 <span id="hf-q-num">1</span> / <span id="hf-q-total">5</span>　正解 <span id="hf-score">0</span> 問
+      </div>
+      <div class="app-diff-bar" id="hf-diff-bar">初級</div>
+    </div>
+    <div class="q-card">
+      <div class="q-label" id="hf-q-label">🎙️ 問題 1</div>
+      <div class="q-text" id="hf-q-text"></div>
+      <div class="hf-status" id="hf-status"></div>
+      <div class="app-result" id="hf-result"></div>
+      <div class="app-ex" id="hf-ex"></div>
+      <button class="app-next-btn" id="hf-next-btn" onclick="hfNextQuestion()">次の問題へ →</button>
+    </div>
   </div>
 
   <!-- チャット画面 -->
@@ -1368,6 +1404,9 @@ let currentMode = 'chat';
 let appAnswered = false;
 let appScore = 0;
 let appCurrent = 0;
+let hfScore = 0;
+let hfCurrent = 0;
+let hfAnswered = false;
 let selectedChar = 'yassan';
 let pendingCategory = '';
 
@@ -1421,12 +1460,16 @@ function toggleVoice() {
 }
 
 function buildQuestionSpeechText(q) {
-  const optsText = q.opts.map((o, i) => `${i + 1}番、${o}`).join('。');
-  return `${q.q}。${optsText}`;
+  return q.q;
 }
 
 function buildAnswerSpeechText(isCorrect, correctIdx, ex) {
   const head = isCorrect ? '正解です。' : `不正解です。正解は${correctIdx + 1}番です。`;
+  return `${head}${ex || ''}`;
+}
+
+function buildOxAnswerSpeechText(isCorrect, correctIdx, ex) {
+  const head = isCorrect ? '正解です。' : `不正解です。正解は${correctIdx === 0 ? '○' : '×'}です。`;
   return `${head}${ex || ''}`;
 }
 
@@ -1572,6 +1615,12 @@ function updateDifficultyUI() {
   if (ab) {
     ab.textContent = info.label;
     ab.className = 'app-diff-bar' + (info.cls ? ' ' + info.cls : '');
+  }
+  // hands-free mode bar
+  const hb2 = document.getElementById('hf-diff-bar');
+  if (hb2) {
+    hb2.textContent = info.label;
+    hb2.className = 'app-diff-bar' + (info.cls ? ' ' + info.cls : '');
   }
   // streak dots in app mode
   renderStreakDots();
@@ -1888,6 +1937,7 @@ function setMode(mode) {
   currentMode = mode;
   document.getElementById('mode-chat-btn').classList.toggle('active', mode === 'chat');
   document.getElementById('mode-app-btn').classList.toggle('active', mode === 'app');
+  document.getElementById('mode-hf-btn').classList.toggle('active', mode === 'hf');
 }
 
 function startByMode(cat) {
@@ -1895,6 +1945,8 @@ function startByMode(cat) {
     pendingCategory = cat;
     hideAllScreens();
     document.getElementById('char-screen').style.display = 'flex';
+  } else if (currentMode === 'hf') {
+    startHandsFree(cat);
   } else {
     startApp(cat);
   }
@@ -1902,7 +1954,7 @@ function startByMode(cat) {
 
 // ===== HELPERS =====
 function hideAllScreens() {
-  ['category-screen','char-screen','chat-screen','app-mode-screen',
+  ['category-screen','char-screen','chat-screen','app-mode-screen','hf-mode-screen',
    'dashboard-screen','finish-screen'].forEach(id => {
     document.getElementById(id).style.display = 'none';
   });
@@ -1911,10 +1963,11 @@ function hideAllScreens() {
 }
 
 // ===== QUESTION FETCH HELPER =====
-function buildQuestionsUrl(cat, limitNum) {
-  if (cat === 'review') return `/api/questions?limit=${limitNum}&mode=review`;
+function buildQuestionsUrl(cat, limitNum, set) {
+  const setParam = set ? `&set=${set}` : '';
+  if (cat === 'review') return `/api/questions?limit=${limitNum}&mode=review${setParam}`;
   const catParam = cat === 'all' ? '' : `&category=${encodeURIComponent(cat)}`;
-  return `/api/questions?limit=${limitNum}${catParam}`;
+  return `/api/questions?limit=${limitNum}${catParam}${setParam}`;
 }
 
 // ===== APP MODE =====
@@ -2024,6 +2077,103 @@ function appNextQuestion() {
     showFinish();
   } else {
     appLoadQuestion();
+  }
+}
+
+// ===== HANDS-FREE MODE (○×) =====
+async function startHandsFree(cat) {
+  selectedCategory = cat;
+  hideAllScreens();
+  document.getElementById('hf-mode-screen').style.display = 'flex';
+  document.getElementById('input-area').style.display = 'block';
+  hfScore = 0;
+  hfCurrent = 0;
+  document.getElementById('hf-score').textContent = '0';
+  document.getElementById('score-disp').textContent = '0';
+  updateDifficultyUI();
+
+  try {
+    const res = await fetch(buildQuestionsUrl(cat, selectedCount, 'ox'));
+    const data = await res.json();
+    if (!data.questions || data.questions.length === 0) {
+      alert(data.reviewEmpty ? 'まだ間違えた問題がないで！えらいやん！😆' : '問題が見つからんかったわ！別の分野を試してや！');
+      backToMenu();
+      return;
+    }
+    questions = data.questions;
+    document.getElementById('hf-q-total').textContent = questions.length;
+    hfLoadQuestion();
+  } catch(e) {
+    alert('エラーが出たわ！もう一回試してや！');
+    backToMenu();
+  }
+}
+
+async function hfLoadQuestion() {
+  hfAnswered = false;
+  const q = questions[hfCurrent];
+  document.getElementById('hf-q-label').textContent = `🎙️ 問題 ${hfCurrent + 1}`;
+  document.getElementById('hf-q-text').textContent = q.q;
+  document.getElementById('hf-q-num').textContent = hfCurrent + 1;
+  document.getElementById('hf-score').textContent = hfScore;
+  document.getElementById('header-sub').textContent = `${hfCurrent+1}問目 / ${questions.length}問`;
+
+  document.getElementById('hf-result').style.display = 'none';
+  document.getElementById('hf-ex').style.display = 'none';
+  document.getElementById('hf-next-btn').style.display = 'none';
+  document.getElementById('hf-status').textContent = '🔊 読み上げ中…';
+
+  await speakText(`${q.q}。○か×か？`);
+  if (!hfAnswered) document.getElementById('hf-status').textContent = '👂 「○」か「×」で答えてや！';
+}
+
+function hfAnswer(choiceText, q) {
+  if (hfAnswered) return;
+  hfAnswered = true;
+
+  const userIdx = choiceText === '○' ? 0 : 1;
+  const correctIdx = Number(q.ans);
+  const isCorrect = userIdx === correctIdx;
+  showAmadoReaction(isCorrect);
+
+  const resultEl = document.getElementById('hf-result');
+  const exEl = document.getElementById('hf-ex');
+
+  if (isCorrect) {
+    hfScore++;
+    document.getElementById('hf-score').textContent = hfScore;
+    document.getElementById('score-disp').textContent = hfScore;
+    resultEl.className = 'app-result ok';
+    resultEl.textContent = '🎉 正解！さすが浩之さん！';
+    onCorrect();
+  } else {
+    resultEl.className = 'app-result ng';
+    resultEl.textContent = `😅 惜しい！正解は${correctIdx === 0 ? '○' : '×'}！`;
+    onWrong();
+  }
+
+  recordAnswer(isCorrect);
+  recordAnswerToServer(q, isCorrect);
+  document.getElementById('hf-status').textContent = '';
+  resultEl.style.display = 'block';
+  exEl.textContent = `📝 ${q.ex}`;
+  exEl.style.display = 'block';
+
+  const nextBtn = document.getElementById('hf-next-btn');
+  nextBtn.textContent = hfCurrent + 1 < questions.length ? '次の問題へ →' : '結果を見る！';
+  nextBtn.style.display = 'block';
+
+  speakText(buildOxAnswerSpeechText(isCorrect, correctIdx, q.ex));
+}
+
+function hfNextQuestion() {
+  hfCurrent++;
+  if (hfCurrent >= questions.length) {
+    score = hfScore;
+    hideAllScreens();
+    showFinish();
+  } else {
+    hfLoadQuestion();
   }
 }
 
@@ -2320,8 +2470,14 @@ async function sendMsg() {
     return;
   }
 
+  if (currentMode === 'hf' && ['○','×'].includes(text) && !hfAnswered && questions[hfCurrent]) {
+    input.value = '';
+    hfAnswer(text, questions[hfCurrent]);
+    return;
+  }
+
   const history = currentMode === 'app' ? appConversationHistory : conversationHistory;
-  const activeIdx = currentMode === 'app' ? appCurrent : current;
+  const activeIdx = currentMode === 'app' ? appCurrent : currentMode === 'hf' ? hfCurrent : current;
 
   addUserBubble(text);
   input.value = '';
@@ -2398,6 +2554,12 @@ const chatInput = document.getElementById('chat-input');
 chatInput.addEventListener('input', () => {
   chatInput.style.height = 'auto';
   chatInput.style.height = Math.min(chatInput.scrollHeight, 130) + 'px';
+  const text = chatInput.value.trim();
+  if (['1番','2番','3番','4番'].includes(text)) {
+    sendMsg(); // 自動送信！
+  } else if (currentMode === 'hf' && ['○','×'].includes(text)) {
+    sendMsg(); // 自動送信！
+  }
 });
 chatInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
