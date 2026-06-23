@@ -1473,6 +1473,16 @@ function buildOxAnswerSpeechText(isCorrect, correctIdx, ex) {
   return `${head}${ex || ''}`;
 }
 
+// ハンズフリーモードの○×判定。音声入力の表記揺れ（まる／丸／バツ／ばつ／×／✕など）を吸収する
+const HF_MARU_WORDS = ['○', 'まる', '丸', 'マル'];
+const HF_BATSU_WORDS = ['×', '✕', 'ばつ', 'バツ'];
+
+function normalizeOxInput(text) {
+  if (HF_MARU_WORDS.includes(text)) return '○';
+  if (HF_BATSU_WORDS.includes(text)) return '×';
+  return null;
+}
+
 async function speakText(text) {
   if (!voiceEnabled || !text) return;
   stopCurrentAudio();
@@ -2470,9 +2480,10 @@ async function sendMsg() {
     return;
   }
 
-  if (currentMode === 'hf' && ['○','×'].includes(text) && !hfAnswered && questions[hfCurrent]) {
+  const hfChoice = normalizeOxInput(text);
+  if (currentMode === 'hf' && hfChoice && !hfAnswered && questions[hfCurrent]) {
     input.value = '';
-    hfAnswer(text, questions[hfCurrent]);
+    hfAnswer(hfChoice, questions[hfCurrent]);
     return;
   }
 
@@ -2557,7 +2568,7 @@ chatInput.addEventListener('input', () => {
   const text = chatInput.value.trim();
   if (['1番','2番','3番','4番'].includes(text)) {
     sendMsg(); // 自動送信！
-  } else if (currentMode === 'hf' && ['○','×'].includes(text)) {
+  } else if (currentMode === 'hf' && normalizeOxInput(text)) {
     sendMsg(); // 自動送信！
   }
 });
