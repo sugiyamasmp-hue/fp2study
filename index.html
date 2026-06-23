@@ -1411,7 +1411,8 @@ let selectedChar = 'yassan';
 let pendingCategory = '';
 
 // ===== VOICE (TTS) STATE =====
-let voiceEnabled = localStorage.getItem('voiceEnabled') !== 'false';
+let voiceEnabled = true;
+try { voiceEnabled = localStorage.getItem('voiceEnabled') !== 'false'; } catch (e) {}
 let audioCtx = null;
 let audioCtxUnlocked = false;
 let currentSource = null;
@@ -1454,7 +1455,7 @@ function stopCurrentAudio() {
 
 function toggleVoice() {
   voiceEnabled = !voiceEnabled;
-  localStorage.setItem('voiceEnabled', voiceEnabled);
+  try { localStorage.setItem('voiceEnabled', voiceEnabled); } catch (e) {}
   updateVoiceBtn();
   if (!voiceEnabled) stopCurrentAudio();
 }
