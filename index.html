@@ -2376,10 +2376,10 @@ function addKuroBubble(text, showAnswerBtns = false, q = null, showButchake = fa
 
 // ===== TYPEWRITER EFFECT =====
 function getTypingDelay(ch) {
-  if (ch === '\n') return 260;
-  if ('。！？!?'.includes(ch)) return 200;
-  if ('、,'.includes(ch)) return 110;
-  return 26;
+  if (ch === '\n') return 1040;
+  if ('。！？!?'.includes(ch)) return 800;
+  if ('、,'.includes(ch)) return 440;
+  return 104;
 }
 
 function typeIntoBubble(el, text, onDone) {
