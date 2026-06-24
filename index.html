@@ -434,6 +434,21 @@
     font-style: italic;
   }
 
+  .typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.05em;
+    margin-left: 2px;
+    vertical-align: -2px;
+    background: var(--muted);
+    animation: typing-blink 0.9s steps(1) infinite;
+  }
+
+  @keyframes typing-blink {
+    0%, 50% { opacity: 1; }
+    50.01%, 100% { opacity: 0; }
+  }
+
   .ans-btns {
     display: flex;
     gap: 10px;
@@ -2318,42 +2333,76 @@ function addKuroBubble(text, showAnswerBtns = false, q = null, showButchake = fa
 
   const bubble = document.createElement('div');
   bubble.className = 'bubble kuro';
-  bubble.textContent = text;
-
-  if (showAnswerBtns && q) {
-    const btnsDiv = document.createElement('div');
-    btnsDiv.className = 'ans-btns';
-    btnsDiv.id = 'ans-btns';
-    [1,2,3,4].forEach(n => {
-      const btn = document.createElement('button');
-      btn.className = 'ans-btn';
-      btn.textContent = `${n}番`;
-      btn.onclick = () => selectAnswer(n-1, q);
-      btnsDiv.appendChild(btn);
-    });
-    bubble.appendChild(btnsDiv);
-  }
-
-  if (showButchake && q) {
-    const bBtn = document.createElement('button');
-    bBtn.className = 'butchake-btn';
-    bBtn.id = 'butchake-btn';
-    bBtn.textContent = '🔥 ぶっちゃけて！';
-    bBtn.onclick = () => butchakeMode(q, bBtn);
-    bubble.appendChild(bBtn);
-
-    const yBtn = document.createElement('button');
-    yBtn.className = 'yaruki-btn';
-    yBtn.id = 'yaruki-btn';
-    yBtn.textContent = '💪 やる気スイッチ！';
-    yBtn.onclick = () => yarukiSwitch(yBtn);
-    bubble.appendChild(yBtn);
-  }
 
   row.appendChild(avatar);
   row.appendChild(bubble);
   screen.appendChild(row);
   scrollBottom();
+
+  typeIntoBubble(bubble, text, () => {
+    if (showAnswerBtns && q) {
+      const btnsDiv = document.createElement('div');
+      btnsDiv.className = 'ans-btns';
+      btnsDiv.id = 'ans-btns';
+      [1,2,3,4].forEach(n => {
+        const btn = document.createElement('button');
+        btn.className = 'ans-btn';
+        btn.textContent = `${n}番`;
+        btn.onclick = () => selectAnswer(n-1, q);
+        btnsDiv.appendChild(btn);
+      });
+      bubble.appendChild(btnsDiv);
+    }
+
+    if (showButchake && q) {
+      const bBtn = document.createElement('button');
+      bBtn.className = 'butchake-btn';
+      bBtn.id = 'butchake-btn';
+      bBtn.textContent = '🔥 ぶっちゃけて！';
+      bBtn.onclick = () => butchakeMode(q, bBtn);
+      bubble.appendChild(bBtn);
+
+      const yBtn = document.createElement('button');
+      yBtn.className = 'yaruki-btn';
+      yBtn.id = 'yaruki-btn';
+      yBtn.textContent = '💪 やる気スイッチ！';
+      yBtn.onclick = () => yarukiSwitch(yBtn);
+      bubble.appendChild(yBtn);
+    }
+
+    scrollBottom();
+  });
+}
+
+// ===== TYPEWRITER EFFECT =====
+function getTypingDelay(ch) {
+  if (ch === '\n') return 260;
+  if ('。！？!?'.includes(ch)) return 200;
+  if ('、,'.includes(ch)) return 110;
+  return 26;
+}
+
+function typeIntoBubble(el, text, onDone) {
+  const chars = Array.from(text);
+  const textNode = document.createTextNode('');
+  const cursor = document.createElement('span');
+  cursor.className = 'typing-cursor';
+  el.appendChild(textNode);
+  el.appendChild(cursor);
+
+  let i = 0;
+  function step() {
+    if (i >= chars.length) {
+      cursor.remove();
+      if (onDone) onDone();
+      return;
+    }
+    textNode.data += chars[i];
+    i++;
+    scrollBottom();
+    setTimeout(step, getTypingDelay(chars[i - 1]));
+  }
+  step();
 }
 
 // ===== YARUKI SWITCH =====
@@ -2452,26 +2501,30 @@ function addKuroBubbleWithEx(mainText, exText, afterText) {
   const bubble = document.createElement('div');
   bubble.className = 'bubble kuro';
 
-  const main = document.createElement('div');
-  main.textContent = mainText;
-  bubble.appendChild(main);
-
-  const ex = document.createElement('div');
-  ex.style.cssText = 'margin-top:10px;padding:10px 12px;background:var(--hover-bg);border-left:3px solid var(--accent);border-radius:6px;color:#0550ae;font-size:0.95rem;line-height:1.75;';
-  ex.textContent = `📝 ${exText}`;
-  bubble.appendChild(ex);
-
-  if (afterText) {
-    const after = document.createElement('div');
-    after.style.marginTop = '10px';
-    after.textContent = afterText;
-    bubble.appendChild(after);
-  }
-
   row.appendChild(avatar);
   row.appendChild(bubble);
   screen.appendChild(row);
   scrollBottom();
+
+  const main = document.createElement('div');
+  bubble.appendChild(main);
+
+  typeIntoBubble(main, mainText, () => {
+    const ex = document.createElement('div');
+    ex.style.cssText = 'margin-top:10px;padding:10px 12px;background:var(--hover-bg);border-left:3px solid var(--accent);border-radius:6px;color:#0550ae;font-size:0.95rem;line-height:1.75;';
+    bubble.appendChild(ex);
+
+    typeIntoBubble(ex, `📝 ${exText}`, () => {
+      if (afterText) {
+        const after = document.createElement('div');
+        after.style.marginTop = '10px';
+        bubble.appendChild(after);
+        typeIntoBubble(after, afterText, scrollBottom);
+      } else {
+        scrollBottom();
+      }
+    });
+  });
 }
 
 // ===== USER BUBBLE =====
