@@ -1574,7 +1574,10 @@ async function speakText(text) {
     gainNode.gain.value = 3;
     source.connect(gainNode);
     gainNode.connect(ctx.destination);
-    source.onended = () => { if (currentSource === source) currentSource = null; };
+    source.onended = () => {
+      if (currentSource === source) currentSource = null;
+      if (currentMode === 'hf') startMicRecognition();
+    };
     source.start(0);
     currentSource = source;
   } catch (e) {
@@ -2687,16 +2690,9 @@ function stopMic() {
   }
 }
 
-function toggleMic() {
+function startMicRecognition() {
   const SpeechRecognitionCtor = getSpeechRecognitionCtor();
-  if (!SpeechRecognitionCtor) {
-    alert('この端末・ブラウザは音声入力に対応していないみたいや。テキストで入力してや！');
-    return;
-  }
-  if (micListening) {
-    stopMic();
-    return;
-  }
+  if (!SpeechRecognitionCtor || micListening) return;
 
   const micBtn = document.getElementById('mic-btn');
   micRecognition = new SpeechRecognitionCtor();
@@ -2720,6 +2716,18 @@ function toggleMic() {
   };
 
   micRecognition.start();
+}
+
+function toggleMic() {
+  if (!getSpeechRecognitionCtor()) {
+    alert('この端末・ブラウザは音声入力に対応していないみたいや。テキストで入力してや！');
+    return;
+  }
+  if (micListening) {
+    stopMic();
+    return;
+  }
+  startMicRecognition();
 }
 
 // ===== TEXTAREA AUTO RESIZE =====
