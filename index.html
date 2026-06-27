@@ -9,10 +9,14 @@
 body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;min-height:100vh}
 .bg{position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(255,140,0,0.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(255,80,80,0.06) 0%,transparent 60%);pointer-events:none;z-index:0}
 .container{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:20px 16px 40px}
+
+/* ロゴ */
 .logo-wrap{display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-top:8px}
 .logo-icon{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#ff8c00,#ff4500);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#fff;box-shadow:0 4px 20px rgba(255,140,0,0.4)}
 .logo-title{font-size:20px;font-weight:800;color:#fff}
 .logo-sub{font-size:11px;color:#ff8c00;letter-spacing:0.1em;font-weight:600}
+
+/* カード */
 .card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:24px 20px;margin-bottom:16px}
 .tag-row{display:flex;gap:8px;margin-bottom:16px}
 .tag{background:rgba(255,140,0,0.15);border:1px solid rgba(255,140,0,0.3);color:#ff8c00;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700}
@@ -24,16 +28,10 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 .stat-num{font-size:22px;font-weight:800;color:#ff8c00}
 .stat-label{font-size:11px;color:#666;margin-top:2px}
 .stat-divider{width:1px;height:30px;background:rgba(255,255,255,0.08)}
-
-
-
-
-
-
 .start-btn{width:100%;padding:14px 0;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:14px;color:#fff;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(255,140,0,0.35);margin-bottom:10px}
 .start-btn:hover{opacity:0.9}
-.hf-btn-home{width:100%;padding:13px 0;background:transparent;border:2px solid #ff8c00;border-radius:14px;color:#ff8c00;font-size:15px;font-weight:800;cursor:pointer}
-.hf-btn-home:hover{background:rgba(255,140,0,0.1)}
+.outline-btn{width:100%;padding:13px 0;background:transparent;border:2px solid #ff8c00;border-radius:14px;color:#ff8c00;font-size:15px;font-weight:800;cursor:pointer}
+.outline-btn:hover{background:rgba(255,140,0,0.1)}
 .history-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:16px 20px;margin-bottom:16px}
 .history-title{font-size:13px;font-weight:700;color:#888;margin-bottom:10px}
 .history-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
@@ -43,7 +41,48 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 .screen{display:none}
 .screen.on{display:block}
 
-/* クイズ共通 */
+/* チャットモード */
+.chat-header-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-top:8px}
+.chat-avatar{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#1a1a3e,#0f3460);border:2px solid #ff8c00;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.chat-name{font-size:15px;font-weight:800;color:#fff}
+.chat-status{font-size:11px;color:#ff8c00}
+.q-progress{font-size:12px;color:#555;margin-left:auto;font-weight:700}
+
+.chat-feed{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;min-height:200px}
+
+.bubble-wrap-bot{display:flex;align-items:flex-start;gap:8px}
+.bubble-wrap-user{display:flex;justify-content:flex-end}
+.bubble-avatar{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#1a1a3e,#0f3460);border:1px solid #ff8c0055;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;margin-top:2px}
+.bubble-bot{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:4px 16px 16px 16px;padding:12px 14px;font-size:14px;line-height:1.8;color:#e8e8e8;max-width:88%;white-space:pre-wrap}
+.bubble-user{background:linear-gradient(135deg,#ff8c00,#ff4500);border-radius:16px 4px 16px 16px;padding:12px 14px;font-size:14px;line-height:1.8;color:#fff;max-width:88%}
+
+/* タイピングカーソル */
+.typing-cursor{display:inline-block;width:2px;height:1em;background:#ff8c00;margin-left:2px;animation:blink 0.7s step-end infinite;vertical-align:text-bottom}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* 選択肢 */
+.opts-wrap{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.opt-btn{display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 14px;color:#e8e8e8;font-size:13px;text-align:left;cursor:pointer;line-height:1.7;width:100%;transition:background 0.15s}
+.opt-btn:hover{background:rgba(255,140,0,0.1);border-color:rgba(255,140,0,0.3)}
+.opt-btn.correct{background:rgba(0,200,100,0.12);border-color:rgba(0,200,100,0.5)}
+.opt-btn.wrong{background:rgba(255,60,60,0.12);border-color:rgba(255,60,60,0.5)}
+.opt-btn.dim{opacity:0.35}
+.opt-btn:disabled{cursor:default}
+.opt-num{min-width:24px;height:24px;border-radius:7px;background:rgba(255,140,0,0.15);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#ff8c00;flex-shrink:0;margin-top:1px}
+
+/* アクションエリア */
+.action-area{margin-bottom:12px}
+.action-btn{width:100%;padding:13px 0;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 3px 14px rgba(255,140,0,0.3)}
+.action-btn:hover{opacity:0.9}
+
+/* チャット入力 */
+.chat-input-area{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:10px 12px;display:flex;gap:8px;align-items:center}
+.chat-input{flex:1;background:transparent;border:none;font-size:14px;color:#fff;outline:none;padding:4px 0}
+.chat-input::placeholder{color:#444}
+.chat-send{padding:8px 16px;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:9px;color:#fff;font-size:13px;font-weight:800;cursor:pointer}
+.chat-send:disabled{opacity:0.4;cursor:not-allowed}
+
+/* 通常クイズ */
 .progress-bar{height:4px;background:rgba(255,255,255,0.08);border-radius:4px;margin-bottom:16px;overflow:hidden}
 .progress-fill{height:100%;background:linear-gradient(90deg,#ff8c00,#ff4500);border-radius:4px;transition:width 0.4s ease}
 .quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
@@ -51,40 +90,22 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 .q-count{font-size:13px;color:#666;font-weight:700}
 .question-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:18px 16px;margin-bottom:14px}
 .question-text{font-size:14px;line-height:1.8;color:#e8e8e8;white-space:pre-wrap}
-.options-wrap{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
-.opt-btn{display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 14px;color:#e8e8e8;font-size:13px;text-align:left;cursor:pointer;line-height:1.6;width:100%}
-.opt-btn:hover{background:rgba(255,255,255,0.08)}
-.opt-btn.correct{background:rgba(0,200,100,0.1);border-color:rgba(0,200,100,0.4)}
-.opt-btn.wrong{background:rgba(255,60,60,0.1);border-color:rgba(255,60,60,0.4)}
-.opt-btn.dim{opacity:0.4}
-.opt-btn:disabled{cursor:default}
-.opt-num{min-width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#ff8c00;flex-shrink:0;margin-top:1px}
 .ex-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:16px;margin-bottom:8px}
 .ex-label{font-size:18px;font-weight:800;margin-bottom:10px;color:#fff}
 .ex-text{font-size:13px;line-height:1.9;color:#ccc;white-space:pre-wrap;margin-bottom:14px}
-.chat-area{background:rgba(0,0,0,0.3);border:1px solid rgba(255,140,0,0.2);border-radius:14px;padding:12px;margin-bottom:14px}
-.chat-header{font-size:13px;font-weight:700;color:#ff8c00;margin-bottom:10px}
-.chat-msgs{max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
-.bot-wrap{display:flex;align-items:flex-start;gap:8px}
-.user-wrap{display:flex;justify-content:flex-end}
-.bot-icon{font-size:18px;margin-top:2px}
-.bot-bubble{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:4px 12px 12px 12px;padding:8px 12px;font-size:13px;line-height:1.7;color:#e8e8e8;max-width:85%;white-space:pre-wrap}
-.user-bubble{background:linear-gradient(135deg,#ff8c00,#ff4500);border-radius:12px 4px 12px 12px;padding:8px 12px;font-size:13px;line-height:1.7;color:#fff;max-width:85%}
-.chat-input-row{display:flex;gap:8px}
-.chat-input{flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:9px 12px;font-size:13px;color:#fff;outline:none}
-.chat-send{padding:9px 16px;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:800;cursor:pointer}
+.norm-chat-area{background:rgba(0,0,0,0.3);border:1px solid rgba(255,140,0,0.2);border-radius:14px;padding:12px;margin-bottom:14px}
+.norm-chat-head{font-size:13px;font-weight:700;color:#ff8c00;margin-bottom:10px}
+.norm-chat-msgs{max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.norm-bot-wrap{display:flex;align-items:flex-start;gap:8px}
+.norm-user-wrap{display:flex;justify-content:flex-end}
+.norm-bot-bubble{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:4px 12px 12px 12px;padding:8px 12px;font-size:13px;line-height:1.7;color:#e8e8e8;max-width:85%;white-space:pre-wrap}
+.norm-user-bubble{background:linear-gradient(135deg,#ff8c00,#ff4500);border-radius:12px 4px 12px 12px;padding:8px 12px;font-size:13px;line-height:1.7;color:#fff;max-width:85%}
+.norm-input-row{display:flex;gap:8px}
+.norm-input{flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:9px 12px;font-size:13px;color:#fff;outline:none}
+.norm-send{padding:9px 16px;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:800;cursor:pointer}
 .next-btn{width:100%;padding:13px 0;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:800;cursor:pointer}
 
-/* リザルト */
-.result-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:28px 20px;text-align:center;margin-bottom:16px}
-.r-emoji{font-size:52px;margin-bottom:12px}
-.r-score{font-size:42px;font-weight:900;color:#fff;line-height:1}
-.r-pct{font-size:22px;font-weight:800;color:#ff8c00;margin-bottom:10px}
-.r-msg{font-size:15px;color:#ccc;margin-bottom:20px;line-height:1.6}
-.review-wrap{text-align:left;background:rgba(255,255,255,0.03);border-radius:12px;padding:12px 16px;margin-bottom:20px}
-.rev-row{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;color:#aaa}
-
-/* ハンズフリーモード */
+/* ハンズフリー */
 .hf-box{background:rgba(255,255,255,0.04);border:2px solid rgba(255,140,0,0.3);border-radius:16px;padding:20px;margin-bottom:16px}
 .mode-badge{display:inline-block;background:rgba(255,140,0,0.15);border:1px solid rgba(255,140,0,0.3);color:#ff8c00;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700;margin-bottom:14px}
 .hf-label{font-size:13px;color:#888;margin-bottom:10px}
@@ -106,6 +127,15 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 .hf-result{background:rgba(0,0,0,0.4);border-radius:14px;padding:18px;margin-bottom:14px;text-align:center;display:none}
 .hf-result-icon{font-size:52px;margin-bottom:8px}
 .hf-result-text{font-size:13px;color:#ccc;line-height:1.8;white-space:pre-wrap}
+
+/* リザルト */
+.result-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:28px 20px;text-align:center;margin-bottom:16px}
+.r-emoji{font-size:52px;margin-bottom:12px}
+.r-score{font-size:42px;font-weight:900;color:#fff;line-height:1}
+.r-pct{font-size:22px;font-weight:800;color:#ff8c00;margin-bottom:10px}
+.r-msg{font-size:15px;color:#ccc;margin-bottom:20px;line-height:1.6}
+.review-wrap{text-align:left;background:rgba(255,255,255,0.03);border-radius:12px;padding:12px 16px;margin-bottom:20px}
+.rev-row{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;color:#aaa}
 </style>
 </head>
 <body>
@@ -133,14 +163,9 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
       <div class="stat-divider"></div>
       <div class="stat"><div class="stat-num" id="s-latest">--</div><div class="stat-label">最新スコア</div></div>
     </div>
-      <div class="api-key-row">
-        <input class="api-key-input" id="api-key-input" type="password" placeholder="sk-ant-...">
-        <button class="api-key-btn" onclick="setApiKey()">設定</button>
-      </div>
-      <div class="api-key-ok" id="api-key-ok" style="display:none">APIキー設定済み！チャット機能が使えるで🎉</div>
-    </div>
-    <button class="start-btn" onclick="startQuiz('normal')">スタート！🔥</button>
-    <button class="hf-btn-home" onclick="startQuiz('handsfree')">🎤 ハンズフリーモード（○×）</button>
+    <button class="start-btn" onclick="startQuiz('chat')">🖤 クロちゃんと学習！</button>
+    <button class="outline-btn" onclick="startQuiz('normal')" style="margin-bottom:10px">📝 通常クイズ</button>
+    <button class="outline-btn" onclick="startQuiz('handsfree')">🎤 ハンズフリーモード（○×）</button>
   </div>
   <div class="history-card" id="hist-card" style="display:none">
     <div class="history-title">📊 最近の記録</div>
@@ -150,7 +175,39 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 </div>
 </div>
 
-<!-- QUIZ 通常 -->
+<!-- チャットモード -->
+<div id="chat-mode" class="screen">
+<div class="container">
+  <div class="chat-header-bar">
+    <div class="chat-avatar">🖤</div>
+    <div>
+      <div class="chat-name">クロちゃん</div>
+      <div class="chat-status">FP2級 先生</div>
+    </div>
+    <div class="q-progress" id="chat-q-progress">1 / 5</div>
+  </div>
+
+  <div class="chat-feed" id="chat-feed"></div>
+
+  <!-- 選択肢エリア -->
+  <div id="opts-area" style="display:none">
+    <div class="opts-wrap" id="chat-opts"></div>
+  </div>
+
+  <!-- アクションボタン -->
+  <div class="action-area" id="action-area" style="display:none">
+    <button class="action-btn" id="action-btn" onclick="onActionBtn()"></button>
+  </div>
+
+  <!-- チャット入力 -->
+  <div class="chat-input-area" id="chat-input-area" style="display:none">
+    <input class="chat-input" id="chat-in" placeholder="クロちゃんに質問してや！" onkeydown="if(event.key==='Enter')sendChatMsg()">
+    <button class="chat-send" id="chat-send-btn" onclick="sendChatMsg()">送信</button>
+  </div>
+</div>
+</div>
+
+<!-- 通常クイズ -->
 <div id="quiz" class="screen">
 <div class="container">
   <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
@@ -159,16 +216,16 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
     <span class="q-count" id="q-num"></span>
   </div>
   <div class="question-card"><div class="question-text" id="q-text"></div></div>
-  <div class="options-wrap" id="opts"></div>
+  <div class="opts-wrap" id="opts"></div>
   <div class="ex-card" id="exbox" style="display:none">
     <div class="ex-label" id="ex-title"></div>
     <div class="ex-text" id="ex-text"></div>
-    <div class="chat-area">
-      <div class="chat-header">🖤 クロちゃんに質問する</div>
-      <div class="chat-msgs" id="chat-msgs"></div>
-      <div class="chat-input-row">
-        <input class="chat-input" id="chat-in" placeholder="なんでも聞いてや！" onkeydown="if(event.key==='Enter')sendChat()">
-        <button class="chat-send" onclick="sendChat()">送信</button>
+    <div class="norm-chat-area">
+      <div class="norm-chat-head">🖤 クロちゃんに質問する</div>
+      <div class="norm-chat-msgs" id="norm-chat-msgs"></div>
+      <div class="norm-input-row">
+        <input class="norm-input" id="norm-chat-in" placeholder="なんでも聞いてや！" onkeydown="if(event.key==='Enter')sendNormChat()">
+        <button class="norm-send" onclick="sendNormChat()">送信</button>
       </div>
     </div>
     <button class="next-btn" id="next-btn" onclick="nextQ()"></button>
@@ -176,7 +233,7 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 </div>
 </div>
 
-<!-- QUIZ ハンズフリー -->
+<!-- ハンズフリー -->
 <div id="quiz-hf" class="screen">
 <div class="container">
   <div class="progress-bar"><div class="progress-fill" id="prog-hf"></div></div>
@@ -221,117 +278,60 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 </div>
 
 <script>
-/* ===== データ ===== */
+/* ===== 問題データ ===== */
 var Qs = [
-  {cat:"ライフ・社会保険",q:"協会けんぽの被保険者に関する記述の空欄にあてはまる組合せとして、最も適切なものはどれか。\n\n特定適用事業所に使用される短時間労働者のうち、次のいずれかに該当する者は、原則として被保険者とならない。\n① 1週間の所定労働時間が（イ）未満の者\n② 所定内賃金が月額（ウ）未満の者\n③ 学生である者\n\nまた短時間労働者の要件として、所定労働時間・労働日数が通常の労働者の（ア）未満であること。",opts:["ア：3分の2　イ：20時間　ウ：5万8千円","ア：3分の2　イ：25時間　ウ：8万8千円","ア：4分の3　イ：20時間　ウ：8万8千円","ア：4分の3　イ：25時間　ウ：5万8千円"],ans:2,ex:"ポイントは3つ！\n\n✅ ア：4分の3 → 所定労働時間・日数が通常の4分の3未満が短時間労働者の基準\n✅ イ：20時間 → 週20時間未満はNG\n✅ ウ：8万8千円 → 月額8万8千円未満がポイント。これは「106万円の壁」のライン！\n\n「ハチハチ（88）で切れる！」で覚えよう！"},
-  {cat:"ライフ・社会保険",q:"労働者災害補償保険に関する次の記述のうち、最も不適切なものはどれか。",opts:["労災保険の適用を受ける労働者には、アルバイトやパートタイマーも含まれる","労災保険料の算定に用いられる労災保険率は、適用事業に従事する労働者数に応じて定められている","業務上の傷病が治癒したときに一定の障害が残り、障害等級に該当する場合、障害補償給付が支給される","業務災害で労働者が死亡した場合、遺族に対して遺族補償年金または遺族補償一時金が支給される"],ans:1,ex:"2番が不適切！\n\n✅ 労災保険率は「労働者数」ではなく「業種（事業の種類）」で決まる！\n\n建設業や林業など危険な仕事は率が高く、オフィスワークは低い。\n\nまた1番の「アルバイト・パートも対象」は試験頻出！労災は雇用形態に関係なく全員対象や！"},
-  {cat:"ライフ・社会保険",q:"国民年金の保険料に関する次の記述のうち、最も不適切なものはどれか。",opts:["第1号被保険者は、一定の条件を除き、月額400円の付加保険料を納付できる","産前産後期間の保険料免除制度により免除された期間は、保険料納付済期間として老齢基礎年金の年金額に反映される","保険料免除期間の保険料を追納する場合、追納額は追納する時期にかかわらず、免除された時点の保険料額となる","保険料を前納した第1号被保険者が、前納期間の途中で第2号被保険者になった場合、未経過期間分の保険料の還付を受けられる"],ans:2,ex:"3番が不適切！\n\n✅ 追納する場合、免除された時点の保険料そのままではない！\n\n2年以内の追納 → 加算なし（当時の保険料額）\n3年度目以降の追納 → 加算あり（割増になる！）\n\n「早よ追納せな損するで！」で覚えよう！⏰"},
-  {cat:"タックス",q:"わが国の税制に関する次の記述のうち、最も不適切なものはどれか。",opts:["所得税では、課税対象となる所得を10種類に区分し、種類ごとに計算する","相続税では、納税者が申告書に記載した内容に基づき、税務署長が納付税額を決定する賦課課税方式が採用されている","税金を負担する者と納める者が異なる税金を間接税といい、消費税は間接税に該当する","法人税は国税、不動産取得税は地方税に該当する"],ans:1,ex:"2番が不適切！\n\n✅ 相続税は「申告納税方式」！自分で計算して申告する！\n\n📝 申告納税方式 → 自分で申告（所得税・相続税・贈与税・法人税）\n📬 賦課課税方式 → 役所から通知（固定資産税・住民税・不動産取得税）"},
-  {cat:"タックス",q:"所得税における各種所得に関する次の記述のうち、最も適切なものはどれか。",opts:["個人事業主が事業資金で株式を購入し、配当金を受け取ったことによる所得は事業所得となる","給与収入が850万円を超える給与所得者が23歳未満の扶養親族を有する場合、所得金額調整控除として最大10万円が控除される","個人による不動産の貸付が事業的規模で行われている場合、その賃貸収入による所得は事業所得となる","会社員が自宅購入資金として勤務先から無利息で金銭を借り入れたことにより生じた経済的利益は給与所得となる"],ans:3,ex:"4番が正解！\n\n✅ 会社から無利息で借りたら、トクした利息分＝経済的利益は「給与所得」！\n\n❌ 1番：株の配当金はどんな目的で買っても「配当所得」\n❌ 2番：所得金額調整控除の最大は「15万円」\n❌ 3番：不動産貸付は規模に関係なく「不動産所得」"},
+  {cat:"ライフ・社会保険",q:"協会けんぽの被保険者に関する記述の空欄にあてはまる組合せとして、最も適切なものはどれか。\n\n特定適用事業所に使用される短時間労働者のうち、次のいずれかに該当する者は、原則として被保険者とならない。\n① 1週間の所定労働時間が（イ）未満の者\n② 所定内賃金が月額（ウ）未満の者\n③ 学生である者\n\nまた短時間労働者の要件として、所定労働時間・労働日数が通常の労働者の（ア）未満であること。",opts:["ア：3分の2　イ：20時間　ウ：5万8千円","ア：3分の2　イ：25時間　ウ：8万8千円","ア：4分の3　イ：20時間　ウ：8万8千円","ア：4分の3　イ：25時間　ウ：5万8千円"],ans:2,ex:"ポイントは3つ！\n\n✅ ア：4分の3 → 通常の4分の3未満が短時間労働者の基準\n✅ イ：20時間 → 週20時間未満はNG\n✅ ウ：8万8千円 → 月額8万8千円未満。「106万円の壁」のライン！\n\n「ハチハチ（88）で切れる！」で覚えよう！"},
+  {cat:"ライフ・社会保険",q:"労働者災害補償保険に関する次の記述のうち、最も不適切なものはどれか。",opts:["労災保険の適用を受ける労働者には、アルバイトやパートタイマーも含まれる","労災保険料の算定に用いられる労災保険率は、適用事業に従事する労働者数に応じて定められている","業務上の傷病が治癒したときに一定の障害が残り、障害等級に該当する場合、障害補償給付が支給される","業務災害で労働者が死亡した場合、遺族に対して遺族補償年金または遺族補償一時金が支給される"],ans:1,ex:"2番が不適切！\n\n✅ 労災保険率は「労働者数」ではなく「業種」で決まる！\n建設業や林業など危険な仕事は率が高く、オフィスワークは低い。\n\n1番「アルバイト・パートも対象」は試験頻出！雇用形態に関係なく全員対象や！"},
+  {cat:"ライフ・社会保険",q:"国民年金の保険料に関する次の記述のうち、最も不適切なものはどれか。",opts:["第1号被保険者は、一定の条件を除き、月額400円の付加保険料を納付できる","産前産後期間の保険料免除制度により免除された期間は、保険料納付済期間として老齢基礎年金の年金額に反映される","保険料免除期間の保険料を追納する場合、追納額は追納する時期にかかわらず、免除された時点の保険料額となる","保険料を前納した第1号被保険者が、前納期間の途中で第2号被保険者になった場合、未経過期間分の保険料の還付を受けられる"],ans:2,ex:"3番が不適切！\n\n✅ 追納は「いつ払うか」で金額が変わる！\n2年以内の追納 → 加算なし\n3年度目以降 → 加算あり（割増！）\n\n「早よ追納せな損するで！」⏰"},
+  {cat:"タックス",q:"わが国の税制に関する次の記述のうち、最も不適切なものはどれか。",opts:["所得税では、課税対象となる所得を10種類に区分し、種類ごとに計算する","相続税では、納税者が申告書に記載した内容に基づき、税務署長が納付税額を決定する賦課課税方式が採用されている","税金を負担する者と納める者が異なる税金を間接税といい、消費税は間接税に該当する","法人税は国税、不動産取得税は地方税に該当する"],ans:1,ex:"2番が不適切！\n\n✅ 相続税は「申告納税方式」！自分で計算して申告する！\n\n📝 申告納税方式：所得税・相続税・贈与税・法人税\n📬 賦課課税方式：固定資産税・住民税・不動産取得税"},
+  {cat:"タックス",q:"所得税における各種所得に関する次の記述のうち、最も適切なものはどれか。",opts:["個人事業主が事業資金で株式を購入し、配当金を受け取ったことによる所得は事業所得となる","給与収入が850万円を超える給与所得者が23歳未満の扶養親族を有する場合、所得金額調整控除として最大10万円が控除される","個人による不動産の貸付が事業的規模で行われている場合、その賃貸収入による所得は事業所得となる","会社員が自宅購入資金として勤務先から無利息で金銭を借り入れたことにより生じた経済的利益は給与所得となる"],ans:3,ex:"4番が正解！\n\n✅ 会社から無利息で借りた→トクした利息分＝経済的利益は「給与所得」！\n\n❌ 1番：株の配当金はどんな目的でも「配当所得」\n❌ 2番：所得金額調整控除の最大は「15万円」\n❌ 3番：不動産貸付は規模に関係なく「不動産所得」"},
 ];
 
 var QsOX = [
   {cat:"ライフ・社会保険", stmt:"協会けんぽの短時間労働者の被保険者除外条件のうち、所定内賃金が月額8万8千円未満の場合は被保険者とならない。", ans:true, ex:"✅ 正解！\n月額8万8千円（年収106万円の壁）未満は対象外！\n「ハチハチ（88）で切れる！」で覚えよう！"},
-  {cat:"ライフ・社会保険", stmt:"労災保険率は、適用事業に従事する労働者数に応じて定められている。", ans:false, ex:"❌ 不正解！\n労災保険率は「労働者数」ではなく「業種」で決まる！\n危険度の高い業種ほど保険料率が高い。"},
-  {cat:"タックス", stmt:"相続税は、税務署長が納付税額を決定する賦課課税方式が採用されている。", ans:false, ex:"❌ 不正解！\n相続税は「申告納税方式」！\n自分で計算して申告するのが基本やで！"},
+  {cat:"ライフ・社会保険", stmt:"労災保険率は、適用事業に従事する労働者数に応じて定められている。", ans:false, ex:"❌ 不正解！\n労災保険率は「労働者数」ではなく「業種」で決まる！"},
+  {cat:"タックス", stmt:"相続税は、税務署長が納付税額を決定する賦課課税方式が採用されている。", ans:false, ex:"❌ 不正解！\n相続税は「申告納税方式」！自分で計算して申告するのが基本やで！"},
   {cat:"タックス", stmt:"事業所得の損失は、不動産所得と損益通算できる。", ans:true, ex:"✅ 正解！\n損益通算できるのは「不事山譲（ふじさんじょう）」\n不動産・事業・山林・譲渡の4種類！"},
-  {cat:"タックス", stmt:"婚姻届を提出していない内縁関係の配偶者は、所得税の配偶者控除の対象となる。", ans:false, ex:"❌ 不正解！\n内縁関係は配偶者控除の対象外！\n健康保険はOKでも税金はNG！\n「健康保険は人情、税金は法律」で覚えよう！"},
+  {cat:"タックス", stmt:"婚姻届を提出していない内縁関係の配偶者は、所得税の配偶者控除の対象となる。", ans:false, ex:"❌ 不正解！\n内縁関係は配偶者控除の対象外！\n「健康保険は人情、税金は法律」で覚えよう！"},
 ];
 
 /* ===== 状態 ===== */
-var cur=0, score=0, answers=[], mode='normal';
+var cur=0, score=0, answers=[], mode='chat';
+var chatApiHist=[];
+var normChatHist=[];
+var hist=[];
+try{hist=JSON.parse(localStorage.getItem('aid_fp2_hist')||'[]');}catch(e){hist=[];}
 
-var chatHist = [];
-var hist = [];
-
-try { hist = JSON.parse(localStorage.getItem('aid_fp2_hist') || '[]'); } catch(e) { hist=[]; }
-
-/* ===== API Key ===== */
-
-
-/* ===== TTS ===== */
-var synth = window.speechSynthesis;
-function speak(text, onEnd) {
-  if (!synth) { if(onEnd) onEnd(); return; }
-  synth.cancel();
-  var u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ja-JP'; u.rate = 0.9;
-  u.onend = function(){ if(onEnd) onEnd(); };
-  u.onerror = function(){ if(onEnd) onEnd(); };
-  synth.speak(u);
-}
-
-/* ===== 音声認識 ===== */
-var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-var recognition = null;
-var voiceOK = !!SR;
-
-function initRec() {
-  if (!voiceOK) return;
-  recognition = new SR();
-  recognition.lang = 'ja-JP';
-  recognition.continuous = false;
-  recognition.interimResults = false;
-  recognition.onresult = function(e) {
-    var txt = e.results[0][0].transcript;
-    stopListen();
-    if (txt.includes('まる')||txt.includes('マル')||txt.includes('○')) { hfAnswer(true); }
-    else if (txt.includes('ばつ')||txt.includes('バツ')||txt.includes('×')||txt.includes('ペケ')) { hfAnswer(false); }
-    else { setHfStatus('「まる」か「ばつ」で答えてや！もう一回！','listening'); startListen(); }
-  };
-  recognition.onerror = function(e) {
-    stopListen(); enableHfBtns();
-    setHfStatus('音声認識エラー。ボタンで答えてね。','');
-  };
-}
-function startListen() {
-  if (!voiceOK||!recognition) return;
-  document.getElementById('voice-wave').style.display='flex';
-  setHfStatus('「まる」か「ばつ」と言ってや！🎤','listening');
-  try { recognition.start(); } catch(e) {}
-}
-function stopListen() {
-  if (!voiceOK||!recognition) return;
-  document.getElementById('voice-wave').style.display='none';
-  try { recognition.stop(); } catch(e) {}
-}
-function setHfStatus(msg, cls) {
-  var el=document.getElementById('hf-status');
-  el.textContent=msg;
-  el.className='hf-status'+(cls?' '+cls:'');
-}
-function enableHfBtns() {
-  document.getElementById('btn-maru').disabled=false;
-  document.getElementById('btn-batu').disabled=false;
-}
-function disableHfBtns() {
-  document.getElementById('btn-maru').disabled=true;
-  document.getElementById('btn-batu').disabled=true;
-}
+/* ===== チャットモード状態 ===== */
+var chatPhase=''; // 'intro'→'question'→'opts'→'answered'→'chat'
+var typingTimer=null;
 
 /* ===== 画面 ===== */
-function show(id) {
+function show(id){
   document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on')});
   document.getElementById(id).classList.add('on');
   window.scrollTo(0,0);
 }
 
-function updateHome() {
-  document.getElementById('s-attempts').textContent = hist.length;
-  if (hist.length > 0) {
-    document.getElementById('s-latest').textContent = Math.round(hist[0].score/hist[0].total*100)+'%';
-    document.getElementById('hist-card').style.display = 'block';
-    document.getElementById('hist-list').innerHTML = hist.slice(0,3).map(function(h){
+function updateHome(){
+  document.getElementById('s-attempts').textContent=hist.length;
+  if(hist.length>0){
+    document.getElementById('s-latest').textContent=Math.round(hist[0].score/hist[0].total*100)+'%';
+    document.getElementById('hist-card').style.display='block';
+    document.getElementById('hist-list').innerHTML=hist.slice(0,3).map(function(h){
       return '<div class="history-row"><span class="history-date">'+h.date+'</span><span class="history-score">'+h.score+'/'+h.total+' ('+Math.round(h.score/h.total*100)+'%)</span></div>';
     }).join('');
   }
 }
 
-function startQuiz(m) {
+function startQuiz(m){
   mode=m; cur=0; score=0; answers=[];
-  synth && synth.cancel();
-  if (m==='handsfree') {
-    document.getElementById('hf-badge').textContent = voiceOK ? '🎤 音声モード' : '👆 タップモード';
+  if(m==='chat'){
+    chatApiHist=[];
+    show('chat-mode');
+    startChatMode();
+  } else if(m==='handsfree'){
+    document.getElementById('hf-badge').textContent=voiceOK?'🎤 音声モード':'👆 タップモード';
     initRec();
     show('quiz-hf');
     renderHfQ();
@@ -341,25 +341,231 @@ function startQuiz(m) {
   }
 }
 
-/* ===== 通常モード ===== */
-function renderQ() {
+/* ===================================================
+   チャットモード
+   =================================================== */
+function chatFeed(){return document.getElementById('chat-feed');}
+
+function addBotBubble(text, onDone){
+  var feed=chatFeed();
+  var wrap=document.createElement('div');
+  wrap.className='bubble-wrap-bot';
+  var av=document.createElement('div');av.className='bubble-avatar';av.textContent='🖤';
+  var bub=document.createElement('div');bub.className='bubble-bot';
+  wrap.appendChild(av);wrap.appendChild(bub);
+  feed.appendChild(wrap);
+  scrollFeed();
+  typeText(bub, text, onDone);
+}
+
+function addUserBubble(text){
+  var feed=chatFeed();
+  var wrap=document.createElement('div');
+  wrap.className='bubble-wrap-user';
+  var bub=document.createElement('div');bub.className='bubble-user';bub.textContent=text;
+  wrap.appendChild(bub);
+  feed.appendChild(wrap);
+  scrollFeed();
+}
+
+function scrollFeed(){
+  setTimeout(function(){window.scrollTo(0,document.body.scrollHeight);},50);
+}
+
+/* タイピングアニメーション */
+function typeText(el, text, onDone){
+  el.textContent='';
+  var cursor=document.createElement('span');
+  cursor.className='typing-cursor';
+  el.appendChild(cursor);
+  var i=0;
+  var speed=28; // ms/文字
+  function next(){
+    if(i<text.length){
+      el.insertBefore(document.createTextNode(text[i]),cursor);
+      i++;
+      scrollFeed();
+      typingTimer=setTimeout(next, speed);
+    } else {
+      cursor.remove();
+      if(onDone) onDone();
+    }
+  }
+  next();
+}
+
+function setActionBtn(label, show){
+  var area=document.getElementById('action-area');
+  var btn=document.getElementById('action-btn');
+  if(show){btn.textContent=label;area.style.display='block';}
+  else{area.style.display='none';}
+}
+
+function showChatInput(on){
+  document.getElementById('chat-input-area').style.display=on?'flex':'none';
+  if(on) setTimeout(function(){document.getElementById('chat-in').focus();},100);
+}
+
+function showOpts(on){
+  document.getElementById('opts-area').style.display=on?'block':'none';
+}
+
+/* チャットモード開始 */
+function startChatMode(){
+  document.getElementById('chat-feed').innerHTML='';
+  showOpts(false);
+  showChatInput(false);
+  setActionBtn('',false);
+  updateChatProgress();
+  chatPhase='intro';
+
+  var q=Qs[cur];
+  var intro='よっしゃ！問題'+( cur+1)+'問目いくで〜！\nカテゴリは「'+q.cat+'」やで！\n\nゆっくり読んでな👇';
+  addBotBubble(intro, function(){
+    setTimeout(function(){
+      chatPhase='question';
+      addBotBubble(q.q, function(){
+        setActionBtn('選択肢を見る →', true);
+      });
+    }, 400);
+  });
+}
+
+function updateChatProgress(){
+  document.getElementById('chat-q-progress').textContent=(cur+1)+' / '+Qs.length;
+}
+
+var actionState=''; // 'show-opts' | 'next-q' | 'result'
+
+function onActionBtn(){
+  if(actionState==='show-opts'){
+    showChoices();
+  } else if(actionState==='next-q'){
+    nextChatQ();
+  } else if(actionState==='result'){
+    finish();
+  } else {
+    // デフォルト：選択肢表示
+    showChoices();
+  }
+}
+
+function showChoices(){
+  setActionBtn('',false);
+  var q=Qs[cur];
+  var optsEl=document.getElementById('chat-opts');
+  optsEl.innerHTML=q.opts.map(function(o,i){
+    return '<button class="opt-btn" id="co'+i+'" onclick="chatPick('+i+')"><span class="opt-num">'+(i+1)+'</span><span>'+o+'</span></button>';
+  }).join('');
+  showOpts(true);
+  chatPhase='opts';
+  scrollFeed();
+  // クロちゃんのひとこと
+  addBotBubble('どれやと思う？直感でもええで！🤔');
+}
+
+function chatPick(idx){
+  showOpts(false);
+  var q=Qs[cur];
+  var ok=idx===q.ans;
+  if(ok) score++;
+  answers.push({q:cur,sel:idx,ok:ok});
+  chatPhase='answered';
+
+  // ユーザーの選択表示
+  addUserBubble((idx+1)+'番！「'+q.opts[idx]+'」');
+
+  setTimeout(function(){
+    var reactionMsg = ok
+      ? '🎉 正解やで！めっちゃええやん！\n\n'+q.ex
+      : '💦 惜しい！'+( idx+1)+'番は不正解や〜\n\n正解は'+(q.ans+1)+'番「'+q.opts[q.ans]+'」やで！\n\n'+q.ex;
+
+    addBotBubble(reactionMsg, function(){
+      showChatInput(true);
+      chatPhase='chat';
+      // 次へボタン
+      if(cur+1<Qs.length){
+        actionState='next-q';
+        setActionBtn('次の問題へ →', true);
+      } else {
+        actionState='result';
+        setActionBtn('結果を見る 🏁', true);
+      }
+      addBotBubble('わからんことあったら何でも聞いてや！🖤');
+    });
+  }, 300);
+}
+
+function nextChatQ(){
+  setActionBtn('',false);
+  showChatInput(false);
+  cur++;
+  chatApiHist=[];
+  startChatMode();
+}
+
+async function sendChatMsg(){
+  var inp=document.getElementById('chat-in');
+  var txt=inp.value.trim();
+  if(!txt) return;
+  inp.value='';
+  document.getElementById('chat-send-btn').disabled=true;
+
+  addUserBubble(txt);
+  chatApiHist.push({role:'user',content:txt});
+
+  var q=Qs[cur];
+  var sys='あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに、楽しく、わかりやすく教えてください。\n今取り組んでいる問題：\nカテゴリ：'+q.cat+'\n問題：'+q.q+'\n正解：選択肢'+(q.ans+1)+'番「'+q.opts[q.ans]+'」\n解説：'+q.ex+'\n\n「なぜそうなるか」を日常のたとえや具体例で200字以内で答えてください。';
+
+  // ローディング表示
+  var feed=chatFeed();
+  var loadWrap=document.createElement('div');loadWrap.className='bubble-wrap-bot';loadWrap.id='chat-loading';
+  var av=document.createElement('div');av.className='bubble-avatar';av.textContent='🖤';
+  var bub=document.createElement('div');bub.className='bubble-bot';bub.textContent='考え中やで...⏳';
+  loadWrap.appendChild(av);loadWrap.appendChild(bub);
+  feed.appendChild(loadWrap);
+  scrollFeed();
+
+  try{
+    var r=await fetch('/api/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({messages:chatApiHist,system:sys})
+    });
+    var d=await r.json();
+    var rep=d.reply||'ごめん、うまく答えられへんかった！';
+    chatApiHist.push({role:'assistant',content:rep});
+    var loading=document.getElementById('chat-loading');
+    if(loading) loading.remove();
+    addBotBubble(rep);
+  }catch(e){
+    var loading=document.getElementById('chat-loading');
+    if(loading) loading.remove();
+    addBotBubble('通信エラーやで！もう一回試してみて！');
+  }
+  document.getElementById('chat-send-btn').disabled=false;
+}
+
+/* ===================================================
+   通常クイズ
+   =================================================== */
+function renderQ(){
   var q=Qs[cur];
   document.getElementById('prog').style.width=((cur+1)/Qs.length*100)+'%';
   document.getElementById('q-cat').textContent=q.cat;
   document.getElementById('q-num').textContent=(cur+1)+' / '+Qs.length;
   document.getElementById('q-text').textContent=q.q;
   document.getElementById('exbox').style.display='none';
-  chatHist=[];
-  var cm=document.getElementById('chat-msgs');
-  cm.innerHTML='';
-  addBot('なんか気になることあったら何でも聞いてや！🖤');
+  normChatHist=[];
+  var nm=document.getElementById('norm-chat-msgs');
+  nm.innerHTML='';
+  addNormBot('なんか気になることあったら何でも聞いてや！🖤');
   document.getElementById('opts').innerHTML=q.opts.map(function(o,i){
     return '<button class="opt-btn" id="o'+i+'" onclick="pick('+i+')"><span class="opt-num">'+(i+1)+'</span><span>'+o+'</span></button>';
   }).join('');
-  speak(q.q);
 }
 
-function pick(idx) {
+function pick(idx){
   var q=Qs[cur];
   var ok=idx===q.ans;
   if(ok) score++;
@@ -378,13 +584,99 @@ function pick(idx) {
   document.getElementById('exbox').style.display='block';
 }
 
-function nextQ() {
+function nextQ(){
   if(cur+1<Qs.length){cur++;renderQ();}
   else finish();
 }
 
-/* ===== ハンズフリーモード ===== */
-function renderHfQ() {
+function addNormBot(txt){
+  var m=document.getElementById('norm-chat-msgs');
+  var d=document.createElement('div');d.className='norm-bot-wrap';
+  d.innerHTML='<div style="font-size:16px">🖤</div><div class="norm-bot-bubble">'+txt+'</div>';
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+function addNormUser(txt){
+  var m=document.getElementById('norm-chat-msgs');
+  var d=document.createElement('div');d.className='norm-user-wrap';
+  d.innerHTML='<div class="norm-user-bubble">'+txt+'</div>';
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+
+async function sendNormChat(){
+  var inp=document.getElementById('norm-chat-in');
+  var txt=inp.value.trim();
+  if(!txt) return;
+  inp.value='';
+  addNormUser(txt);
+  normChatHist.push({role:'user',content:txt});
+  addNormBot('考え中やで...⏳');
+  var q=Qs[cur];
+  var sys='あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに楽しく教えてください。\nカテゴリ：'+q.cat+'\n問題：'+q.q+'\n正解：'+q.opts[q.ans]+'\n解説：'+q.ex+'\n200字以内で答えてください。';
+  try{
+    var r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:normChatHist,system:sys})});
+    var d=await r.json();
+    var rep=d.reply||'ごめん、うまく答えられへんかった！';
+    normChatHist.push({role:'assistant',content:rep});
+    var msgs=document.getElementById('norm-chat-msgs');
+    if(msgs.lastChild) msgs.removeChild(msgs.lastChild);
+    addNormBot(rep);
+  }catch(e){
+    var msgs=document.getElementById('norm-chat-msgs');
+    if(msgs.lastChild) msgs.removeChild(msgs.lastChild);
+    addNormBot('通信エラーやで！');
+  }
+}
+
+/* ===================================================
+   ハンズフリー
+   =================================================== */
+var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+var recognition=null;
+var voiceOK=!!SR;
+var synth=window.speechSynthesis;
+
+function speak(text,onEnd){
+  if(!synth){if(onEnd)onEnd();return;}
+  synth.cancel();
+  var u=new SpeechSynthesisUtterance(text);
+  u.lang='ja-JP';u.rate=0.9;
+  u.onend=function(){if(onEnd)onEnd();};
+  u.onerror=function(){if(onEnd)onEnd();};
+  synth.speak(u);
+}
+
+function initRec(){
+  if(!voiceOK)return;
+  recognition=new SR();
+  recognition.lang='ja-JP';recognition.continuous=false;recognition.interimResults=false;
+  recognition.onresult=function(e){
+    var txt=e.results[0][0].transcript;
+    stopListen();
+    if(txt.includes('まる')||txt.includes('マル')||txt.includes('○')){hfAnswer(true);}
+    else if(txt.includes('ばつ')||txt.includes('バツ')||txt.includes('×')||txt.includes('ペケ')){hfAnswer(false);}
+    else{setHfStatus('「まる」か「ばつ」で答えてや！もう一回！','listening');startListen();}
+  };
+  recognition.onerror=function(){stopListen();enableHfBtns();setHfStatus('音声認識エラー。ボタンで答えてね。','');};
+}
+function startListen(){
+  if(!voiceOK||!recognition)return;
+  document.getElementById('voice-wave').style.display='flex';
+  setHfStatus('「まる」か「ばつ」と言ってや！🎤','listening');
+  try{recognition.start();}catch(e){}
+}
+function stopListen(){
+  if(!voiceOK||!recognition)return;
+  document.getElementById('voice-wave').style.display='none';
+  try{recognition.stop();}catch(e){}
+}
+function setHfStatus(msg,cls){
+  var el=document.getElementById('hf-status');
+  el.textContent=msg;el.className='hf-status'+(cls?' '+cls:'');
+}
+function enableHfBtns(){document.getElementById('btn-maru').disabled=false;document.getElementById('btn-batu').disabled=false;}
+function disableHfBtns(){document.getElementById('btn-maru').disabled=true;document.getElementById('btn-batu').disabled=true;}
+
+function renderHfQ(){
   var q=QsOX[cur];
   document.getElementById('prog-hf').style.width=((cur+1)/QsOX.length*100)+'%';
   document.getElementById('q-cat-hf').textContent=q.cat;
@@ -395,24 +687,20 @@ function renderHfQ() {
   disableHfBtns();
   document.getElementById('voice-wave').style.display='none';
   setHfStatus('問題を読み上げています...','speaking');
-  speak('問題。'+q.stmt+'。これは○ですか、×ですか？', function(){
+  speak('問題。'+q.stmt+'。これは○ですか、×ですか？',function(){
     enableHfBtns();
-    if(voiceOK) {
-      setTimeout(startListen, 500);
-    } else {
-      setHfStatus('⭕か❌をタップして答えてね！','');
-    }
+    if(voiceOK){setTimeout(startListen,500);}
+    else{setHfStatus('⭕か❌をタップして答えてね！','');}
   });
 }
 
-function hfAnswer(ans) {
-  stopListen(); disableHfBtns();
+function hfAnswer(ans){
+  stopListen();disableHfBtns();
   var q=QsOX[cur];
   var ok=(ans===q.ans);
-  if(ok) score++;
+  if(ok)score++;
   answers.push({q:cur,sel:ans,ok:ok});
-  var panel=document.getElementById('hf-result');
-  panel.style.display='block';
+  document.getElementById('hf-result').style.display='block';
   document.getElementById('hf-result-icon').textContent=ok?'⭕':'❌';
   document.getElementById('hf-result-text').textContent=q.ex;
   var nb=document.getElementById('next-btn-hf');
@@ -422,17 +710,19 @@ function hfAnswer(ans) {
   setHfStatus(ok?'🎉 正解！':'💦 不正解...','');
 }
 
-function nextHfQ() {
+function nextHfQ(){
   synth&&synth.cancel();
   if(cur+1<QsOX.length){cur++;renderHfQ();}
   else finish();
 }
 
-/* ===== 共通 ===== */
-function finish() {
+/* ===================================================
+   共通
+   =================================================== */
+function finish(){
   synth&&synth.cancel();
   var total=mode==='handsfree'?QsOX.length:Qs.length;
-  var rec={date:new Date().toLocaleDateString('ja-JP'),score:score,total:total};
+  var rec={date:new Date().toLocaleDateString('ja-JP'),score:score,total:total,mode:mode};
   hist=[rec].concat(hist).slice(0,10);
   try{localStorage.setItem('aid_fp2_hist',JSON.stringify(hist));}catch(e){}
   var pct=Math.round(score/total*100);
@@ -448,50 +738,6 @@ function finish() {
 }
 
 function goHome(){synth&&synth.cancel();updateHome();show('home');}
-
-/* ===== チャット ===== */
-function addBot(txt){
-  var m=document.getElementById('chat-msgs');
-  var d=document.createElement('div');d.className='bot-wrap';
-  d.innerHTML='<div class="bot-icon">🖤</div><div class="bot-bubble">'+txt+'</div>';
-  m.appendChild(d);m.scrollTop=m.scrollHeight;
-}
-function addUser(txt){
-  var m=document.getElementById('chat-msgs');
-  var d=document.createElement('div');d.className='user-wrap';
-  d.innerHTML='<div class="user-bubble">'+txt+'</div>';
-  m.appendChild(d);m.scrollTop=m.scrollHeight;
-}
-function removeLast(){
-  var m=document.getElementById('chat-msgs');
-  if(m.lastChild)m.removeChild(m.lastChild);
-}
-
-async function sendChat(){
-  var inp=document.getElementById('chat-in');
-  var txt=inp.value.trim();
-  if(!txt) return;
-  inp.value='';
-  addUser(txt);
-  chatHist.push({role:'user',content:txt});
-  addBot('考え中やで...⏳');
-  var q=Qs[cur];
-  var sys='あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに、楽しく、わかりやすく教えてください。\n今取り組んでいる問題：\nカテゴリ：'+q.cat+'\n問題：'+q.q+'\n正解：選択肢'+(q.ans+1)+'番「'+q.opts[q.ans]+'」\n解説：'+q.ex+'\n\nユーザーが質問したことに対して、「なぜそうなるか」を日常のたとえや具体例を使って完全理解できるよう説明してください。200字以内で簡潔に答えてください。';
-
-  try {
-    var r = await fetch('/api/chat',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({messages:chatHist, system:sys})
-    });
-    var d = await r.json();
-    var rep = d.reply || 'ごめん、うまく答えられへんかった！';
-    chatHist.push({role:'assistant',content:rep});
-    removeLast(); addBot(rep);
-  } catch(e) {
-    removeLast(); addBot('通信エラーやで！もう一回試してみて！');
-  }
-}
 
 updateHome();
 </script>
