@@ -379,7 +379,7 @@ function typeText(el, text, onDone){
   cursor.className='typing-cursor';
   el.appendChild(cursor);
   var i=0;
-  var speed=28; // ms/文字
+  var speed=56; // ms/文字
   function next(){
     if(i<text.length){
       el.insertBefore(document.createTextNode(text[i]),cursor);
@@ -420,7 +420,7 @@ function startChatMode(){
   chatPhase='intro';
 
   var q=Qs[cur];
-  var intro='よっしゃ！問題'+( cur+1)+'問目いくで〜！\nカテゴリは「'+q.cat+'」やで！\n\nゆっくり読んでな👇';
+  var intro='よっしゃ！問題'+( cur+1)+'問目いくで〜！\nカテゴリは「'+q.cat+'」やで！\n\nゆっくり読んでな！';
   addBotBubble(intro, function(){
     setTimeout(function(){
       chatPhase='question';
