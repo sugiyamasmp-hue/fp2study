@@ -3,2753 +3,492 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FP2級スタディ</title>
+<title>AID式学習法 FP2級</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #ffffff;
-    --surface: #ffffff;
-    --border: #e4e8ec;
-    --accent: #0969da;
-    --hover-bg: #eef6ff;
-    --user-bg: #e6ffed;
-    --text: #24292f;
-    --muted: #57606a;
-    --green: #1a7f37;
-    --red: #cf222e;
-    --yellow: #9a6700;
-    --yellow-bg: #fff8c5;
-    --shadow: 0 1px 3px rgba(27,31,36,0.08), 0 1px 2px rgba(27,31,36,0.04);
-    --shadow-md: 0 4px 14px rgba(27,31,36,0.10);
-  }
-
-  html, body {
-    height: 100%;
-    font-family: 'Noto Sans JP', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-  }
-
-  .app {
-    display: flex;
-    flex-direction: column;
-    height: 100dvh;
-    max-width: 760px;
-    margin: 0 auto;
-    position: relative;
-  }
-
-  /* ===== HEADER ===== */
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-    flex-shrink: 0;
-    box-shadow: var(--shadow);
-    z-index: 10;
-  }
-
-  .header-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .header-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    overflow: hidden;
-    flex-shrink: 0;
-    border: 2px solid var(--border);
-    background: var(--bg);
-  }
-
-  .header-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .header-info h1 {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--text);
-  }
-
-  .header-info p {
-    font-size: 0.72rem;
-    color: var(--muted);
-  }
-
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .difficulty-badge {
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    background: #dafbe1;
-    color: var(--green);
-    border: 1px solid #acd5b2;
-  }
-
-  .difficulty-badge.mid {
-    background: var(--yellow-bg);
-    color: var(--yellow);
-    border-color: #e0c060;
-  }
-
-  .difficulty-badge.hard {
-    background: #ffebe9;
-    color: var(--red);
-    border-color: #f5b8b4;
-  }
-
-  .score-badge {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 3px 10px;
-    font-size: 0.78rem;
-    color: var(--muted);
-  }
-
-  .score-badge span { color: var(--green); font-weight: 700; }
-
-  .dash-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--muted);
-    font-size: 1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s;
-  }
-
-  .dash-btn:hover { background: var(--bg); color: var(--accent); }
-
-  /* ===== UPGRADE TOAST ===== */
-  .upgrade-toast {
-    position: fixed;
-    top: 70px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-20px);
-    background: linear-gradient(135deg, #0969da, #218bff);
-    color: white;
-    padding: 12px 24px;
-    border-radius: 30px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    box-shadow: var(--shadow-md);
-    opacity: 0;
-    pointer-events: none;
-    z-index: 100;
-    transition: opacity 0.3s, transform 0.3s;
-    white-space: nowrap;
-  }
-
-  .upgrade-toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  /* ===== AMADO WIDGET ===== */
-  .amado-widget {
-    position: fixed;
-    right: 16px;
-    bottom: 88px;
-    z-index: 90;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 6px;
-    opacity: 0;
-    transform: translateY(60px);
-    pointer-events: none;
-    transition: opacity 0.4s, transform 0.4s;
-  }
-
-  .amado-widget.show {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .amado-img {
-    width: 150px;
-    display: block;
-    filter: drop-shadow(0 4px 10px rgba(27,31,36,0.18));
-  }
-
-  .amado-bubble {
-    display: none;
-    max-width: 200px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    border-bottom-right-radius: 4px;
-    padding: 8px 14px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    line-height: 1.5;
-    color: var(--text);
-    box-shadow: var(--shadow-md);
-  }
-
-  .amado-bubble.show { display: block; }
-
-  /* ===== CATEGORY SCREEN ===== */
-  #category-screen {
-    flex: 1;
-    flex-direction: column;
-    overflow-y: auto;
-    padding: 0 0 24px;
-  }
-
-  /* Character greeting banner */
-  .char-greeting {
-    display: flex;
-    align-items: flex-end;
-    gap: 14px;
-    padding: 22px 20px 6px;
-  }
-
-  .greeting-avatar {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    flex-shrink: 0;
-    object-fit: cover;
-  }
-
-  .speech-bubble {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    border-bottom-left-radius: 4px;
-    padding: 14px 18px;
-    font-size: 0.95rem;
-    line-height: 1.7;
-    color: var(--text);
-    box-shadow: var(--shadow);
-    position: relative;
-    flex: 1;
-  }
-
-  .mode-toggle {
-    display: flex;
-    gap: 10px;
-    padding: 18px 20px 0;
-    flex-shrink: 0;
-  }
-
-  .mode-btn {
-    flex: 1;
-    padding: 14px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--muted);
-    font-size: 1rem;
-    font-weight: 700;
-    font-family: 'Noto Sans JP', sans-serif;
-    cursor: pointer;
-    transition: all 0.15s;
-    box-shadow: var(--shadow);
-  }
-
-  .mode-btn.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: white;
-  }
-
-  .cat-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 6px;
-  }
-
-  .cat-sub {
-    font-size: 0.88rem;
-    color: var(--muted);
-    margin-bottom: 18px;
-  }
-
-  .cat-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 22px;
-  }
-
-  .cat-btn {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 18px 20px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    color: var(--text);
-    font-size: 1.05rem;
-    font-family: 'Noto Sans JP', sans-serif;
-    font-weight: 500;
-    cursor: pointer;
-    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-    text-align: left;
-    box-shadow: var(--shadow);
-  }
-
-  .cat-btn:hover {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(9,105,218,0.1);
-    background: var(--hover-bg);
-  }
-
-  .cat-btn .icon { font-size: 1.3rem; }
-
-  .count-label {
-    font-size: 0.85rem;
-    color: var(--muted);
-    font-weight: 500;
-    margin-bottom: 10px;
-  }
-
-  .count-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-
-  .cnt-btn {
-    padding: 12px 26px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--muted);
-    font-size: 1rem;
-    font-weight: 700;
-    font-family: 'Noto Sans JP', sans-serif;
-    cursor: pointer;
-    transition: all 0.15s;
-    box-shadow: var(--shadow);
-  }
-
-  .cnt-btn.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: white;
-  }
-
-  /* ===== CHAT AREA ===== */
-  #chat-screen {
-    display: none;
-    flex: 1;
-    flex-direction: column;
-    overflow-y: auto;
-    padding: 20px;
-    scroll-behavior: smooth;
-    background: var(--bg);
-  }
-
-  .msg-row {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-
-  .msg-row.user { flex-direction: row-reverse; }
-
-  .avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    margin-top: 2px;
-    overflow: hidden;
-    border: 1.5px solid var(--border);
-  }
-
-  .avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .avatar.user {
-    background: linear-gradient(135deg, #1a7f37, #2ea043);
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: white;
-    border-color: #2ea043;
-  }
-
-  .bubble {
-    max-width: calc(100% - 56px);
-    padding: 14px 18px;
-    border-radius: 18px;
-    font-size: 1.05rem;
-    line-height: 1.8;
-    white-space: pre-line;
-    box-shadow: var(--shadow);
-  }
-
-  .bubble.kuro {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-top-left-radius: 4px;
-  }
-
-  .bubble.user {
-    background: var(--user-bg);
-    border: 1px solid #acd5b2;
-    border-top-right-radius: 4px;
-    color: var(--text);
-  }
-
-  .bubble.loading {
-    color: var(--muted);
-    font-style: italic;
-  }
-
-  .typing-cursor {
-    display: inline-block;
-    width: 2px;
-    height: 1.05em;
-    margin-left: 2px;
-    vertical-align: -2px;
-    background: var(--muted);
-    animation: typing-blink 0.9s steps(1) infinite;
-  }
-
-  @keyframes typing-blink {
-    0%, 50% { opacity: 1; }
-    50.01%, 100% { opacity: 0; }
-  }
-
-  .ans-btns {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 14px;
-  }
-
-  .ans-btn {
-    padding: 12px 22px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    color: var(--text);
-    font-size: 1.02rem;
-    font-weight: 700;
-    font-family: 'Noto Sans JP', sans-serif;
-    cursor: pointer;
-    transition: all 0.15s;
-    box-shadow: var(--shadow);
-  }
-
-  .ans-btn:hover:not(:disabled) {
-    border-color: var(--accent);
-    background: var(--hover-bg);
-  }
-
-  .ans-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .next-btn {
-    margin-top: 14px;
-    padding: 14px 30px;
-    border-radius: 10px;
-    border: none;
-    background: var(--accent);
-    color: white;
-    font-size: 1.02rem;
-    font-weight: 700;
-    font-family: 'Noto Sans JP', sans-serif;
-    cursor: pointer;
-    transition: opacity 0.15s;
-    box-shadow: var(--shadow);
-  }
-
-  .next-btn:hover { opacity: 0.85; }
-
-  .butchake-btn {
-    margin-top: 10px;
-    padding: 11px 18px;
-    border-radius: 10px;
-    border: 1px solid #d29922;
-    background: var(--yellow-bg);
-    color: var(--yellow);
-    font-size: 0.92rem;
-    font-weight: 700;
-    font-family: 'Noto Sans JP', sans-serif;
-    cursor: pointer;
-    transition: all 0.15s;
-    display: inline-block;
-  }
-
-  .butchake-btn:hover { background: #ffeea0; }
-  .butchake-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .yaruki-btn {
-    margin-top: 10px;
-    margin-left: 10px;
-    padding: 11px 18px;
-    border-radius: 10px;
-    border: 1px solid #acd5b2;
-    background: var(--user-bg);
-    color: var(--green);
-    font-size: 0.92rem;
-    font-weight: 700;
-    font-family: 'Noto Sans JP', sans-serif;
-    cursor: pointer;
-    transition: all 0.15s;
-    display: inline-block;
-  }
-
-  .yaruki-btn:hover { background: #ccffdd; }
-  .yaruki-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  /* ===== INPUT AREA ===== */
-  .input-area {
-    display: none;
-    padding: 14px 18px;
-    border-top: 1px solid var(--border);
-    background: var(--surface);
-    flex-shrink: 0;
-    box-shadow: 0 -1px 3px rgba(27,31,36,0.06);
-  }
-
-  .input-row { display: flex; gap: 10px; align-items: flex-end; }
-
-  .chat-input {
-    flex: 1;
-    padding: 14px 18px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    color: var(--text);
-    font-size: 1.02rem;
-    font-family: 'Noto Sans JP', sans-serif;
-    resize: none;
-    outline: none;
-    min-height: 50px;
-    max-height: 130px;
-    line-height: 1.5;
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-
-  .chat-input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(9,105,218,0.1);
-  }
-
-  .send-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
-    border: none;
-    background: var(--accent);
-    color: white;
-    font-size: 1.2rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: opacity 0.15s;
-    box-shadow: var(--shadow);
-  }
-
-  .send-btn:hover { opacity: 0.85; }
-  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .mic-btn {
-    display: none;
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
-    border: none;
-    background: var(--green);
-    color: white;
-    font-size: 1.3rem;
-    cursor: pointer;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: opacity 0.15s, transform 0.15s;
-    box-shadow: var(--shadow);
-  }
-
-  .mic-btn:hover { opacity: 0.85; }
-
-  .mic-btn.listening {
-    background: var(--red);
-    animation: mic-pulse 1.1s infinite;
-  }
-
-  @keyframes mic-pulse {
-    0% { box-shadow: 0 0 0 0 rgba(207,34,46,0.5); }
-    70% { box-shadow: 0 0 0 10px rgba(207,34,46,0); }
-    100% { box-shadow: 0 0 0 0 rgba(207,34,46,0); }
-  }
-
-  /* ハンズフリーモード：入力欄を大きく目立たせる */
-  .input-area.hf-mode {
-    background: var(--hover-bg);
-    border-top: 2px solid var(--accent);
-    padding: 18px;
-  }
-
-  .input-area.hf-mode .mic-btn,
-  .input-area.hf-mode .send-btn {
-    display: flex;
-    width: 58px;
-    height: 58px;
-    font-size: 1.5rem;
-  }
-
-  .input-area.hf-mode .chat-input {
-    font-size: 1.3rem;
-    font-weight: 700;
-    min-height: 64px;
-    padding: 18px 22px;
-    border: 2px solid var(--accent);
-    text-align: center;
-  }
-
-  /* ===== FINISH SCREEN ===== */
-  #finish-screen {
-    display: none;
-    flex: 1;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 28px;
-    text-align: center;
-    background: var(--bg);
-  }
-
-  .finish-inner {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 40px 28px;
-    box-shadow: var(--shadow-md);
-    max-width: 420px;
-    width: 100%;
-  }
-
-  .finish-avatar {
-    width: 88px;
-    height: 88px;
-    border-radius: 50%;
-    border: 3px solid var(--border);
-    margin: 0 auto 18px;
-    overflow: hidden;
-  }
-
-  .finish-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .finish-inner h2 {
-    font-size: 1.6rem;
-    font-weight: 900;
-    color: var(--green);
-    margin-bottom: 10px;
-  }
-
-  .finish-inner p {
-    font-size: 1rem;
-    color: var(--text);
-    line-height: 1.8;
-    margin-bottom: 24px;
-  }
-
-  .finish-difficulty {
-    display: inline-block;
-    padding: 4px 14px;
-    border-radius: 20px;
-    font-size: 0.82rem;
-    font-weight: 700;
-    background: #dafbe1;
-    color: var(--green);
-    border: 1px solid #acd5b2;
-    margin-bottom: 20px;
-  }
-
-  .finish-btns {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .btn-again {
-    padding: 14px 28px;
-    border-radius: 12px;
-    border: none;
-    background: var(--green);
-    color: white;
-    font-size: 1rem;
-    font-weight: 700;
-    font-family: 'Noto Sans JP', sans-serif;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-  }
-
-  .btn-back {
-    padding: 14px 28px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text);
-    font-size: 1rem;
-    font-weight: 700;
-    font-family: 'Noto Sans JP', sans-serif;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-  }
-
-  /* ===== APP MODE ===== */
-  #app-mode-screen {
-    display: none;
-    flex: 1;
-    flex-direction: column;
-    overflow-y: auto;
-    padding: 20px 20px;
-    background: var(--bg);
-  }
-
-  .app-header-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-  }
-
-  .app-score-bar {
-    font-size: 0.85rem;
-    color: var(--muted);
-    font-weight: 700;
-  }
-
-  .app-score-bar span { color: var(--green); }
-
-  .app-diff-bar {
-    font-size: 0.78rem;
-    font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 20px;
-    background: #dafbe1;
-    color: var(--green);
-    border: 1px solid #acd5b2;
-  }
-
-  .app-diff-bar.mid { background: var(--yellow-bg); color: var(--yellow); border-color: #e0c060; }
-  .app-diff-bar.hard { background: #ffebe9; color: var(--red); border-color: #f5b8b4; }
-
-  .streak-bar {
-    font-size: 0.78rem;
-    color: var(--muted);
-    margin-bottom: 10px;
-  }
-
-  .streak-dots { display: inline-flex; gap: 3px; margin-left: 6px; }
-  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
-  .dot.filled { background: var(--accent); }
-
-  .q-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: var(--shadow);
-  }
-
-  .q-label {
-    font-size: 0.8rem;
-    color: var(--accent);
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    margin-bottom: 14px;
-  }
-
-  .q-text {
-    font-size: 1.1rem;
-    font-weight: 700;
-    line-height: 1.85;
-    margin-bottom: 20px;
-    color: var(--text);
-  }
-
-  .app-choices { display: flex; flex-direction: column; gap: 12px; }
-
-  .app-choice-btn {
-    padding: 16px 20px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    color: var(--text);
-    font-size: 1.03rem;
-    font-weight: 500;
-    font-family: 'Noto Sans JP', sans-serif;
-    text-align: left;
-    cursor: pointer;
-    line-height: 1.6;
-    transition: all 0.15s;
-    box-shadow: var(--shadow);
-  }
-
-  .app-choice-btn:hover:not(:disabled) {
-    border-color: var(--accent);
-    background: var(--hover-bg);
-    box-shadow: 0 0 0 3px rgba(9,105,218,0.08);
-  }
-
-  .app-choice-btn.correct {
-    background: #e6ffed;
-    border-color: var(--green);
-    color: var(--green);
-  }
-
-  .app-choice-btn.wrong {
-    background: #ffebe9;
-    border-color: var(--red);
-    color: var(--red);
-  }
-
-  .app-choice-btn.reveal {
-    background: #e6ffed;
-    border-color: var(--green);
-    color: var(--green);
-  }
-
-  .app-result {
-    display: none;
-    margin-top: 12px;
-    padding: 12px 16px;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    font-weight: 700;
-  }
-
-  .app-result.ok {
-    background: #e6ffed;
-    border: 1px solid var(--green);
-    color: var(--green);
-  }
-
-  .app-result.ng {
-    background: var(--yellow-bg);
-    border: 1px solid #d29922;
-    color: var(--yellow);
-  }
-
-  .app-ex {
-    display: none;
-    margin-top: 10px;
-    padding: 12px 14px;
-    background: var(--hover-bg);
-    border-left: 3px solid var(--accent);
-    border-radius: 6px;
-    color: #0550ae;
-    font-size: 0.95rem;
-    line-height: 1.75;
-  }
-
-  .app-next-btn {
-    display: none;
-    margin-top: 16px;
-    width: 100%;
-    padding: 17px;
-    border-radius: 12px;
-    border: none;
-    background: var(--accent);
-    color: white;
-    font-size: 1.05rem;
-    font-weight: 700;
-    font-family: 'Noto Sans JP', sans-serif;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-    transition: opacity 0.15s;
-  }
-
-  .app-next-btn:hover { opacity: 0.85; }
-
-  .app-chat-log { margin-top: 16px; }
-  .app-chat-log:empty { margin-top: 0; }
-
-  /* ===== HANDS-FREE MODE (○×) ===== */
-  #hf-mode-screen {
-    display: none;
-    flex: 1;
-    flex-direction: column;
-    overflow-y: auto;
-    padding: 20px 20px;
-    background: var(--bg);
-  }
-
-  .hf-status {
-    margin-top: 14px;
-    font-size: 0.95rem;
-    color: var(--muted);
-    text-align: center;
-  }
-
-  /* ===== CHARACTER SELECT ===== */
-  #char-screen {
-    display: none;
-    flex: 1;
-    flex-direction: column;
-    overflow-y: auto;
-    padding: 24px 20px;
-    background: var(--bg);
-  }
-
-  .char-title {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 6px;
-  }
-
-  .char-sub {
-    font-size: 0.9rem;
-    color: var(--muted);
-    margin-bottom: 22px;
-  }
-
-  .char-list { display: flex; flex-direction: column; gap: 14px; }
-
-  .char-card {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 18px 20px;
-    background: var(--surface);
-    border: 2px solid var(--border);
-    border-radius: 16px;
-    cursor: pointer;
-    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-    text-align: left;
-    font-family: 'Noto Sans JP', sans-serif;
-    color: var(--text);
-    box-shadow: var(--shadow);
-  }
-
-  .char-card:hover {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(9,105,218,0.1);
-  }
-
-  .char-card.selected {
-    border-color: var(--accent);
-    background: var(--hover-bg);
-    box-shadow: 0 0 0 3px rgba(9,105,218,0.12);
-  }
-
-  .char-avatar-img {
-    width: 68px;
-    height: 68px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-    border: 2px solid var(--border);
-  }
-
-  .char-card.selected .char-avatar-img { border-color: var(--accent); }
-
-  .char-info { flex: 1; }
-  .char-name { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
-  .char-desc { font-size: 0.86rem; color: var(--muted); line-height: 1.55; }
-
-  .char-sample {
-    font-size: 0.86rem;
-    color: var(--accent);
-    margin-top: 6px;
-    font-style: italic;
-    line-height: 1.55;
-    background: var(--hover-bg);
-    padding: 7px 10px;
-    border-radius: 8px;
-    border-left: 2px solid var(--accent);
-  }
-
-  .char-confirm-btn {
-    margin-top: 22px;
-    width: 100%;
-    padding: 18px;
-    border-radius: 14px;
-    border: none;
-    background: var(--accent);
-    color: white;
-    font-size: 1.05rem;
-    font-weight: 700;
-    font-family: 'Noto Sans JP', sans-serif;
-    cursor: pointer;
-    transition: opacity 0.15s;
-    box-shadow: var(--shadow-md);
-  }
-
-  .char-confirm-btn:hover { opacity: 0.85; }
-
-  /* ===== DASHBOARD ===== */
-  #dashboard-screen {
-    display: none;
-    flex: 1;
-    flex-direction: column;
-    overflow-y: auto;
-    padding: 24px 20px;
-    background: var(--bg);
-  }
-
-  .dash-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-
-  .dash-header h2 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text);
-  }
-
-  .dash-close-btn {
-    padding: 6px 14px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--muted);
-    font-size: 0.85rem;
-    font-weight: 700;
-    font-family: 'Noto Sans JP', sans-serif;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-  }
-
-  .dash-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin-bottom: 18px;
-  }
-
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 18px;
-    box-shadow: var(--shadow);
-  }
-
-  .stat-label {
-    font-size: 0.78rem;
-    color: var(--muted);
-    font-weight: 500;
-    margin-bottom: 6px;
-  }
-
-  .stat-value {
-    font-size: 1.8rem;
-    font-weight: 900;
-    color: var(--text);
-    line-height: 1;
-  }
-
-  .stat-value.green { color: var(--green); }
-  .stat-value.blue { color: var(--accent); }
-  .stat-value.yellow { color: var(--yellow); }
-
-  .stat-sub {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-top: 4px;
-  }
-
-  .dash-section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 18px;
-    box-shadow: var(--shadow);
-    margin-bottom: 14px;
-  }
-
-  .dash-section-title {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 12px;
-  }
-
-  /* Difficulty progress */
-  .diff-progress {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .diff-level-badge {
-    padding: 4px 14px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-
-  .diff-level-badge.easy { background: #dafbe1; color: var(--green); border: 1px solid #acd5b2; }
-  .diff-level-badge.mid { background: var(--yellow-bg); color: var(--yellow); border: 1px solid #e0c060; }
-  .diff-level-badge.hard { background: #ffebe9; color: var(--red); border: 1px solid #f5b8b4; }
-
-  .diff-info { flex: 1; }
-  .diff-next-label { font-size: 0.78rem; color: var(--muted); margin-bottom: 6px; }
-
-  .streak-progress {
-    display: flex;
-    gap: 5px;
-  }
-
-  .streak-pip {
-    width: 24px;
-    height: 8px;
-    border-radius: 4px;
-    background: var(--border);
-    transition: background 0.2s;
-  }
-
-  .streak-pip.filled { background: var(--accent); }
-
-  .diff-note {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-top: 6px;
-  }
-
-  .today-section {
-    display: flex;
-    gap: 8px;
-  }
-
-  .today-stat {
-    flex: 1;
-    text-align: center;
-    padding: 10px;
-    background: var(--bg);
-    border-radius: 8px;
-    border: 1px solid var(--border);
-  }
-
-  .today-stat .ts-val {
-    font-size: 1.4rem;
-    font-weight: 900;
-    color: var(--text);
-  }
-
-  .today-stat .ts-val.green { color: var(--green); }
-  .today-stat .ts-label { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
-
-  .cat-level-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.88rem;
-  }
-  .cat-level-row:last-child { border-bottom: none; }
-  .cat-level-name { flex: 1; color: var(--text); }
-  .cat-level-badge {
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    background: #dafbe1;
-    color: var(--green);
-    border: 1px solid #acd5b2;
-    flex-shrink: 0;
-  }
-  .cat-level-badge.hard { background: #ffebe9; color: var(--red); border-color: #f5b8b4; }
-  .cat-level-rate { color: var(--muted); font-size: 0.8rem; flex-shrink: 0; }
-  .cat-level-empty { font-size: 0.85rem; color: var(--muted); }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#1a1a2e;color:#eee;font-family:sans-serif;min-height:100vh;padding:16px}
+h1{color:#ff8c00;font-size:22px;margin-bottom:4px}
+.sub{color:#ff8c00;font-size:11px;margin-bottom:20px;opacity:0.8}
+.card{background:#16213e;border:1px solid #0f3460;border-radius:16px;padding:20px;margin-bottom:16px}
+.tag{background:#ff8c0022;border:1px solid #ff8c0055;color:#ff8c00;border-radius:20px;padding:2px 10px;font-size:12px;font-weight:700;margin-right:6px}
+.big{font-size:26px;font-weight:900;color:#fff;margin:8px 0}
+.orange{color:#ff8c00}
+.sub2{font-size:13px;color:#888;margin-bottom:16px}
+.stats{display:flex;background:#0f3460;border-radius:10px;padding:12px 0;margin-bottom:16px}
+.stat{flex:1;text-align:center}
+.stat-n{font-size:20px;font-weight:800;color:#ff8c00}
+.stat-l{font-size:11px;color:#666;margin-top:2px}
+.divider{width:1px;background:#ffffff22}
+.btn{width:100%;padding:14px;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:12px;color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:4px}
+.btn:hover{opacity:0.9}
+.btn-outline{width:100%;padding:13px;background:transparent;border:2px solid #ff8c00;border-radius:12px;color:#ff8c00;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px}
+.hist-title{font-size:13px;color:#888;font-weight:700;margin-bottom:8px}
+.hist-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #ffffff11;font-size:13px}
+.hist-score{color:#ff8c00;font-weight:700}
+.screen{display:none}
+.screen.on{display:block}
+.progress{height:4px;background:#ffffff11;border-radius:4px;margin-bottom:14px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,#ff8c00,#ff4500);border-radius:4px;transition:width 0.3s}
+.qhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.cat-tag{background:#ff8c0022;border:1px solid #ff8c0055;color:#ff8c00;border-radius:20px;padding:2px 10px;font-size:12px;font-weight:700}
+.qnum{font-size:13px;color:#666;font-weight:700}
+.qbox{background:#16213e;border:1px solid #0f3460;border-radius:14px;padding:16px;margin-bottom:12px}
+.qtext{font-size:14px;line-height:1.8;color:#ddd;white-space:pre-wrap}
+.opts{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.opt{display:flex;align-items:flex-start;gap:10px;background:#16213e;border:1px solid #0f3460;border-radius:10px;padding:12px;color:#ddd;font-size:13px;text-align:left;cursor:pointer;line-height:1.6;width:100%}
+.opt:hover{background:#0f3460}
+.opt.correct{background:#00c86422;border-color:#00c864aa}
+.opt.wrong{background:#ff444422;border-color:#ff4444aa}
+.opt.dim{opacity:0.35}
+.opt-n{min-width:22px;height:22px;border-radius:6px;background:#ff8c0022;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#ff8c00;flex-shrink:0;margin-top:1px}
+.exbox{background:#16213e;border:1px solid #0f3460;border-radius:14px;padding:16px;margin-bottom:10px}
+.ex-title{font-size:17px;font-weight:800;color:#fff;margin-bottom:10px}
+.ex-text{font-size:13px;line-height:1.9;color:#ccc;white-space:pre-wrap;margin-bottom:14px}
+.chat-box{background:#0a0a1a;border:1px solid #ff8c0033;border-radius:12px;padding:12px;margin-bottom:12px}
+.chat-head{font-size:13px;font-weight:700;color:#ff8c00;margin-bottom:8px}
+.chat-msgs{max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.bot-wrap{display:flex;align-items:flex-start;gap:6px}
+.user-wrap{display:flex;justify-content:flex-end}
+.bot-msg{background:#ffffff0d;border:1px solid #ffffff11;border-radius:4px 12px 12px 12px;padding:8px 10px;font-size:13px;line-height:1.7;color:#ddd;max-width:85%;white-space:pre-wrap}
+.user-msg{background:linear-gradient(135deg,#ff8c00,#ff4500);border-radius:12px 4px 12px 12px;padding:8px 10px;font-size:13px;line-height:1.7;color:#fff;max-width:85%}
+.chat-row{display:flex;gap:6px}
+.chat-input{flex:1;background:#ffffff0d;border:1px solid #ffffff22;border-radius:8px;padding:8px 10px;font-size:13px;color:#fff;outline:none}
+.chat-send{padding:8px 14px;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:800;cursor:pointer}
+.next-btn{width:100%;padding:13px;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+.result-box{background:#16213e;border:1px solid #0f3460;border-radius:16px;padding:28px 20px;text-align:center;margin-bottom:16px}
+.r-emoji{font-size:50px;margin-bottom:12px}
+.r-score{font-size:40px;font-weight:900;color:#fff}
+.r-pct{font-size:22px;font-weight:800;color:#ff8c00;margin-bottom:10px}
+.r-msg{font-size:14px;color:#ccc;margin-bottom:18px;line-height:1.6}
+.review{text-align:left;background:#0f3460;border-radius:10px;padding:12px;margin-bottom:18px}
+.rev-row{display:flex;gap:8px;padding:4px 0;border-bottom:1px solid #ffffff11;font-size:13px;color:#aaa;align-items:center}
+.footer{text-align:center;font-size:12px;color:#444;margin-top:8px}
+
+/* ハンズフリーモード専用スタイル */
+.hf-qbox{background:#16213e;border:2px solid #ff8c0055;border-radius:14px;padding:20px;margin-bottom:16px;text-align:center}
+.hf-qtext{font-size:15px;line-height:1.9;color:#eee;white-space:pre-wrap;text-align:left;margin-bottom:16px}
+.hf-statement{background:#0f3460;border-radius:10px;padding:14px;font-size:16px;line-height:1.8;color:#fff;margin-bottom:16px;font-weight:700;text-align:left}
+.hf-status{text-align:center;font-size:14px;color:#888;margin-bottom:12px;min-height:24px}
+.hf-status.listening{color:#00c864}
+.hf-status.speaking{color:#ff8c00}
+.hf-btns{display:flex;gap:12px;margin-bottom:16px}
+.hf-btn-maru{flex:1;padding:28px 12px;background:linear-gradient(135deg,#00c864,#00a050);border:none;border-radius:16px;color:#fff;font-size:32px;font-weight:900;cursor:pointer;line-height:1}
+.hf-btn-batu{flex:1;padding:28px 12px;background:linear-gradient(135deg,#ff4444,#cc2200);border:none;border-radius:16px;color:#fff;font-size:32px;font-weight:900;cursor:pointer;line-height:1}
+.hf-btn-maru:hover{opacity:0.9}
+.hf-btn-batu:hover{opacity:0.9}
+.hf-btn-maru:disabled,.hf-btn-batu:disabled{opacity:0.3;cursor:not-allowed}
+.hf-result-panel{background:#0a0a1a;border-radius:14px;padding:16px;margin-bottom:14px;text-align:center;display:none}
+.hf-result-ok{font-size:48px;color:#00c864}
+.hf-result-ng{font-size:48px;color:#ff4444}
+.hf-result-msg{font-size:15px;color:#ccc;margin-top:8px;line-height:1.6}
+.voice-wave{display:flex;align-items:center;justify-content:center;gap:4px;height:30px;margin-bottom:8px}
+.voice-wave span{display:inline-block;width:4px;background:#ff8c00;border-radius:2px;animation:wave 1s ease-in-out infinite}
+.voice-wave span:nth-child(2){animation-delay:0.1s}
+.voice-wave span:nth-child(3){animation-delay:0.2s}
+.voice-wave span:nth-child(4){animation-delay:0.3s}
+.voice-wave span:nth-child(5){animation-delay:0.4s}
+@keyframes wave{0%,100%{height:6px}50%{height:24px}}
+.mode-badge{display:inline-block;background:#ff8c0022;border:1px solid #ff8c0055;color:#ff8c00;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700;margin-bottom:12px}
 </style>
 </head>
 <body>
+<!-- HOME -->
+<div id="home" class="screen on">
+<h1>AID式学習法</h1>
+<div class="sub">AI Interactive Dialogue</div>
+<div class="card">
+<div><span class="tag">FP2級</span><span class="tag">学科対策</span></div>
+<div class="big">楽しく、気分良く、</div>
+<div class="big orange">完全理解！</div>
+<div class="sub2">暗記じゃなくて「なぜ？」で理解する学習法</div>
+<div class="stats">
+<div class="stat"><div class="stat-n">5</div><div class="stat-l">問題数</div></div>
+<div class="divider"></div>
+<div class="stat"><div class="stat-n" id="s-attempts">0</div><div class="stat-l">挑戦回数</div></div>
+<div class="divider"></div>
+<div class="stat"><div class="stat-n" id="s-latest">--</div><div class="stat-l">最新スコア</div></div>
+</div>
+<button class="btn" onclick="startQuiz('normal')">スタート！🔥</button>
+<button class="btn-outline" onclick="startQuiz('handsfree')">🎤 ハンズフリーモード</button>
+</div>
+<div class="card" id="hist-card" style="display:none">
+<div class="hist-title">📊 最近の記録</div>
+<div id="hist-list"></div>
+</div>
+<div class="footer">クロちゃんと一緒に合格めざそ！🖤</div>
+</div>
 
-<div class="app">
+<!-- QUIZ (通常モード) -->
+<div id="quiz" class="screen">
+<div class="progress"><div class="progress-bar" id="prog"></div></div>
+<div class="qhead">
+<span class="cat-tag" id="q-cat"></span>
+<span class="qnum" id="q-num"></span>
+</div>
+<div class="qbox"><div class="qtext" id="q-text"></div></div>
+<div class="opts" id="opts"></div>
+<div class="exbox" id="exbox" style="display:none">
+<div class="ex-title" id="ex-title"></div>
+<div class="ex-text" id="ex-text"></div>
+<div class="chat-box">
+<div class="chat-head">🖤 クロちゃんに質問する</div>
+<div class="chat-msgs" id="chat-msgs"></div>
+<div class="chat-row">
+<input class="chat-input" id="chat-in" placeholder="なんでも聞いてや！" onkeydown="if(event.key==='Enter')sendChat()">
+<button class="chat-send" onclick="sendChat()">送信</button>
+</div>
+</div>
+<button class="next-btn" id="next-btn" onclick="nextQ()"></button>
+</div>
+</div>
 
-  <!-- ヘッダー -->
-  <div class="header">
-    <div class="header-left">
-      <div class="header-avatar" id="header-avatar">
-        <img id="header-avatar-img" src="/images/characters/yassan.png" alt="キャラ">
-      </div>
-      <div class="header-info">
-        <h1 id="header-char-name">やっさん先生</h1>
-        <p id="header-sub">FP2級 一緒に合格しよ！</p>
-      </div>
-    </div>
-    <div class="header-right">
-      <div class="difficulty-badge" id="difficulty-badge">初級</div>
-      <div class="score-badge">正解 <span id="score-disp">0</span> 問</div>
-      <button class="dash-btn" id="voice-toggle-btn" onclick="toggleVoice()" title="音声読み上げ">🔊</button>
-      <button class="dash-btn" onclick="openDashboard()" title="ダッシュボード">📊</button>
-    </div>
-  </div>
+<!-- QUIZ (ハンズフリーモード) -->
+<div id="quiz-hf" class="screen">
+<div class="progress"><div class="progress-bar" id="prog-hf"></div></div>
+<div class="qhead">
+<span class="cat-tag" id="q-cat-hf"></span>
+<span class="qnum" id="q-num-hf"></span>
+</div>
+<div class="hf-qbox">
+<div class="mode-badge" id="hf-mode-badge">🎤 音声モード</div>
+<div class="hf-qtext" id="hf-q-text"></div>
+<div class="hf-statement" id="hf-statement"></div>
+<div class="hf-status" id="hf-status">問題を読み上げています...</div>
+<div class="voice-wave" id="voice-wave" style="display:none">
+<span></span><span></span><span></span><span></span><span></span>
+</div>
+<div class="hf-btns">
+<button class="hf-btn-maru" id="btn-maru" onclick="hfAnswer(true)" disabled>⭕</button>
+<button class="hf-btn-batu" id="btn-batu" onclick="hfAnswer(false)" disabled>❌</button>
+</div>
+<div class="hf-result-panel" id="hf-result-panel">
+<div id="hf-result-icon"></div>
+<div class="hf-result-msg" id="hf-result-msg"></div>
+</div>
+<button class="next-btn" id="next-btn-hf" onclick="nextHfQ()" style="display:none"></button>
+</div>
+</div>
 
-  <!-- 昇格トースト -->
-  <div id="upgrade-toast" class="upgrade-toast"></div>
-
-  <!-- アマドちゃんポップアップ -->
-  <div id="amado-widget" class="amado-widget">
-    <div class="amado-bubble" id="amado-bubble"></div>
-    <img id="amado-img" class="amado-img" src="/images/amado/amado_seikai.png" alt="アマドちゃん">
-  </div>
-
-  <!-- 分野選択 -->
-  <div id="category-screen">
-
-    <!-- キャラクターの挨拶 -->
-    <div class="char-greeting">
-      <img id="greeting-avatar" src="/images/characters/yassan.png" alt="キャラ" class="greeting-avatar">
-      <div class="speech-bubble" id="speech-bubble">よっしゃ！今日もFP2、一緒にがんばろや！</div>
-    </div>
-
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="mode-chat-btn" onclick="setMode('chat')">💬 チャットモード</button>
-      <button class="mode-btn" id="mode-app-btn" onclick="setMode('app')">📱 アプリモード</button>
-      <button class="mode-btn" id="mode-hf-btn" onclick="setMode('hf')">🎙️ ハンズフリー</button>
-    </div>
-
-    <div style="padding: 18px 20px 0;">
-      <p class="cat-title">どの分野から練習する？</p>
-      <p class="cat-sub">浩之さん、今日もやってこ！💪</p>
-
-      <div class="cat-list">
-        <button class="cat-btn" onclick="startByMode('all')"><span class="icon">🎲</span>全分野おまかせ</button>
-        <button class="cat-btn" onclick="startByMode('review')"><span class="icon">🔁</span>復習モード（間違えた問題）</button>
-        <button class="cat-btn" onclick="startByMode('ライフ・社会保険,ライフプランニング,社会保険,年金,職業倫理・関連法規')"><span class="icon">📋</span>ライフプランニング・社会保険</button>
-        <button class="cat-btn" onclick="startByMode('保険')"><span class="icon">🛡️</span>リスク管理・保険</button>
-        <button class="cat-btn" onclick="startByMode('金融資産運用,金融資産')"><span class="icon">📈</span>金融資産運用</button>
-        <button class="cat-btn" onclick="startByMode('タックス')"><span class="icon">💰</span>タックスプランニング</button>
-        <button class="cat-btn" onclick="startByMode('不動産')"><span class="icon">🏠</span>不動産</button>
-        <button class="cat-btn" onclick="startByMode('相続・事業承継')"><span class="icon">🎁</span>相続・事業承継</button>
-        <button class="cat-btn" onclick="startByMode('模擬試験')"><span class="icon">📝</span>模擬試験</button>
-      </div>
-
-      <p class="count-label">問題数</p>
-      <div class="count-row">
-        <button class="cnt-btn active" onclick="setCount(5, this)">5問</button>
-        <button class="cnt-btn" onclick="setCount(10, this)">10問</button>
-        <button class="cnt-btn" onclick="setCount(20, this)">20問</button>
-      </div>
-
-      <button class="cnt-btn" style="margin-top:14px; font-size:0.88rem; color:var(--muted);" onclick="openCharScreen()">🎭 先生を変える（現在: <span id="current-char-label">やっさん先生</span>）</button>
-    </div>
-  </div>
-
-  <!-- アプリモード画面 -->
-  <div id="app-mode-screen">
-    <div class="app-header-bar">
-      <div class="app-score-bar">
-        問題 <span id="app-q-num">1</span> / <span id="app-q-total">5</span>　正解 <span id="app-score">0</span> 問
-      </div>
-      <div class="app-diff-bar" id="app-diff-bar">初級</div>
-    </div>
-    <div class="streak-bar">
-      連続正解: <span id="streak-display" class="streak-dots"></span>
-    </div>
-    <div class="q-card">
-      <div class="q-label" id="app-q-label">📋 問題 1</div>
-      <div class="q-text" id="app-q-text"></div>
-      <div class="app-choices" id="app-choices"></div>
-      <div class="app-result" id="app-result"></div>
-      <div class="app-ex" id="app-ex"></div>
-      <button class="app-next-btn" id="app-next-btn" onclick="appNextQuestion()">次の問題へ →</button>
-    </div>
-    <div id="app-chat-log" class="app-chat-log"></div>
-  </div>
-
-  <!-- ハンズフリーモード画面（○×） -->
-  <div id="hf-mode-screen">
-    <div class="app-header-bar">
-      <div class="app-score-bar">
-        問題 <span id="hf-q-num">1</span> / <span id="hf-q-total">5</span>　正解 <span id="hf-score">0</span> 問
-      </div>
-      <div class="app-diff-bar" id="hf-diff-bar">初級</div>
-    </div>
-    <div class="q-card">
-      <div class="q-label" id="hf-q-label">🎙️ 問題 1</div>
-      <div class="q-text" id="hf-q-text"></div>
-      <div class="hf-status" id="hf-status"></div>
-      <div class="app-result" id="hf-result"></div>
-      <div class="app-ex" id="hf-ex"></div>
-      <button class="app-next-btn" id="hf-next-btn" onclick="hfNextQuestion()">次の問題へ →</button>
-    </div>
-  </div>
-
-  <!-- チャット画面 -->
-  <div id="chat-screen"></div>
-
-  <!-- キャラクター選択画面 -->
-  <div id="char-screen">
-    <p class="char-title">先生を選んでや！</p>
-    <p class="char-sub">誰に教えてもらう？</p>
-    <div class="char-list">
-
-      <div class="char-card selected" id="char-yassan" onclick="selectChar('yassan')">
-        <img src="/images/characters/yassan.png" alt="やっさん先生" class="char-avatar-img">
-        <div class="char-info">
-          <div class="char-name">やっさん先生 🐾</div>
-          <div class="char-desc">関西弁でフレンドリー！楽しく学べるで</div>
-          <div class="char-sample">「よっしゃ！正解やで！さすが浩之さん！🎉」</div>
-        </div>
-      </div>
-
-      <div class="char-card" id="char-bon" onclick="selectChar('bon')">
-        <img src="/images/characters/bon.png" alt="ボン先生" class="char-avatar-img">
-        <div class="char-info">
-          <div class="char-name">ボン先生 🎩</div>
-          <div class="char-desc">「これでいいのだ！」のほほんとFPを教えてくれる</div>
-          <div class="char-sample">「これでいいのだ！キミは天才なのだ！パパは嬉しいのだ！」</div>
-        </div>
-      </div>
-
-      <div class="char-card" id="char-gyal" onclick="selectChar('gyal')">
-        <img src="/images/characters/gyal.png" alt="ギャル先生" class="char-avatar-img">
-        <div class="char-info">
-          <div class="char-name">ギャル先生 💃</div>
-          <div class="char-desc">マジで神な教え方！難しいこともえぐくわかりやすく！</div>
-          <div class="char-sample">「やばっ！！正解じゃん！！神すぎ！！この調子で絶対合格しちゃおう！！💕」</div>
-        </div>
-      </div>
-
-      <div class="char-card" id="char-sebas" onclick="selectChar('sebas')">
-        <img src="/images/characters/sebas.png" alt="セバス先生" class="char-avatar-img">
-        <div class="char-info">
-          <div class="char-name">セバス先生 🎻</div>
-          <div class="char-desc">執事のように上品で丁寧！落ち着いた敬語でしっかり教えてくれる</div>
-          <div class="char-sample">「さすがでございます、浩之様。正解にございます」</div>
-        </div>
-      </div>
-
-    </div>
-    <button class="char-confirm-btn" onclick="confirmChar()">この先生で始める！</button>
-  </div>
-
-  <!-- ダッシュボード -->
-  <div id="dashboard-screen">
-    <div class="dash-header">
-      <h2>📊 学習ダッシュボード</h2>
-      <button class="dash-close-btn" onclick="closeDashboard()">← 戻る</button>
-    </div>
-
-    <!-- 難易度進捗 -->
-    <div class="dash-section">
-      <div class="dash-section-title">🏆 現在の難易度</div>
-      <div class="diff-progress">
-        <div class="diff-level-badge easy" id="dash-diff-badge">初級</div>
-        <div class="diff-info">
-          <div class="diff-next-label" id="dash-diff-next">あと3連続正解で中級に昇格！</div>
-          <div class="streak-progress" id="dash-streak-pips"></div>
-          <div class="diff-note">3連続正解で昇格 / 不正解でリセット</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 今日の学習 -->
-    <div class="dash-section">
-      <div class="dash-section-title">📅 今日の学習</div>
-      <div class="today-section">
-        <div class="today-stat">
-          <div class="ts-val" id="dash-today-answered">0</div>
-          <div class="ts-label">問題数</div>
-        </div>
-        <div class="today-stat">
-          <div class="ts-val green" id="dash-today-correct">0</div>
-          <div class="ts-label">正解数</div>
-        </div>
-        <div class="today-stat">
-          <div class="ts-val blue" id="dash-today-rate">—</div>
-          <div class="ts-label">正解率</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 通算記録 -->
-    <div class="dash-grid">
-      <div class="stat-card">
-        <div class="stat-label">📚 累計問題数</div>
-        <div class="stat-value blue" id="dash-total-answered">0</div>
-        <div class="stat-sub">問</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">✅ 累計正解数</div>
-        <div class="stat-value green" id="dash-total-correct">0</div>
-        <div class="stat-sub">問</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">🎯 通算正解率</div>
-        <div class="stat-value" id="dash-total-rate">—</div>
-        <div class="stat-sub">%</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">🔥 最長連続正解</div>
-        <div class="stat-value yellow" id="dash-best-streak">0</div>
-        <div class="stat-sub">連続</div>
-      </div>
-    </div>
-
-    <!-- 分野別レベル -->
-    <div class="dash-section">
-      <div class="dash-section-title">📚 分野別レベル</div>
-      <div id="dash-category-levels"></div>
-    </div>
-  </div>
-
-  <!-- 終了画面 -->
-  <div id="finish-screen">
-    <div class="finish-inner">
-      <div class="finish-avatar">
-        <img id="finish-avatar-img" src="/images/characters/yassan.png" alt="キャラ">
-      </div>
-      <h2>🎉 お疲れ様！</h2>
-      <p id="finish-msg"></p>
-      <div class="finish-difficulty" id="finish-difficulty">難易度: 初級</div>
-      <div class="finish-btns">
-        <button class="btn-again" onclick="retryChat()">もう一度！</button>
-        <button class="btn-back" onclick="backToMenu()">分野を変える</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 入力エリア -->
-  <div class="input-area" id="input-area">
-    <div class="input-row">
-      <textarea class="chat-input" id="chat-input" placeholder="先生に話しかけてや！" rows="1"></textarea>
-      <button class="mic-btn" id="mic-btn" onclick="toggleMic()" title="音声入力">🎤</button>
-      <button class="send-btn" id="send-btn" onclick="sendMsg()">↑</button>
-    </div>
-  </div>
-
+<!-- RESULT -->
+<div id="result" class="screen">
+<div class="result-box">
+<div class="r-emoji" id="r-emoji"></div>
+<div class="r-score" id="r-score"></div>
+<div class="r-pct" id="r-pct"></div>
+<div class="r-msg" id="r-msg"></div>
+<div class="review" id="review"></div>
+<button class="btn" onclick="goHome()">もう一回挑戦！🔥</button>
+</div>
+<div class="footer">AID式学習法 © amadopapa</div>
 </div>
 
 <script>
-// ===== STATE =====
-let questions = [];
-let current = 0;
-let score = 0;
-let answered = false;
-let selectedCount = 5;
-let selectedCategory = 'all';
-let conversationHistory = [];
-let appConversationHistory = [];
-let currentMode = 'chat';
-let appAnswered = false;
-let appScore = 0;
-let appCurrent = 0;
-let hfScore = 0;
-let hfCurrent = 0;
-let hfAnswered = false;
-let selectedChar = 'yassan';
-let pendingCategory = '';
-
-// ===== VOICE (TTS) STATE =====
-let voiceEnabled = true;
-try { voiceEnabled = localStorage.getItem('voiceEnabled') !== 'false'; } catch (e) {}
-let audioCtx = null;
-let audioCtxUnlocked = false;
-let currentSource = null;
-
-function getAudioContext() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  return audioCtx;
-}
-
-// iOS等は最初のユーザー操作内で同期的にAudioContextを使わないとロックされたままになるため、
-// ページ最初のタップ／クリックで無音バッファを再生してアンロックし、以後はこのContextを使い回す
-function unlockAudioContext() {
-  if (audioCtxUnlocked) return;
-  const ctx = getAudioContext();
-  if (ctx.state === 'suspended') ctx.resume();
-  const buffer = ctx.createBuffer(1, 1, 22050);
-  const source = ctx.createBufferSource();
-  source.buffer = buffer;
-  source.connect(ctx.destination);
-  source.start(0);
-  audioCtxUnlocked = true;
-}
-['touchend', 'click'].forEach(evt => {
-  document.addEventListener(evt, unlockAudioContext, { once: true, passive: true });
-});
-
-function updateVoiceBtn() {
-  const btn = document.getElementById('voice-toggle-btn');
-  if (btn) btn.textContent = voiceEnabled ? '🔊' : '🔇';
-}
-
-function stopCurrentAudio() {
-  if (currentSource) {
-    try { currentSource.stop(); } catch (e) {}
-    currentSource = null;
-  }
-}
-
-function toggleVoice() {
-  voiceEnabled = !voiceEnabled;
-  try { localStorage.setItem('voiceEnabled', voiceEnabled); } catch (e) {}
-  updateVoiceBtn();
-  if (!voiceEnabled) stopCurrentAudio();
-}
-
-function buildQuestionSpeechText(q) {
-  return q.q;
-}
-
-function buildAnswerSpeechText(isCorrect, correctIdx, ex) {
-  const head = isCorrect ? '正解です。' : `不正解です。正解は${correctIdx + 1}番です。`;
-  return `${head}${ex || ''}`;
-}
-
-function buildOxAnswerSpeechText(isCorrect, correctIdx, ex) {
-  const head = isCorrect ? '正解です。' : `不正解です。正解は${correctIdx === 0 ? '○' : '×'}です。`;
-  return `${head}${ex || ''}`;
-}
-
-// ハンズフリーモードの○×判定。音声入力の表記揺れ（まる／丸／バツ／ばつ／×／✕など）を吸収する
-const HF_MARU_WORDS = ['○', 'まる', '丸', 'マル'];
-const HF_BATSU_WORDS = ['×', '✕', 'ばつ', 'バツ'];
-
-function normalizeOxInput(text) {
-  if (HF_MARU_WORDS.includes(text)) return '○';
-  if (HF_BATSU_WORDS.includes(text)) return '×';
-  return null;
-}
-
-async function speakText(text) {
-  if (!voiceEnabled || !text) return;
-  stopCurrentAudio();
-  try {
-    const res = await fetch('/api/tts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, voice: 'alloy' })
-    });
-    if (!res.ok) return;
-    const arrayBuffer = await res.arrayBuffer();
-    const ctx = getAudioContext();
-    if (ctx.state === 'suspended') await ctx.resume();
-    const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-    const source = ctx.createBufferSource();
-    source.buffer = audioBuffer;
-    const gainNode = ctx.createGain();
-    gainNode.gain.value = 3;
-    source.connect(gainNode);
-    gainNode.connect(ctx.destination);
-    source.onended = () => {
-      if (currentSource === source) currentSource = null;
-      if (currentMode === 'hf') startMicRecognition();
-    };
-    source.start(0);
-    currentSource = source;
-  } catch (e) {
-    // 読み上げ失敗時は無視（学習の妨げにならないように）
-  }
-}
-
-// ===== DIFFICULTY STATE =====
-let difficulty = 0; // 0=初級 1=中級 2=上級
-let consecutiveCorrect = 0;
-let sessionBestStreak = 0;
-const UPGRADE_THRESHOLD = 3;
-
-const DIFFICULTY_INFO = [
-  { label: '初級', cls: '',    badgeCls: '',    nextLabel: (n) => `あと${UPGRADE_THRESHOLD - n}連続正解で中級に昇格！` },
-  { label: '中級', cls: 'mid', badgeCls: 'mid', nextLabel: (n) => `あと${UPGRADE_THRESHOLD - n}連続正解で上級に昇格！` },
-  { label: '上級', cls: 'hard',badgeCls: 'hard',nextLabel: () => '上級クリア中！このまま突き進め！' }
+/* ===== 問題データ（○×形式に変換） ===== */
+var QsOX = [
+  {cat:"ライフ・社会保険", statement:"協会けんぽの短時間労働者の被保険者除外条件のうち、所定内賃金が月額8万8千円未満の場合は被保険者とならない。", ans:true, ex:"✅ 正解！\n月額8万8千円（年収106万円の壁）未満は対象外！\n「ハチハチ（88）で切れる！」で覚えよう！"},
+  {cat:"ライフ・社会保険", statement:"労災保険率は、適用事業に従事する労働者数に応じて定められている。", ans:false, ex:"❌ 不正解！\n労災保険率は「労働者数」ではなく「業種」で決まる！\n危険度の高い業種ほど保険料率が高い。"},
+  {cat:"タックス", statement:"相続税は、税務署長が納付税額を決定する賦課課税方式が採用されている。", ans:false, ex:"❌ 不正解！\n相続税は「申告納税方式」！\n自分で計算して申告するのが基本やで！"},
+  {cat:"タックス", statement:"事業所得の損失は、不動産所得と損益通算できる。", ans:true, ex:"✅ 正解！\n損益通算できるのは「不事山譲（ふじさんじょう）」\n不動産・事業・山林・譲渡の4種類！"},
+  {cat:"タックス", statement:"婚姻届を提出していない内縁関係の配偶者は、所得税の配偶者控除の対象となる。", ans:false, ex:"❌ 不正解！\n内縁関係は配偶者控除の対象外！\n健康保険はOKでも税金はNG！\n「健康保険は人情、税金は法律」で覚えよう！"},
 ];
 
-// ===== LOCALSTORAGE STATS =====
-const STATS_KEY = 'fp2study_stats_v2';
+var cur=0, score=0, answers=[], mode='normal';
+var hist=JSON.parse(localStorage.getItem('aid_hist')||'[]');
+var chatHist=[];
 
-function loadStats() {
-  try {
-    const raw = localStorage.getItem(STATS_KEY);
-    if (!raw) return defaultStats();
-    const s = JSON.parse(raw);
-    // reset today if different date
-    if (s.lastDate !== new Date().toDateString()) {
-      s.todayAnswered = 0;
-      s.todayCorrect = 0;
-      s.lastDate = new Date().toDateString();
-    }
-    return s;
-  } catch(e) { return defaultStats(); }
+/* ===== TTS ===== */
+var synth = window.speechSynthesis;
+var isSpeaking = false;
+
+function speak(text, onEnd) {
+  if (!synth) { if(onEnd) onEnd(); return; }
+  synth.cancel();
+  var utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'ja-JP';
+  utter.rate = 0.9;
+  utter.onend = function() { isSpeaking=false; if(onEnd) onEnd(); };
+  utter.onerror = function() { isSpeaking=false; if(onEnd) onEnd(); };
+  isSpeaking = true;
+  synth.speak(utter);
 }
 
-function defaultStats() {
-  return {
-    totalAnswered: 0,
-    totalCorrect: 0,
-    bestStreak: 0,
-    todayAnswered: 0,
-    todayCorrect: 0,
-    lastDate: new Date().toDateString()
+/* ===== 音声認識 ===== */
+var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+var recognition = null;
+var voiceSupported = !!SpeechRecognition;
+
+function initRecognition() {
+  if (!voiceSupported) return;
+  recognition = new SpeechRecognition();
+  recognition.lang = 'ja-JP';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.onresult = function(e) {
+    var txt = e.results[0][0].transcript;
+    console.log('認識結果:', txt);
+    stopListening();
+    if (txt.includes('まる') || txt.includes('マル') || txt.includes('○')) {
+      hfAnswer(true);
+    } else if (txt.includes('ばつ') || txt.includes('バツ') || txt.includes('×') || txt.includes('ペケ')) {
+      hfAnswer(false);
+    } else {
+      // 再試行
+      setStatus('「まる」か「ばつ」で答えてや！もう一回！', 'listening');
+      startListening();
+    }
+  };
+  recognition.onerror = function(e) {
+    console.log('音声認識エラー:', e.error);
+    stopListening();
+    enableButtons();
+    setStatus('音声認識エラー。ボタンで答えてね。', '');
+  };
+  recognition.onend = function() {
+    // 意図的に止めた場合はそのまま
   };
 }
 
-function saveStats(s) {
-  try { localStorage.setItem(STATS_KEY, JSON.stringify(s)); } catch(e) {}
+function startListening() {
+  if (!voiceSupported || !recognition) return;
+  showWave(true);
+  setStatus('「まる」か「ばつ」と言ってや！🎤', 'listening');
+  try { recognition.start(); } catch(e) { console.log(e); }
 }
 
-function recordAnswer(isCorrect) {
-  const s = loadStats();
-  s.totalAnswered++;
-  s.todayAnswered++;
-  if (isCorrect) {
-    s.totalCorrect++;
-    s.todayCorrect++;
-  }
-  if (s.bestStreak < sessionBestStreak) s.bestStreak = sessionBestStreak;
-  saveStats(s);
+function stopListening() {
+  if (!voiceSupported || !recognition) return;
+  showWave(false);
+  try { recognition.stop(); } catch(e) {}
 }
 
-// ===== SERVER-SIDE ANSWER HISTORY (Firebase) =====
-async function recordAnswerToServer(q, isCorrect) {
-  if (!q || !q.id || !q.cat) return;
-  try {
-    const res = await fetch('/api/answer', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        questionId: q.id,
-        cat: q.cat,
-        isCorrect,
-        level: q.level || 1,
-        mode: currentMode,
-        q: q.q,
-        opts: q.opts,
-        ans: q.ans,
-        ex: q.ex
-      })
-    });
-    const data = await res.json();
-    if (data.leveledUp) showToast(`🎉 ${q.cat}が上級に昇格！`);
-  } catch (e) {
-    // 履歴保存に失敗しても出題は止めない
-  }
+function showWave(on) {
+  document.getElementById('voice-wave').style.display = on ? 'flex' : 'none';
 }
 
-// ===== DIFFICULTY LOGIC =====
-function onCorrect() {
-  consecutiveCorrect++;
-  if (consecutiveCorrect > sessionBestStreak) sessionBestStreak = consecutiveCorrect;
-  const s = loadStats();
-  if (sessionBestStreak > s.bestStreak) { s.bestStreak = sessionBestStreak; saveStats(s); }
-
-  if (difficulty < 2 && consecutiveCorrect >= UPGRADE_THRESHOLD) {
-    difficulty++;
-    consecutiveCorrect = 0;
-    showUpgradeToast();
-  }
-  updateDifficultyUI();
+function setStatus(msg, cls) {
+  var el = document.getElementById('hf-status');
+  el.textContent = msg;
+  el.className = 'hf-status' + (cls ? ' '+cls : '');
 }
 
-function onWrong() {
-  consecutiveCorrect = 0;
-  updateDifficultyUI();
+function enableButtons() {
+  document.getElementById('btn-maru').disabled = false;
+  document.getElementById('btn-batu').disabled = false;
 }
 
-function updateDifficultyUI() {
-  const info = DIFFICULTY_INFO[difficulty];
-  // header badge
-  const hb = document.getElementById('difficulty-badge');
-  hb.textContent = info.label;
-  hb.className = 'difficulty-badge' + (info.cls ? ' ' + info.cls : '');
-  // app mode bar
-  const ab = document.getElementById('app-diff-bar');
-  if (ab) {
-    ab.textContent = info.label;
-    ab.className = 'app-diff-bar' + (info.cls ? ' ' + info.cls : '');
-  }
-  // hands-free mode bar
-  const hb2 = document.getElementById('hf-diff-bar');
-  if (hb2) {
-    hb2.textContent = info.label;
-    hb2.className = 'app-diff-bar' + (info.cls ? ' ' + info.cls : '');
-  }
-  // streak dots in app mode
-  renderStreakDots();
+function disableButtons() {
+  document.getElementById('btn-maru').disabled = true;
+  document.getElementById('btn-batu').disabled = true;
 }
 
-function renderStreakDots() {
-  const container = document.getElementById('streak-display');
-  if (!container) return;
-  container.innerHTML = '';
-  for (let i = 0; i < UPGRADE_THRESHOLD; i++) {
-    const dot = document.createElement('span');
-    dot.className = 'dot' + (i < consecutiveCorrect ? ' filled' : '');
-    container.appendChild(dot);
+/* ===== 画面切替 ===== */
+function show(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on')});
+  document.getElementById(id).classList.add('on');
+}
+
+function updateHome(){
+  document.getElementById('s-attempts').textContent=hist.length;
+  if(hist.length>0){
+    document.getElementById('s-latest').textContent=Math.round(hist[0].score/hist[0].total*100)+'%';
+    document.getElementById('hist-card').style.display='block';
+    document.getElementById('hist-list').innerHTML=hist.slice(0,3).map(function(h){
+      return '<div class="hist-row"><span>'+h.date+'</span><span class="hist-score">'+h.score+'/'+h.total+' ('+Math.round(h.score/h.total*100)+'%)</span></div>';
+    }).join('');
   }
 }
 
-function showToast(message) {
-  const toast = document.getElementById('upgrade-toast');
-  toast.textContent = message;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3000);
-}
+/* ===== 通常モード ===== */
+var Qs=[
+  {cat:"ライフ・社会保険",q:"協会けんぽの被保険者に関する記述の空欄にあてはまる組合せとして、最も適切なものはどれか。\n\n短時間労働者のうち次のいずれかに該当する者は被保険者とならない。\n①1週間の所定労働時間が（イ）未満\n②所定内賃金が月額（ウ）未満\n③学生\n\nまた所定労働時間・日数が通常の労働者の（ア）未満であること。",opts:["ア：3分の2 イ：20時間 ウ：5万8千円","ア：3分の2 イ：25時間 ウ：8万8千円","ア：4分の3 イ：20時間 ウ：8万8千円","ア：4分の3 イ：25時間 ウ：5万8千円"],ans:2,ex:"✅ ア：4分の3\n✅ イ：20時間\n✅ ウ：8万8千円（106万円の壁のライン！）\n\n「ハチハチ（88）で切れる！」で覚えよう！"},
+  {cat:"ライフ・社会保険",q:"労働者災害補償保険に関する次の記述のうち、最も不適切なものはどれか。",opts:["労災保険の適用を受ける労働者には、アルバイトやパートタイマーも含まれる","労災保険率は、適用事業に従事する労働者数に応じて定められている","業務上の傷病が治癒したときに一定の障害が残り障害等級に該当する場合、障害補償給付が支給される","業務災害で労働者が死亡した場合、遺族補償年金または遺族補償一時金が支給される"],ans:1,ex:"2番が不適切！\n\n✅ 労災保険率は「労働者数」ではなく「業種」で決まる！\n\n労災は雇用形態に関係なく全員対象！"},
+  {cat:"タックス",q:"わが国の税制に関する次の記述のうち、最も不適切なものはどれか。",opts:["所得税では課税対象となる所得を10種類に区分し種類ごとに計算する","相続税では税務署長が納付税額を決定する賦課課税方式が採用されている","消費税は間接税に該当する","法人税は国税、不動産取得税は地方税に該当する"],ans:1,ex:"2番が不適切！\n\n✅ 相続税は「申告納税方式」！自分で計算して申告！\n\n📝 申告納税方式：所得税・相続税・贈与税・法人税\n📬 賦課課税方式：固定資産税・住民税・不動産取得税"},
+  {cat:"タックス",q:"所得税における損益通算に関する次の記述のうち、最も適切なものはどれか。",opts:["不動産所得の損失のうち土地取得の負債利子は給与所得と損益通算できる","先物取引の雑所得の損失は不動産所得と損益通算できる","生活用自家用車を売却した譲渡所得の損失は給与所得と損益通算できる","コンサルティング事業の事業所得の損失は不動産所得と損益通算できる"],ans:3,ex:"4番が正解！\n\n✅ 事業所得の損失は他の所得と損益通算できる！\n\n損益通算できる所得は「不事山譲（ふじさんじょう）」！\n不動産・事業・山林・譲渡の4つや！"},
+  {cat:"タックス",q:"所得税における所得控除に関する次の記述のうち、最も不適切なものはどれか。",opts:["19歳以上23歳未満の扶養親族は特定扶養親族に該当する","70歳以上の扶養親族は老人扶養親族に該当する","合計所得金額が1,000万円を超える場合、配偶者控除の適用を受けることはできない","婚姻届を提出していなくても内縁関係にある者は控除対象配偶者に該当する"],ans:3,ex:"4番が不適切！\n\n✅ 内縁関係は配偶者控除の対象外！戸籍上の配偶者のみ！\n\n健康保険はOKでも税金はNG！\n「健康保険は人情、税金は法律」で覚えよう！"},
+];
 
-function showUpgradeToast() {
-  showToast(`🎉 難易度アップ！${DIFFICULTY_INFO[difficulty].label}に昇格！`);
-}
-
-// ===== AMADO WIDGET =====
-const AMADO_IMAGES = {
-  correct: [
-    '/images/amado/amado_seikai.png',
-    '/images/amado/amado_seikai_1.png',
-    '/images/amado/amado_seikai_2.png',
-    '/images/amado/amado_seikai_3.png',
-    '/images/amado/amado_seikai_4.png',
-    '/images/amado/amado_seikai_5.png',
-    '/images/amado/amado_seikai_6.png',
-    '/images/amado/amado_seikai_7.png',
-    '/images/amado/amado_seikai_8.png'
-  ],
-  wrong: '/images/amado/amado_fusseikai.png'
-};
-
-function pickRandomCorrectImage() {
-  const images = AMADO_IMAGES.correct;
-  return images[Math.floor(Math.random() * images.length)];
-}
-
-let amadoFadeTimer = null;
-
-function showAmadoReaction(isCorrect) {
-  clearTimeout(amadoFadeTimer);
-  const widget = document.getElementById('amado-widget');
-  const bubble = document.getElementById('amado-bubble');
-
-  document.getElementById('amado-img').src = isCorrect ? pickRandomCorrectImage() : AMADO_IMAGES.wrong;
-  bubble.textContent = isCorrect ? '🎉 正解！よく頑張った！' : '😴 惜しい！もう一回チャレンジ！';
-  bubble.classList.add('show');
-  widget.classList.remove('show');
-  requestAnimationFrame(() => widget.classList.add('show'));
-
-  amadoFadeTimer = setTimeout(() => {
-    widget.classList.remove('show');
-    setTimeout(() => {
-      bubble.classList.remove('show');
-      bubble.textContent = '';
-    }, 400);
-  }, 2500);
-}
-
-function hideAmado() {
-  clearTimeout(amadoFadeTimer);
-  const widget = document.getElementById('amado-widget');
-  widget.classList.remove('show');
-  document.getElementById('amado-bubble').classList.remove('show');
-}
-
-// ===== DASHBOARD =====
-async function openDashboard() {
-  hideAllScreens();
-  const screen = document.getElementById('dashboard-screen');
-  screen.style.display = 'flex';
-
-  const s = loadStats();
-
-  // today
-  document.getElementById('dash-today-answered').textContent = s.todayAnswered;
-  document.getElementById('dash-today-correct').textContent = s.todayCorrect;
-  document.getElementById('dash-today-rate').textContent =
-    s.todayAnswered > 0 ? Math.round(s.todayCorrect / s.todayAnswered * 100) + '%' : '—';
-
-  // totals
-  document.getElementById('dash-total-answered').textContent = s.totalAnswered;
-  document.getElementById('dash-total-correct').textContent = s.totalCorrect;
-  document.getElementById('dash-total-rate').textContent =
-    s.totalAnswered > 0 ? Math.round(s.totalCorrect / s.totalAnswered * 100) : '—';
-  document.getElementById('dash-best-streak').textContent = Math.max(s.bestStreak, sessionBestStreak);
-
-  // difficulty
-  const info = DIFFICULTY_INFO[difficulty];
-  const badge = document.getElementById('dash-diff-badge');
-  badge.textContent = info.label;
-  badge.className = 'diff-level-badge ' + (difficulty === 0 ? 'easy' : difficulty === 1 ? 'mid' : 'hard');
-  document.getElementById('dash-diff-next').textContent = info.nextLabel(consecutiveCorrect);
-
-  // streak pips
-  const pips = document.getElementById('dash-streak-pips');
-  pips.innerHTML = '';
-  for (let i = 0; i < UPGRADE_THRESHOLD; i++) {
-    const pip = document.createElement('div');
-    pip.className = 'streak-pip' + (i < consecutiveCorrect ? ' filled' : '');
-    pips.appendChild(pip);
-  }
-
-  // 分野別レベル
-  try {
-    const res = await fetch('/api/category-stats');
-    const data = await res.json();
-    renderCategoryLevels(data.stats || {});
-  } catch (e) {
-    renderCategoryLevels({});
+function startQuiz(m){
+  mode=m; cur=0; score=0; answers=[];
+  synth && synth.cancel();
+  if(m==='handsfree'){
+    // 音声サポート確認
+    if(!voiceSupported){
+      document.getElementById('hf-mode-badge').textContent='👆 タップモード（音声非対応）';
+    } else {
+      document.getElementById('hf-mode-badge').textContent='🎤 音声モード';
+    }
+    initRecognition();
+    show('quiz-hf');
+    renderHfQ();
+  } else {
+    show('quiz');
+    renderQ();
   }
 }
 
-function renderCategoryLevels(stats) {
-  const container = document.getElementById('dash-category-levels');
-  container.innerHTML = '';
-  const cats = Object.keys(stats);
+/* ===== 通常モード描画 ===== */
+function renderQ(){
+  var q=Qs[cur];
+  document.getElementById('prog').style.width=((cur+1)/Qs.length*100)+'%';
+  document.getElementById('q-cat').textContent=q.cat;
+  document.getElementById('q-num').textContent=(cur+1)+' / '+Qs.length;
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('exbox').style.display='none';
+  chatHist=[];
+  document.getElementById('chat-msgs').innerHTML='';
+  addBot('なんか気になることあったら何でも聞いてや！🖤');
+  var opts=document.getElementById('opts');
+  opts.innerHTML=q.opts.map(function(o,i){
+    return '<button class="opt" id="o'+i+'" onclick="pick('+i+')"><span class="opt-n">'+(i+1)+'</span><span>'+o+'</span></button>';
+  }).join('');
+  speak(q.q);
+}
 
-  if (cats.length === 0) {
-    const p = document.createElement('p');
-    p.className = 'cat-level-empty';
-    p.textContent = 'まだ記録がないで。問題を解いてみてや！';
-    container.appendChild(p);
-    return;
+function pick(idx){
+  var q=Qs[cur];
+  var ok=idx===q.ans;
+  if(ok)score++;
+  answers.push({q:cur,sel:idx,ok:ok});
+  for(var i=0;i<q.opts.length;i++){
+    var b=document.getElementById('o'+i);
+    b.disabled=true;
+    if(i===q.ans)b.classList.add('correct');
+    else if(i===idx)b.classList.add('wrong');
+    else b.classList.add('dim');
   }
+  document.getElementById('ex-title').textContent=ok?'🎉 正解！！':'💦 不正解...';
+  document.getElementById('ex-text').textContent=q.ex;
+  document.getElementById('next-btn').textContent=cur+1<Qs.length?'次の問題へ →':'結果を見る 🏁';
+  document.getElementById('exbox').style.display='block';
+}
 
-  cats.sort((a, b) => (stats[b].totalAnswered || 0) - (stats[a].totalAnswered || 0));
-  cats.forEach(cat => {
-    const s = stats[cat];
-    const rate = s.totalAnswered > 0 ? Math.round(s.totalCorrect / s.totalAnswered * 100) : 0;
-    const isHard = s.level >= 2;
+function nextQ(){
+  if(cur+1<Qs.length){cur++;renderQ();}
+  else finish();
+}
 
-    const row = document.createElement('div');
-    row.className = 'cat-level-row';
+/* ===== ハンズフリーモード描画 ===== */
+function renderHfQ(){
+  var q=QsOX[cur];
+  document.getElementById('prog-hf').style.width=((cur+1)/QsOX.length*100)+'%';
+  document.getElementById('q-cat-hf').textContent=q.cat;
+  document.getElementById('q-num-hf').textContent=(cur+1)+' / '+QsOX.length;
+  document.getElementById('hf-q-text').textContent='次の記述は○か×か？';
+  document.getElementById('hf-statement').textContent=q.statement;
+  document.getElementById('hf-result-panel').style.display='none';
+  document.getElementById('next-btn-hf').style.display='none';
+  disableButtons();
+  showWave(false);
 
-    const nameEl = document.createElement('span');
-    nameEl.className = 'cat-level-name';
-    nameEl.textContent = cat;
-
-    const badgeEl = document.createElement('span');
-    badgeEl.className = 'cat-level-badge' + (isHard ? ' hard' : '');
-    badgeEl.textContent = isHard ? '上級' : '初級';
-
-    const rateEl = document.createElement('span');
-    rateEl.className = 'cat-level-rate';
-    rateEl.textContent = `${rate}%（${s.totalCorrect}/${s.totalAnswered}）`;
-
-    row.appendChild(nameEl);
-    row.appendChild(badgeEl);
-    row.appendChild(rateEl);
-    container.appendChild(row);
+  // TTS読み上げ後に入力受付
+  setStatus('問題を読み上げています...', 'speaking');
+  var readText = '問題。' + q.statement + '。これは○ですか、×ですか？';
+  speak(readText, function(){
+    setStatus('', '');
+    enableButtons();
+    if(voiceSupported){
+      // 少し間をおいてから音声認識開始
+      setTimeout(startListening, 500);
+    } else {
+      setStatus('⭕か❌をタップして答えてね！', '');
+    }
   });
 }
 
-function closeDashboard() {
-  document.getElementById('dashboard-screen').style.display = 'none';
-  document.getElementById('category-screen').style.display = 'flex';
+function hfAnswer(userSaysTrue){
+  stopListening();
+  disableButtons();
+  showWave(false);
+
+  var q=QsOX[cur];
+  var ok=(userSaysTrue===q.ans);
+  if(ok)score++;
+  answers.push({q:cur,sel:userSaysTrue,ok:ok});
+
+  var panel=document.getElementById('hf-result-panel');
+  panel.style.display='block';
+  document.getElementById('hf-result-icon').textContent=ok?'⭕':'❌';
+  document.getElementById('hf-result-msg').textContent=q.ex;
+
+  var nextBtn=document.getElementById('next-btn-hf');
+  nextBtn.textContent=cur+1<QsOX.length?'次の問題へ →':'結果を見る 🏁';
+  nextBtn.style.display='block';
+
+  // 正誤を読み上げ
+  speak(ok?'正解！'+q.ex:'不正解！'+q.ex);
+  setStatus(ok?'🎉 正解！':'💦 不正解...', '');
 }
 
-// ===== CHARACTERS =====
-const CHARS = {
-  yassan: {
-    name: 'やっさん先生',
-    avatar: '/images/characters/yassan.png',
-    loading: '考え中やで～🐾',
-    greetings: [
-      'よっしゃ！今日もFP2、一緒にがんばろや！どの分野から始める？🐾',
-      '来てくれたんやな！うれしいわ！今日も全力でサポートするで！',
-      '今日もやる気満々やな！その調子でFP2、一緒に攻略しよ！🎉'
-    ],
-    prompt: `あなたは「やっさん先生」というFP2級の先生キャラクターです。
-【口調】必ず関西弁。「〜やで」「〜やん」「〜やな」「〜やろ」「そやそや！」「ほんまに！」を使う。「です」「ます」は絶対使わない。
-【性格】明るくフレンドリーな近所のおっちゃん。絵文字を多用。ボケたりツッコんだりする。
-【正解時】「よっしゃ！正解やで！🎉 さすが浩之さん！この調子やで！」
-【不正解時】「惜しい！あと一歩やったのに！😅 でも大丈夫、今覚えたら本番はバッチリや！」
-【解説時】「ポイントはな〜、〜やねん。これ試験によく出るから覚えといてや！」
-【質問への返答】関西弁で短くわかりやすく。たまにボケを入れてもOK。`
-  },
-  bon: {
-    name: 'ボン先生',
-    avatar: '/images/characters/bon.png',
-    loading: 'パパも考え中なのだ…🎩',
-    greetings: [
-      'おはようなのだ！今日も一緒にFP2級を頑張るのだ！🎩',
-      'キミが来てくれて嬉しいのだ！今日も一緒に勉強するのだ！',
-      'これでいいのだ！今日もFP2級を攻略するのだ！✨'
-    ],
-    prompt: `あなたは「ボン先生」というキャラクターです。バカボンのパパそっくりの、ゆるくてのほほんとしたFP2級の先生です。
-【口調】すべての語尾は必ず「〜なのだ」「〜のだ」で終えること。例外は一切なし。疑問文は「〜なのだ？」とする。「です」「ます」「だよ」は絶対使わない。
-【性格】ゆるくてのほほんとしているが、FP2級の知識は正確。ユーザーを絶対に責めない。自分のことは「パパ」と呼ぶ。ユーザーのことは「キミ」と呼ぶ。
-【口癖】「これでいいのだ！」「バカボンのパパは天才なのだ！」「反対の賛成なのだ！」
-【正解時】「これでいいのだ！キミは天才なのだ！パパは嬉しいのだ！」
-【不正解時】「おしいのだ！でも間違えるのも勉強なのだ！これでいいのだ！」
-【解説時】「いいか、よく聞くのだ。ここがポイントなのだ！」
-【質問】まず「いい質問なのだ！」と褒めてから答える。最後は「これでいいのだ！」で締める。`
-  },
-  gyal: {
-    name: 'ギャル先生',
-    avatar: '/images/characters/gyal.png',
-    loading: 'ちょっと待ってよ〜考え中！！💃',
-    greetings: [
-      'やばっ！今日も来てくれた！！一緒に勉強しよ！絶対合格しちゃおう！！💕',
-      'マジ待ってた！！今日も全力でサポートするから！！えぐくわかりやすく教えるね！✨',
-      'きた！！今日もやろ！！あたしと一緒なら絶対いけるから！！神すぎ！！🔥'
-    ],
-    prompt: `あなたはギャル先生というキャラクターです。FP2級の学習をサポートするギャルAI講師として、ユーザーと対話してください。
-キャラクター設定：見た目はギャルだけど、FP2級の知識は完璧。一人称は「あたし」、ユーザーのことは「浩之さん」と呼ぶ。絵文字を多用する。難しいことも「要はさ〜」と噛み砕いて説明する。
-口癖：「やばくない！？」「マジで！？」「それな！」「えぐい！」「神！」「〜じゃん！」
-正解時：「やばっ！！正解じゃん！！神すぎ！！💕」「マジ！？正解！？えぐくない！？浩之さん天才じゃん！！✨」
-不正解時：「あーもうちょっとだったじゃん！惜しすぎ！！でも大丈夫！一緒に覚えよ！💕」
-解説時：「要はさ〜、〜ってことなんだよね！これさえ覚えたら無敵じゃん！✨」
-禁止事項：ネガティブな言葉。絵文字を全く使わないこと。`
-  },
-  sebas: {
-    name: 'セバス先生',
-    avatar: '/images/characters/sebas.png',
-    loading: '少々お待ちくださいませ…🎻',
-    greetings: [
-      'おはようございます、浩之様。本日もFP2級の学習をお手伝いいたします。',
-      'お待ちしておりました。今日も着実に進めてまいりましょう。',
-      'ようこそお越しくださいました。この調子で合格まで導いてまいります。'
-    ],
-    prompt: `あなたは「セバス先生」という、執事のように上品で落ち着いたFP2級の先生キャラクターです。
-【口調】常に丁寧な敬語。「〜でございます」「〜でございますね」「かしこまりました」を多用。砕けた言葉やくだけた絵文字は使わない。ユーザーのことは「浩之様」と呼ぶ。
-【性格】冷静で知的、物腰がやわらかい。決して声を荒げず、常に紳士的に励ます。
-【正解時】「さすがでございます、浩之様。正解にございます。その調子でまいりましょう。」
-【不正解時】「惜しゅうございますね。正解は〜でございます。次に活かしましょう。」
-【解説時】「畏れながら、ここがポイントでございます。〜ということにございます。」
-【質問への返答】敬語で簡潔に、上品にお答えする。`
-  }
-};
-
-// ===== YARUKI / BUTCHAKE PROMPTS =====
-const YARUKI_PROMPTS = {
-  yassan: `浩之さんが嫌になってる。関西弁で短く熱く励ましてや！絵文字使って明るく！2〜3文でOK。`,
-  bon: `浩之さんが嫌になってるのだ！パパが励ますのだ！「諦めてはいかんのだ！キミならできるのだ！これでいいのだ！」のノリで短く熱く2〜3文で励ますのだ！`,
-  gyal: `浩之さんが嫌になってる！「えー！！やめないでよ！！」から始めて全力で励まして！2〜3文。絵文字使って！`,
-  sebas: `浩之様がやる気を失っておられます。落ち着いた敬語で短く励ましてください。「諦めてはなりません」のような言葉を入れてください。2〜3文。`
-};
-
-const BUTCHAKE_PROMPTS = {
-  yassan: `問題を関西弁でめちゃくちゃ簡単に言い直してや！「ぶっちゃけな〜、」から始めて難しい言葉は全部やさしく。同じ4択で出し直してや。`,
-  bon: `問題をわかりやすく言い直すのだ！「ぶっちゃけて言うのだ〜、」から始めて難しい言葉は全部やさしくするのだ！同じ4択で出し直すのだ！`,
-  gyal: `問題をギャル語でめちゃくちゃわかりやすく言い直して！「要はさ〜！」から始めて同じ4択で出し直して！「余裕じゃん！！💕」で締めて！`,
-  sebas: `問題を敬語で丁寧にわかりやすく言い直してください。「噛み砕いて申し上げますと」から始めて、同じ4択で出し直してください。`
-};
-
-// ===== CHARACTER HELPERS =====
-function getCharAvatar() { return CHARS[selectedChar]?.avatar || CHARS.yassan.avatar; }
-function getLoadingText() { return CHARS[selectedChar]?.loading || '考え中…'; }
-function getSystemPrompt(q) {
-  const base = CHARS[selectedChar]?.prompt || CHARS.yassan.prompt;
-  return `${base}\n今取り組んでいる問題：「${q ? q.q : ''}」\n解説：「${q ? q.ex : ''}」`;
+function nextHfQ(){
+  synth && synth.cancel();
+  if(cur+1<QsOX.length){cur++;renderHfQ();}
+  else finish();
 }
 
-function updateHeaderChar() {
-  const char = CHARS[selectedChar];
-  document.getElementById('header-avatar-img').src = char.avatar;
-  document.getElementById('header-char-name').textContent = char.name;
-  document.getElementById('current-char-label').textContent = char.name;
-
-  // greeting
-  const greetings = char.greetings;
-  const g = greetings[Math.floor(Math.random() * greetings.length)];
-  document.getElementById('greeting-avatar').src = char.avatar;
-  document.getElementById('speech-bubble').textContent = g;
-
-  // finish avatar
-  const fa = document.getElementById('finish-avatar-img');
-  if (fa) fa.src = char.avatar;
-
-  // chat input placeholder
-  const ci = document.getElementById('chat-input');
-  if (ci) ci.placeholder = `${char.name}に話しかけてや！`;
+/* ===== 共通 ===== */
+function finish(){
+  synth && synth.cancel();
+  var total=mode==='handsfree'?QsOX.length:Qs.length;
+  var rec={date:new Date().toLocaleDateString('ja-JP'),score:score,total:total};
+  hist=[rec].concat(hist).slice(0,10);
+  localStorage.setItem('aid_hist',JSON.stringify(hist));
+  var pct=Math.round(score/total*100);
+  document.getElementById('r-emoji').textContent=pct>=80?'🎉':pct>=60?'💪':'😅';
+  document.getElementById('r-score').textContent=score+' / '+total;
+  document.getElementById('r-pct').textContent=pct+'%';
+  document.getElementById('r-msg').textContent=pct>=80?'めっちゃええやん！この調子で2級合格や！':pct>=60?'惜しい！あと一歩やで！':'ドンマイ！間違いが宝や！解説読んで完全理解しよ！';
+  document.getElementById('review').innerHTML=answers.map(function(a,i){
+    var q=mode==='handsfree'?QsOX[a.q]:Qs[a.q];
+    return '<div class="rev-row"><span>'+(a.ok?'✅':'❌')+'</span><span>問'+(i+1)+'：'+q.cat+'</span></div>';
+  }).join('');
+  show('result');
 }
 
-// ===== CHARACTER SELECTION =====
-function selectChar(charId) {
-  selectedChar = charId;
-  document.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
-  const el = document.getElementById(`char-${charId}`);
-  if (el) el.classList.add('selected');
+function goHome(){synth&&synth.cancel();updateHome();show('home')}
+
+/* ===== チャット ===== */
+function addBot(txt){
+  var m=document.getElementById('chat-msgs');
+  var d=document.createElement('div');d.className='bot-wrap';
+  d.innerHTML='<div style="font-size:18px;flex-shrink:0">🖤</div><div class="bot-msg">'+txt+'</div>';
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
 }
-
-function openCharScreen() {
-  hideAllScreens();
-  document.getElementById('char-screen').style.display = 'flex';
+function addUser(txt){
+  var m=document.getElementById('chat-msgs');
+  var d=document.createElement('div');d.className='user-wrap';
+  d.innerHTML='<div class="user-msg">'+txt+'</div>';
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
 }
-
-function confirmChar() {
-  updateHeaderChar();
-  document.getElementById('char-screen').style.display = 'none';
-  document.getElementById('category-screen').style.display = 'flex';
-  if (pendingCategory) {
-    const cat = pendingCategory;
-    pendingCategory = '';
-    startChat(cat);
-  }
+function removeLast(){
+  var m=document.getElementById('chat-msgs');
+  if(m.lastChild)m.removeChild(m.lastChild);
 }
-
-// ===== MODE SWITCH =====
-function setMode(mode) {
-  currentMode = mode;
-  document.getElementById('mode-chat-btn').classList.toggle('active', mode === 'chat');
-  document.getElementById('mode-app-btn').classList.toggle('active', mode === 'app');
-  document.getElementById('mode-hf-btn').classList.toggle('active', mode === 'hf');
-}
-
-function startByMode(cat) {
-  if (currentMode === 'chat') {
-    pendingCategory = cat;
-    hideAllScreens();
-    document.getElementById('char-screen').style.display = 'flex';
-  } else if (currentMode === 'hf') {
-    startHandsFree(cat);
-  } else {
-    startApp(cat);
-  }
-}
-
-// ===== HELPERS =====
-function hideAllScreens() {
-  ['category-screen','char-screen','chat-screen','app-mode-screen','hf-mode-screen',
-   'dashboard-screen','finish-screen'].forEach(id => {
-    document.getElementById(id).style.display = 'none';
-  });
-  document.getElementById('input-area').style.display = 'none';
-  document.getElementById('input-area').classList.remove('hf-mode');
-  stopMic();
-  hideAmado();
-}
-
-// ===== QUESTION FETCH HELPER =====
-function buildQuestionsUrl(cat, limitNum, set) {
-  const setParam = set ? `&set=${set}` : '';
-  if (cat === 'review') return `/api/questions?limit=${limitNum}&mode=review${setParam}`;
-  const catParam = cat === 'all' ? '' : `&category=${encodeURIComponent(cat)}`;
-  return `/api/questions?limit=${limitNum}${catParam}${setParam}`;
-}
-
-// ===== APP MODE =====
-async function startApp(cat) {
-  selectedCategory = cat;
-  hideAllScreens();
-  document.getElementById('app-mode-screen').style.display = 'flex';
-  document.getElementById('input-area').style.display = 'block';
-  document.getElementById('app-chat-log').innerHTML = '';
-  appConversationHistory = [];
-  appScore = 0;
-  appCurrent = 0;
-  document.getElementById('app-score').textContent = '0';
-  document.getElementById('score-disp').textContent = '0';
-  updateDifficultyUI();
-
-  try {
-    const res = await fetch(buildQuestionsUrl(cat, selectedCount));
-    const data = await res.json();
-    if (!data.questions || data.questions.length === 0) {
-      alert(data.reviewEmpty ? 'まだ間違えた問題がないで！えらいやん！😆' : '問題が見つからんかったわ！別の分野を試してや！');
-      backToMenu();
-      return;
-    }
-    questions = data.questions;
-    document.getElementById('app-q-total').textContent = questions.length;
-    appLoadQuestion();
-  } catch(e) {
-    alert('エラーが出たわ！もう一回試してや！');
-    backToMenu();
-  }
-}
-
-function appLoadQuestion() {
-  appAnswered = false;
-  const q = questions[appCurrent];
-  document.getElementById('app-q-label').textContent = `📋 問題 ${appCurrent + 1}`;
-  document.getElementById('app-q-text').textContent = q.q;
-  document.getElementById('app-q-num').textContent = appCurrent + 1;
-  document.getElementById('app-score').textContent = appScore;
-  document.getElementById('header-sub').textContent = `${appCurrent+1}問目 / ${questions.length}問`;
-
-  const choicesDiv = document.getElementById('app-choices');
-  choicesDiv.innerHTML = '';
-  q.opts.forEach((c, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'app-choice-btn';
-    btn.textContent = `${i+1}. ${c}`;
-    btn.onclick = () => appAnswer(i, q);
-    choicesDiv.appendChild(btn);
-  });
-
-  document.getElementById('app-result').style.display = 'none';
-  document.getElementById('app-ex').style.display = 'none';
-  document.getElementById('app-next-btn').style.display = 'none';
-  renderStreakDots();
-  speakText(buildQuestionSpeechText(q));
-}
-
-function appAnswer(idx, q) {
-  if (appAnswered) return;
-  appAnswered = true;
-
-  const correctIdx = Number(q.ans);
-  const btns = document.querySelectorAll('.app-choice-btn');
-  btns.forEach(b => b.disabled = true);
-
-  const resultEl = document.getElementById('app-result');
-  const exEl = document.getElementById('app-ex');
-  const isCorrect = idx === correctIdx;
-  showAmadoReaction(isCorrect);
-
-  if (isCorrect) {
-    appScore++;
-    document.getElementById('app-score').textContent = appScore;
-    document.getElementById('score-disp').textContent = appScore;
-    btns[idx].classList.add('correct');
-    resultEl.className = 'app-result ok';
-    resultEl.textContent = '🎉 正解！さすが浩之さん！';
-    onCorrect();
-  } else {
-    btns[idx].classList.add('wrong');
-    btns[correctIdx].classList.add('reveal');
-    resultEl.className = 'app-result ng';
-    resultEl.textContent = `😅 惜しい！正解は ${correctIdx + 1} 番！`;
-    onWrong();
-  }
-
-  recordAnswer(isCorrect);
-  recordAnswerToServer(q, isCorrect);
-  resultEl.style.display = 'block';
-  exEl.textContent = `📝 ${q.ex}`;
-  exEl.style.display = 'block';
-
-  const nextBtn = document.getElementById('app-next-btn');
-  nextBtn.textContent = appCurrent + 1 < questions.length ? '次の問題へ →' : '結果を見る！';
-  nextBtn.style.display = 'block';
-  renderStreakDots();
-  speakText(buildAnswerSpeechText(isCorrect, correctIdx, q.ex));
-}
-
-function appNextQuestion() {
-  appCurrent++;
-  if (appCurrent >= questions.length) {
-    score = appScore;
-    hideAllScreens();
-    showFinish();
-  } else {
-    appLoadQuestion();
-  }
-}
-
-// ===== HANDS-FREE MODE (○×) =====
-async function startHandsFree(cat) {
-  selectedCategory = cat;
-  hideAllScreens();
-  document.getElementById('hf-mode-screen').style.display = 'flex';
-  document.getElementById('input-area').style.display = 'block';
-  document.getElementById('input-area').classList.add('hf-mode');
-  chatInput.placeholder = '🎙️「まる」「ばつ」と話すか入力してや！';
-  hfScore = 0;
-  hfCurrent = 0;
-  document.getElementById('hf-score').textContent = '0';
-  document.getElementById('score-disp').textContent = '0';
-  updateDifficultyUI();
-
-  try {
-    const res = await fetch(buildQuestionsUrl(cat, selectedCount, 'ox'));
-    const data = await res.json();
-    if (!data.questions || data.questions.length === 0) {
-      alert(data.reviewEmpty ? 'まだ間違えた問題がないで！えらいやん！😆' : '問題が見つからんかったわ！別の分野を試してや！');
-      backToMenu();
-      return;
-    }
-    questions = data.questions;
-    document.getElementById('hf-q-total').textContent = questions.length;
-    hfLoadQuestion();
-  } catch(e) {
-    alert('エラーが出たわ！もう一回試してや！');
-    backToMenu();
-  }
-}
-
-async function hfLoadQuestion() {
-  hfAnswered = false;
-  const q = questions[hfCurrent];
-  document.getElementById('hf-q-label').textContent = `🎙️ 問題 ${hfCurrent + 1}`;
-  document.getElementById('hf-q-text').textContent = q.q;
-  document.getElementById('hf-q-num').textContent = hfCurrent + 1;
-  document.getElementById('hf-score').textContent = hfScore;
-  document.getElementById('header-sub').textContent = `${hfCurrent+1}問目 / ${questions.length}問`;
-
-  document.getElementById('hf-result').style.display = 'none';
-  document.getElementById('hf-ex').style.display = 'none';
-  document.getElementById('hf-next-btn').style.display = 'none';
-  document.getElementById('hf-status').textContent = '🔊 読み上げ中…';
-
-  await speakText(`${q.q}。○か×か？`);
-  if (!hfAnswered) document.getElementById('hf-status').textContent = '👂 「○」か「×」で答えてや！';
-}
-
-function hfAnswer(choiceText, q) {
-  if (hfAnswered) return;
-  hfAnswered = true;
-
-  const userIdx = choiceText === '○' ? 0 : 1;
-  const correctIdx = Number(q.ans);
-  const isCorrect = userIdx === correctIdx;
-  showAmadoReaction(isCorrect);
-
-  const resultEl = document.getElementById('hf-result');
-  const exEl = document.getElementById('hf-ex');
-
-  if (isCorrect) {
-    hfScore++;
-    document.getElementById('hf-score').textContent = hfScore;
-    document.getElementById('score-disp').textContent = hfScore;
-    resultEl.className = 'app-result ok';
-    resultEl.textContent = '🎉 正解！さすが浩之さん！';
-    onCorrect();
-  } else {
-    resultEl.className = 'app-result ng';
-    resultEl.textContent = `😅 惜しい！正解は${correctIdx === 0 ? '○' : '×'}！`;
-    onWrong();
-  }
-
-  recordAnswer(isCorrect);
-  recordAnswerToServer(q, isCorrect);
-  document.getElementById('hf-status').textContent = '';
-  resultEl.style.display = 'block';
-  exEl.textContent = `📝 ${q.ex}`;
-  exEl.style.display = 'block';
-
-  const nextBtn = document.getElementById('hf-next-btn');
-  nextBtn.textContent = hfCurrent + 1 < questions.length ? '次の問題へ →' : '結果を見る！';
-  nextBtn.style.display = 'block';
-
-  speakText(buildOxAnswerSpeechText(isCorrect, correctIdx, q.ex));
-}
-
-function hfNextQuestion() {
-  hfCurrent++;
-  if (hfCurrent >= questions.length) {
-    score = hfScore;
-    hideAllScreens();
-    showFinish();
-  } else {
-    hfLoadQuestion();
-  }
-}
-
-// ===== SETUP =====
-function setCount(n, btn) {
-  selectedCount = n;
-  document.querySelectorAll('.cnt-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-}
-
-// ===== START CHAT =====
-async function startChat(cat) {
-  selectedCategory = cat;
-  hideAllScreens();
-  document.getElementById('chat-screen').style.display = 'flex';
-  document.getElementById('input-area').style.display = 'block';
-  document.getElementById('chat-screen').innerHTML = '';
-  conversationHistory = [];
-  score = 0;
-  current = 0;
-  document.getElementById('score-disp').textContent = '0';
-  updateDifficultyUI();
-
-  addKuroBubble('よっしゃ！問題読み込み中やで～🐾');
-
-  try {
-    const res = await fetch(buildQuestionsUrl(cat, selectedCount));
-    const data = await res.json();
-    if (!data.questions || data.questions.length === 0) {
-      addKuroBubble(data.reviewEmpty ? 'まだ間違えた問題がないで！えらいやん！😆 ' : 'あれ、問題が見つからんかったわ😅 別の分野を試してや！');
-      return;
-    }
-    questions = data.questions;
-    document.getElementById('chat-screen').innerHTML = '';
-    conversationHistory = [];
-    askQuestion();
-  } catch(e) {
-    addKuroBubble('エラーが出たわ😅 もう一回試してや！');
-  }
-}
-
-// ===== ASK QUESTION =====
-function askQuestion() {
-  if (current >= questions.length) { showFinish(); return; }
-  answered = false;
-  const q = questions[current];
-  const optsText = q.opts.map((o, i) => `${i+1}. ${o}`).join('\n');
-  const qText = `【問題 ${current+1}／${questions.length}】\n\n${q.q}\n\n${optsText}`;
-  addKuroBubble(qText, true, q, true);
-  document.getElementById('header-sub').textContent = `${current+1}問目 / ${questions.length}問`;
-  scrollBottom();
-  speakText(buildQuestionSpeechText(q));
-}
-
-// ===== KURO BUBBLE =====
-function getActiveLogScreen() {
-  return document.getElementById(currentMode === 'app' ? 'app-chat-log' : 'chat-screen');
-}
-
-function addKuroBubble(text, showAnswerBtns = false, q = null, showButchake = false) {
-  const screen = getActiveLogScreen();
-  const row = document.createElement('div');
-  row.className = 'msg-row';
-
-  const avatar = document.createElement('div');
-  avatar.className = 'avatar';
-  const img = document.createElement('img');
-  img.src = getCharAvatar();
-  img.alt = 'キャラ';
-  img.onerror = () => { img.style.display='none'; avatar.textContent = '🐾'; };
-  avatar.appendChild(img);
-
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble kuro';
-
-  row.appendChild(avatar);
-  row.appendChild(bubble);
-  screen.appendChild(row);
-  scrollBottom();
-
-  typeIntoBubble(bubble, text, () => {
-    if (showAnswerBtns && q) {
-      const btnsDiv = document.createElement('div');
-      btnsDiv.className = 'ans-btns';
-      btnsDiv.id = 'ans-btns';
-      [1,2,3,4].forEach(n => {
-        const btn = document.createElement('button');
-        btn.className = 'ans-btn';
-        btn.textContent = `${n}番`;
-        btn.onclick = () => selectAnswer(n-1, q);
-        btnsDiv.appendChild(btn);
-      });
-      bubble.appendChild(btnsDiv);
-    }
-
-    if (showButchake && q) {
-      const bBtn = document.createElement('button');
-      bBtn.className = 'butchake-btn';
-      bBtn.id = 'butchake-btn';
-      bBtn.textContent = '🔥 ぶっちゃけて！';
-      bBtn.onclick = () => butchakeMode(q, bBtn);
-      bubble.appendChild(bBtn);
-
-      const yBtn = document.createElement('button');
-      yBtn.className = 'yaruki-btn';
-      yBtn.id = 'yaruki-btn';
-      yBtn.textContent = '💪 やる気スイッチ！';
-      yBtn.onclick = () => yarukiSwitch(yBtn);
-      bubble.appendChild(yBtn);
-    }
-
-    scrollBottom();
-  });
-}
-
-// ===== TYPEWRITER EFFECT =====
-function getTypingDelay(ch) {
-  if (ch === '\n') return 1040;
-  if ('。！？!?'.includes(ch)) return 800;
-  if ('、,'.includes(ch)) return 440;
-  return 104;
-}
-
-function typeIntoBubble(el, text, onDone) {
-  const chars = Array.from(text);
-  const textNode = document.createTextNode('');
-  const cursor = document.createElement('span');
-  cursor.className = 'typing-cursor';
-  el.appendChild(textNode);
-  el.appendChild(cursor);
-
-  let i = 0;
-  function step() {
-    if (i >= chars.length) {
-      cursor.remove();
-      if (onDone) onDone();
-      return;
-    }
-    textNode.data += chars[i];
-    i++;
-    scrollBottom();
-    setTimeout(step, getTypingDelay(chars[i - 1]));
-  }
-  step();
-}
-
-// ===== YARUKI SWITCH =====
-async function yarukiSwitch(btn) {
-  btn.disabled = true;
-  btn.textContent = '充電中…';
-  addUserBubble('💪 やる気スイッチ！');
-
-  const screen = document.getElementById('chat-screen');
-  const loadRow = makeLoadingRow();
-  screen.appendChild(loadRow);
-  scrollBottom();
-
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system: `${CHARS[selectedChar].prompt}\n\n${YARUKI_PROMPTS[selectedChar] || YARUKI_PROMPTS.yassan}`,
-        messages: [{ role: 'user', content: 'やる気スイッチを押しました！励ましてください！' }]
-      })
+async function sendChat(){
+  var inp=document.getElementById('chat-in');
+  var txt=inp.value.trim();
+  if(!txt)return;
+  inp.value='';
+  addUser(txt);
+  chatHist.push({role:'user',content:txt});
+  addBot('考え中やで...⏳');
+  var q=Qs[cur];
+  var sys='あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに楽しく教えてください。\n今の問題：'+q.cat+'\n問題：'+q.q+'\n正解：'+q.opts[q.ans]+'\n解説：'+q.ex+'\n200字以内で簡潔に答えてください。';
+  try{
+    var r=await fetch('/api/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({messages:chatHist, system:sys})
     });
-    const data = await res.json();
-    document.getElementById('loading-row')?.remove();
-    addKuroBubble(data.reply || 'がんばれ！！');
-    btn.textContent = '💪 やる気スイッチ！';
-    btn.disabled = false;
-  } catch(e) {
-    document.getElementById('loading-row')?.remove();
-    addKuroBubble('ごめん、エラーやわ😅');
-    btn.disabled = false;
+    var d=await r.json();
+    var rep=d.reply||'ごめん、うまく答えられへんかった！';
+    chatHist.push({role:'assistant',content:rep});
+    removeLast();addBot(rep);
+  }catch(e){
+    removeLast();addBot('通信エラーやで！もう一回試してみて！');
   }
 }
 
-// ===== BUTCHAKE MODE =====
-async function butchakeMode(q, btn) {
-  btn.disabled = true;
-  btn.textContent = '考え中…';
-  addUserBubble('🔥 ぶっちゃけて！');
-
-  const screen = document.getElementById('chat-screen');
-  const loadRow = makeLoadingRow();
-  screen.appendChild(loadRow);
-  scrollBottom();
-
-  const optsText = q.opts.map((o, i) => `${i+1}. ${o}`).join('\n');
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system: `${CHARS[selectedChar].prompt}\n\n${BUTCHAKE_PROMPTS[selectedChar] || BUTCHAKE_PROMPTS.yassan}`,
-        messages: [{ role: 'user', content: `以下の問題をぶっちゃけてわかりやすく言い直して、同じ4択で出し直してください。正解は絶対に教えないでください。\n\n問題：${q.q}\n\n${optsText}` }]
-      })
-    });
-    const data = await res.json();
-    document.getElementById('loading-row')?.remove();
-    addKuroBubble(data.reply || 'ごめん、エラーやわ😅', true, q, false);
-  } catch(e) {
-    document.getElementById('loading-row')?.remove();
-    addKuroBubble('ごめん、エラーやわ😅');
-  }
-}
-
-function makeLoadingRow() {
-  const loadRow = document.createElement('div');
-  loadRow.className = 'msg-row';
-  loadRow.id = 'loading-row';
-  const loadAvatar = document.createElement('div');
-  loadAvatar.className = 'avatar';
-  const img = document.createElement('img');
-  img.src = getCharAvatar();
-  img.alt = 'キャラ';
-  loadAvatar.appendChild(img);
-  const loadBubble = document.createElement('div');
-  loadBubble.className = 'bubble kuro loading';
-  loadBubble.textContent = getLoadingText();
-  loadRow.appendChild(loadAvatar);
-  loadRow.appendChild(loadBubble);
-  return loadRow;
-}
-
-// ===== EXPLANATION BUBBLE =====
-function addKuroBubbleWithEx(mainText, exText, afterText) {
-  const screen = document.getElementById('chat-screen');
-  const row = document.createElement('div');
-  row.className = 'msg-row';
-
-  const avatar = document.createElement('div');
-  avatar.className = 'avatar';
-  const img = document.createElement('img');
-  img.src = getCharAvatar();
-  img.alt = 'キャラ';
-  avatar.appendChild(img);
-
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble kuro';
-
-  row.appendChild(avatar);
-  row.appendChild(bubble);
-  screen.appendChild(row);
-  scrollBottom();
-
-  const main = document.createElement('div');
-  bubble.appendChild(main);
-
-  typeIntoBubble(main, mainText, () => {
-    const ex = document.createElement('div');
-    ex.style.cssText = 'margin-top:10px;padding:10px 12px;background:var(--hover-bg);border-left:3px solid var(--accent);border-radius:6px;color:#0550ae;font-size:0.95rem;line-height:1.75;';
-    bubble.appendChild(ex);
-
-    typeIntoBubble(ex, `📝 ${exText}`, () => {
-      if (afterText) {
-        const after = document.createElement('div');
-        after.style.marginTop = '10px';
-        bubble.appendChild(after);
-        typeIntoBubble(after, afterText, scrollBottom);
-      } else {
-        scrollBottom();
-      }
-    });
-  });
-}
-
-// ===== USER BUBBLE =====
-function addUserBubble(text) {
-  const screen = getActiveLogScreen();
-  const row = document.createElement('div');
-  row.className = 'msg-row user';
-  const avatar = document.createElement('div');
-  avatar.className = 'avatar user';
-  avatar.textContent = '浩';
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble user';
-  bubble.textContent = text;
-  row.appendChild(avatar);
-  row.appendChild(bubble);
-  screen.appendChild(row);
-  scrollBottom();
-}
-
-// ===== SELECT ANSWER =====
-function selectAnswer(idx, q) {
-  if (answered) return;
-  answered = true;
-  document.querySelectorAll('.ans-btn').forEach(b => b.disabled = true);
-
-  const correctIdx = Number(q.ans);
-  const isCorrect = idx === correctIdx;
-  showAmadoReaction(isCorrect);
-  addUserBubble(`${idx+1}番！`);
-  conversationHistory.push({ role: 'user', content: `${idx+1}番` });
-
-  if (isCorrect) {
-    score++;
-    document.getElementById('score-disp').textContent = score;
-    addKuroBubbleWithEx('🎉 正解やで！さすが浩之さん！', q.ex, '次の問題いく？');
-    conversationHistory.push({ role: 'assistant', content: `🎉 正解やで！さすが浩之さん！\n\n📝 ${q.ex}\n\n次の問題いく？` });
-    onCorrect();
-  } else {
-    addKuroBubbleWithEx(`😅 惜しい！正解は${correctIdx+1}番やで！`, q.ex, '次の問題いく？');
-    conversationHistory.push({ role: 'assistant', content: `😅 惜しい！正解は${correctIdx+1}番やで！\n\n📝 ${q.ex}\n\n次の問題いく？` });
-    onWrong();
-  }
-
-  recordAnswer(isCorrect);
-  recordAnswerToServer(q, isCorrect);
-  speakText(buildAnswerSpeechText(isCorrect, correctIdx, q.ex));
-
-  const nextBtn = document.createElement('button');
-  nextBtn.className = 'next-btn';
-  nextBtn.id = 'next-q-btn';
-  nextBtn.textContent = current+1 < questions.length ? '次の問題へ →' : '結果を見る！';
-  nextBtn.onclick = () => { nextBtn.remove(); current++; askQuestion(); };
-  document.getElementById('chat-screen').appendChild(nextBtn);
-  scrollBottom();
-}
-
-// ===== FREE INPUT =====
-async function sendMsg() {
-  const input = document.getElementById('chat-input');
-  const text = input.value.trim();
-  if (!text) return;
-
-  if (currentMode === 'chat' && ['1','2','3','4'].includes(text) && !answered && questions[current]) {
-    input.value = '';
-    selectAnswer(Number(text)-1, questions[current]);
-    return;
-  }
-
-  const hfChoice = normalizeOxInput(text);
-  if (currentMode === 'hf' && hfChoice && !hfAnswered && questions[hfCurrent]) {
-    input.value = '';
-    hfAnswer(hfChoice, questions[hfCurrent]);
-    return;
-  }
-
-  const history = currentMode === 'app' ? appConversationHistory : conversationHistory;
-  const activeIdx = currentMode === 'app' ? appCurrent : currentMode === 'hf' ? hfCurrent : current;
-
-  addUserBubble(text);
-  input.value = '';
-  input.style.height = 'auto';
-
-  const sendBtn = document.getElementById('send-btn');
-  sendBtn.disabled = true;
-
-  const screen = getActiveLogScreen();
-  const loadRow = makeLoadingRow();
-  screen.appendChild(loadRow);
-  scrollBottom();
-
-  history.push({ role: 'user', content: text });
-  const currentQ = questions[activeIdx] || questions[questions.length-1];
-
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ system: getSystemPrompt(currentQ), messages: history })
-    });
-    const data = await res.json();
-    document.getElementById('loading-row')?.remove();
-    const reply = data.reply || 'ごめん、エラーやわ😅';
-    addKuroBubble(reply);
-    history.push({ role: 'assistant', content: reply });
-  } catch(e) {
-    document.getElementById('loading-row')?.remove();
-    addKuroBubble('ごめん、エラーやわ😅もう一回聞いてや！');
-  }
-
-  sendBtn.disabled = false;
-}
-
-// ===== FINISH =====
-function showFinish() {
-  document.getElementById('finish-avatar-img').src = getCharAvatar();
-  const fs = document.getElementById('finish-screen');
-  fs.style.display = 'flex';
-
-  const pct = Math.round(score / questions.length * 100);
-  let msg = '';
-  if (pct === 100) msg = `全問正解！！${questions.length}問中${score}問(${pct}%)🔥\nこの調子で10月の本番も突破やで！`;
-  else if (pct >= 60) msg = `${questions.length}問中${score}問正解(${pct}%)！\nええ感じやで！間違えた問題を復習したら完璧や！`;
-  else msg = `${questions.length}問中${score}問正解(${pct}%)。\n一緒にもう一回やり直そ！絶対できるようになるで！`;
-  document.getElementById('finish-msg').textContent = msg;
-
-  const diffEl = document.getElementById('finish-difficulty');
-  diffEl.textContent = `難易度: ${DIFFICULTY_INFO[difficulty].label} ／ 最長連続正解: ${sessionBestStreak}問`;
-  diffEl.className = 'finish-difficulty';
-}
-
-function retryChat() {
-  hideAllScreens();
-  startChat(selectedCategory);
-}
-
-function backToMenu() {
-  hideAllScreens();
-  document.getElementById('category-screen').style.display = 'flex';
-  document.getElementById('header-sub').textContent = 'FP2級 一緒に合格しよ！';
-  document.getElementById('score-disp').textContent = '0';
-  updateHeaderChar();
-}
-
-function scrollBottom() {
-  const screen = document.getElementById(currentMode === 'app' ? 'app-mode-screen' : 'chat-screen');
-  screen.scrollTop = screen.scrollHeight;
-}
-
-// ===== MIC (Web Speech API) =====
-let micRecognition = null;
-let micListening = false;
-
-function getSpeechRecognitionCtor() {
-  return window.SpeechRecognition || window.webkitSpeechRecognition;
-}
-
-function stopMic() {
-  if (micRecognition) {
-    try { micRecognition.stop(); } catch (e) {}
-  }
-}
-
-function startMicRecognition() {
-  const SpeechRecognitionCtor = getSpeechRecognitionCtor();
-  if (!SpeechRecognitionCtor || micListening) return;
-
-  const micBtn = document.getElementById('mic-btn');
-  micRecognition = new SpeechRecognitionCtor();
-  micRecognition.lang = 'ja-JP';
-  micRecognition.interimResults = false;
-  micRecognition.maxAlternatives = 1;
-
-  micRecognition.onstart = () => {
-    micListening = true;
-    micBtn.classList.add('listening');
-  };
-  micRecognition.onresult = (e) => {
-    const said = e.results[0][0].transcript.trim();
-    chatInput.value = said;
-    chatInput.dispatchEvent(new Event('input'));
-  };
-  micRecognition.onerror = () => {};
-  micRecognition.onend = () => {
-    micListening = false;
-    micBtn.classList.remove('listening');
-  };
-
-  micRecognition.start();
-}
-
-function toggleMic() {
-  if (!getSpeechRecognitionCtor()) {
-    alert('この端末・ブラウザは音声入力に対応していないみたいや。テキストで入力してや！');
-    return;
-  }
-  if (micListening) {
-    stopMic();
-    return;
-  }
-  startMicRecognition();
-}
-
-// ===== TEXTAREA AUTO RESIZE =====
-const chatInput = document.getElementById('chat-input');
-chatInput.addEventListener('input', () => {
-  chatInput.style.height = 'auto';
-  chatInput.style.height = Math.min(chatInput.scrollHeight, 130) + 'px';
-  const text = chatInput.value.trim();
-  if (['1番','2番','3番','4番'].includes(text)) {
-    sendMsg(); // 自動送信！
-  } else if (currentMode === 'hf' && normalizeOxInput(text)) {
-    sendMsg(); // 自動送信！
-  }
-});
-chatInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
-});
-
-// ===== INIT =====
-updateHeaderChar();
-updateDifficultyUI();
-updateVoiceBtn();
+updateHome();
 </script>
 </body>
 </html>
