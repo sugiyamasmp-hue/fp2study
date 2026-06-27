@@ -9,14 +9,10 @@
 body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;min-height:100vh}
 .bg{position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(255,140,0,0.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(255,80,80,0.06) 0%,transparent 60%);pointer-events:none;z-index:0}
 .container{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:20px 16px 40px}
-
-/* ロゴ */
 .logo-wrap{display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-top:8px}
 .logo-icon{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#ff8c00,#ff4500);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#fff;box-shadow:0 4px 20px rgba(255,140,0,0.4)}
 .logo-title{font-size:20px;font-weight:800;color:#fff}
 .logo-sub{font-size:11px;color:#ff8c00;letter-spacing:0.1em;font-weight:600}
-
-/* カード */
 .card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:24px 20px;margin-bottom:16px}
 .tag-row{display:flex;gap:8px;margin-bottom:16px}
 .tag{background:rgba(255,140,0,0.15);border:1px solid rgba(255,140,0,0.3);color:#ff8c00;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700}
@@ -30,7 +26,7 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 .stat-divider{width:1px;height:30px;background:rgba(255,255,255,0.08)}
 .start-btn{width:100%;padding:14px 0;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:14px;color:#fff;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(255,140,0,0.35);margin-bottom:10px}
 .start-btn:hover{opacity:0.9}
-.outline-btn{width:100%;padding:13px 0;background:transparent;border:2px solid #ff8c00;border-radius:14px;color:#ff8c00;font-size:15px;font-weight:800;cursor:pointer}
+.outline-btn{width:100%;padding:13px 0;background:transparent;border:2px solid #ff8c00;border-radius:14px;color:#ff8c00;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:10px}
 .outline-btn:hover{background:rgba(255,140,0,0.1)}
 .history-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:16px 20px;margin-bottom:16px}
 .history-title{font-size:13px;font-weight:700;color:#888;margin-bottom:10px}
@@ -41,26 +37,36 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 .screen{display:none}
 .screen.on{display:block}
 
-/* チャットモード */
+/* 先生選択 */
+.teacher-title{font-size:18px;font-weight:800;color:#fff;margin-bottom:6px}
+.teacher-sub{font-size:13px;color:#888;margin-bottom:20px}
+.teacher-grid{display:flex;flex-direction:column;gap:12px;margin-bottom:8px}
+.teacher-card{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.08);border-radius:16px;padding:16px;cursor:pointer;transition:all 0.2s}
+.teacher-card:hover{background:rgba(255,140,0,0.08);border-color:rgba(255,140,0,0.4)}
+.teacher-card.selected{background:rgba(255,140,0,0.12);border-color:#ff8c00}
+.teacher-icon{width:72px;height:72px;border-radius:14px;flex-shrink:0;overflow:hidden;background:rgba(255,255,255,0.06)}
+.teacher-icon img{width:100%;height:100%;object-fit:cover}
+.teacher-info{flex:1}
+.teacher-name{font-size:16px;font-weight:800;color:#fff;margin-bottom:4px}
+.teacher-desc{font-size:12px;color:#888;line-height:1.5}
+.teacher-sample{font-size:12px;color:#ff8c00;margin-top:4px;font-style:italic}
+
+/* チャット */
 .chat-header-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-top:8px}
-.chat-avatar{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#1a1a3e,#0f3460);border:2px solid #ff8c00;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.chat-avatar{width:42px;height:42px;border-radius:12px;border:2px solid #ff8c00;flex-shrink:0;overflow:hidden;background:#1a1a3e}
+.chat-avatar img{width:100%;height:100%;object-fit:cover}
 .chat-name{font-size:15px;font-weight:800;color:#fff}
 .chat-status{font-size:11px;color:#ff8c00}
 .q-progress{font-size:12px;color:#555;margin-left:auto;font-weight:700}
-
 .chat-feed{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;min-height:200px}
-
 .bubble-wrap-bot{display:flex;align-items:flex-start;gap:8px}
 .bubble-wrap-user{display:flex;justify-content:flex-end}
-.bubble-avatar{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#1a1a3e,#0f3460);border:1px solid #ff8c0055;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;margin-top:2px}
+.bubble-avatar{width:32px;height:32px;border-radius:10px;border:1px solid rgba(255,140,0,0.3);flex-shrink:0;margin-top:2px;overflow:hidden;background:#1a1a3e}
+.bubble-avatar img{width:100%;height:100%;object-fit:cover}
 .bubble-bot{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:4px 16px 16px 16px;padding:12px 14px;font-size:14px;line-height:1.8;color:#e8e8e8;max-width:88%;white-space:pre-wrap}
 .bubble-user{background:linear-gradient(135deg,#ff8c00,#ff4500);border-radius:16px 4px 16px 16px;padding:12px 14px;font-size:14px;line-height:1.8;color:#fff;max-width:88%}
-
-/* タイピングカーソル */
 .typing-cursor{display:inline-block;width:2px;height:1em;background:#ff8c00;margin-left:2px;animation:blink 0.7s step-end infinite;vertical-align:text-bottom}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-
-/* 選択肢 */
 .opts-wrap{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .opt-btn{display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 14px;color:#e8e8e8;font-size:13px;text-align:left;cursor:pointer;line-height:1.7;width:100%;transition:background 0.15s}
 .opt-btn:hover{background:rgba(255,140,0,0.1);border-color:rgba(255,140,0,0.3)}
@@ -69,13 +75,8 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 .opt-btn.dim{opacity:0.35}
 .opt-btn:disabled{cursor:default}
 .opt-num{min-width:24px;height:24px;border-radius:7px;background:rgba(255,140,0,0.15);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#ff8c00;flex-shrink:0;margin-top:1px}
-
-/* アクションエリア */
 .action-area{margin-bottom:12px}
-.action-btn{width:100%;padding:13px 0;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 3px 14px rgba(255,140,0,0.3)}
-.action-btn:hover{opacity:0.9}
-
-/* チャット入力 */
+.action-btn{width:100%;padding:13px 0;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:800;cursor:pointer}
 .chat-input-area{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:10px 12px;display:flex;gap:8px;align-items:center}
 .chat-input{flex:1;background:transparent;border:none;font-size:14px;color:#fff;outline:none;padding:4px 0}
 .chat-input::placeholder{color:#444}
@@ -163,15 +164,66 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
       <div class="stat-divider"></div>
       <div class="stat"><div class="stat-num" id="s-latest">--</div><div class="stat-label">最新スコア</div></div>
     </div>
-    <button class="start-btn" onclick="startQuiz('chat')">🖤 クロちゃんと学習！</button>
-    <button class="outline-btn" onclick="startQuiz('normal')" style="margin-bottom:10px">📝 通常クイズ</button>
-    <button class="outline-btn" onclick="startQuiz('handsfree')">🎤 ハンズフリーモード（○×）</button>
+    <button class="start-btn" onclick="goTeacherSelect()">先生を選んで学習！</button>
+    <button class="outline-btn" onclick="startQuiz('normal')">通常クイズ</button>
+    <button class="outline-btn" onclick="startQuiz('handsfree')">ハンズフリーモード（○×）</button>
   </div>
   <div class="history-card" id="hist-card" style="display:none">
-    <div class="history-title">📊 最近の記録</div>
+    <div class="history-title">最近の記録</div>
     <div id="hist-list"></div>
   </div>
-  <div class="footer">クロちゃんと一緒に合格めざそ！🖤</div>
+  <div class="footer">AID式学習法 © amadopapa</div>
+</div>
+</div>
+
+<!-- 先生選択 -->
+<div id="teacher-select" class="screen">
+<div class="container">
+  <div class="logo-wrap">
+    <div class="logo-icon">A</div>
+    <div>
+      <div class="logo-title">先生を選んでね！</div>
+      <div class="logo-sub">AI Interactive Dialogue</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="teacher-title">どの先生と学ぶ？</div>
+    <div class="teacher-sub">先生によって解説のスタイルが違うで！</div>
+    <div class="teacher-grid">
+      <div class="teacher-card" id="tc-yassan" onclick="selectTeacher('yassan')">
+        <div class="teacher-icon"><img src="/images/characters/yassan.png" alt="やっさん先生"></div>
+        <div class="teacher-info">
+          <div class="teacher-name">やっさん先生</div>
+          <div class="teacher-desc">熱血！関西弁でズバッと教えてくれる頼れる兄貴</div>
+          <div class="teacher-sample">「ちゃうちゃう！それはこういうことやで！」</div>
+        </div>
+      </div>
+      <div class="teacher-card" id="tc-bon" onclick="selectTeacher('bon')">
+        <div class="teacher-icon"><img src="/images/characters/bon.png" alt="ボン先生"></div>
+        <div class="teacher-info">
+          <div class="teacher-name">ボン先生</div>
+          <div class="teacher-desc">バカボンのパパ風！のほほんと「なのだ」で教えてくれる</div>
+          <div class="teacher-sample">「これでいいのだ！正解なのだ！」</div>
+        </div>
+      </div>
+      <div class="teacher-card" id="tc-gal" onclick="selectTeacher('gal')">
+        <div class="teacher-icon"><img src="/images/characters/gyal.png" alt="ギャル先生"></div>
+        <div class="teacher-info">
+          <div class="teacher-name">ギャル先生</div>
+          <div class="teacher-desc">超元気！ギャル語でテンション上げて教えてくれる</div>
+          <div class="teacher-sample">「やばっ！！正解じゃん！マジ天才！」</div>
+        </div>
+      </div>
+      <div class="teacher-card" id="tc-sebas" onclick="selectTeacher('sebas')">
+        <div class="teacher-icon"><img src="/images/characters/sebas.png" alt="セバス先生"></div>
+        <div class="teacher-info">
+          <div class="teacher-name">セバス先生</div>
+          <div class="teacher-desc">英国紳士の執事！丁寧で上品な解説が光る</div>
+          <div class="teacher-sample">「左様でございます。大変よろしゅうございました」</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 </div>
 
@@ -179,29 +231,22 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 <div id="chat-mode" class="screen">
 <div class="container">
   <div class="chat-header-bar">
-    <div class="chat-avatar">🖤</div>
+    <div class="chat-avatar" id="chat-avatar"></div>
     <div>
-      <div class="chat-name">クロちゃん</div>
+      <div class="chat-name" id="chat-teacher-name"></div>
       <div class="chat-status">FP2級 先生</div>
     </div>
     <div class="q-progress" id="chat-q-progress">1 / 5</div>
   </div>
-
   <div class="chat-feed" id="chat-feed"></div>
-
-  <!-- 選択肢エリア -->
   <div id="opts-area" style="display:none">
     <div class="opts-wrap" id="chat-opts"></div>
   </div>
-
-  <!-- アクションボタン -->
   <div class="action-area" id="action-area" style="display:none">
     <button class="action-btn" id="action-btn" onclick="onActionBtn()"></button>
   </div>
-
-  <!-- チャット入力 -->
   <div class="chat-input-area" id="chat-input-area" style="display:none">
-    <input class="chat-input" id="chat-in" placeholder="クロちゃんに質問してや！" onkeydown="if(event.key==='Enter')sendChatMsg()">
+    <input class="chat-input" id="chat-in" placeholder="質問してや！" onkeydown="if(event.key==='Enter')sendChatMsg()">
     <button class="chat-send" id="chat-send-btn" onclick="sendChatMsg()">送信</button>
   </div>
 </div>
@@ -221,7 +266,7 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
     <div class="ex-label" id="ex-title"></div>
     <div class="ex-text" id="ex-text"></div>
     <div class="norm-chat-area">
-      <div class="norm-chat-head">🖤 クロちゃんに質問する</div>
+      <div class="norm-chat-head" id="norm-chat-head">クロちゃんに質問する</div>
       <div class="norm-chat-msgs" id="norm-chat-msgs"></div>
       <div class="norm-input-row">
         <input class="norm-input" id="norm-chat-in" placeholder="なんでも聞いてや！" onkeydown="if(event.key==='Enter')sendNormChat()">
@@ -242,7 +287,7 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
     <span class="q-count" id="q-num-hf"></span>
   </div>
   <div class="hf-box">
-    <div class="mode-badge" id="hf-badge">🎤 音声モード</div>
+    <div class="mode-badge" id="hf-badge">音声モード</div>
     <div class="hf-label">次の記述は○か×か？</div>
     <div class="hf-statement" id="hf-stmt"></div>
     <div class="hf-status" id="hf-status">問題を読み上げています...</div>
@@ -250,8 +295,8 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
       <span></span><span></span><span></span><span></span><span></span>
     </div>
     <div class="hf-btns">
-      <button class="hf-maru" id="btn-maru" onclick="hfAnswer(true)" disabled>⭕</button>
-      <button class="hf-batu" id="btn-batu" onclick="hfAnswer(false)" disabled>❌</button>
+      <button class="hf-maru" id="btn-maru" onclick="hfAnswer(true)" disabled>○</button>
+      <button class="hf-batu" id="btn-batu" onclick="hfAnswer(false)" disabled>×</button>
     </div>
     <div class="hf-result" id="hf-result">
       <div class="hf-result-icon" id="hf-result-icon"></div>
@@ -271,40 +316,93 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
     <div class="r-pct" id="r-pct"></div>
     <div class="r-msg" id="r-msg"></div>
     <div class="review-wrap" id="review"></div>
-    <button class="start-btn" onclick="goHome()">もう一回挑戦！🔥</button>
+    <button class="start-btn" onclick="goHome()">もう一回挑戦！</button>
   </div>
   <div class="footer">AID式学習法 © amadopapa</div>
 </div>
 </div>
 
 <script>
+/* ===== 先生データ ===== */
+var TEACHERS = {
+  yassan: {
+    name: 'やっさん先生',
+    icon: '/images/characters/yassan.png',
+    intro: 'よっしゃ！やっさんやで！一緒にFP2級ぶっ倒したろうや！\n全力でサポートするから、わからんことは何でも聞いてや！',
+    correct: 'そうや！正解やで！さすがやな！',
+    wrong: 'ちゃうちゃう！惜しいけどな！',
+    next: 'よっしゃ、次いくで！',
+    question: 'ほな問題や！ゆっくり読んでや！',
+    system: 'あなたは「やっさん先生」というFP2級の先生です。熱血な関西弁でフレンドリーに、ズバッと教えてください。「〜やで」「〜やな」「〜やろ」などの関西弁を使ってください。200字以内で答えてください。'
+  },
+  bon: {
+    name: 'ボン先生',
+    icon: '/images/characters/bon.png',
+    intro: 'これでいいのだ！ボン先生なのだ！\nFP2級、一緒に合格するのだ！わからないことは何でも聞くのだ！',
+    correct: 'これでいいのだ！正解なのだ！',
+    wrong: 'ちがうのだ！でも大丈夫なのだ！',
+    next: 'では次の問題なのだ！',
+    question: 'では問題なのだ！よく読むのだ！',
+    system: 'あなたは「ボン先生」というFP2級の先生です。バカボンのパパのように「〜なのだ」という語尾で話してください。のほほんとした雰囲気で優しく教えてください。200字以内で答えてください。'
+  },
+  gal: {
+    name: 'ギャル先生',
+    icon: '/images/characters/gyal.png',
+    intro: 'やばっ！ギャル先生登場！！\nFP2級とか余裕じゃん！一緒に頑張ろ！わからないことあったら超教えるから！',
+    correct: 'やばっ！！正解じゃん！マジ天才！',
+    wrong: 'えー！惜しかったじゃん！ドンマイ！',
+    next: 'じゃあ次いこ！テンション上げてこ！',
+    question: 'じゃあ問題ね！ちゃんと読んでよ！',
+    system: 'あなたは「ギャル先生」というFP2級の先生です。ギャル語でテンション高く教えてください。「やばっ」「じゃん」「超」「マジ」などのギャル語を使ってください。200字以内で答えてください。'
+  },
+  sebas: {
+    name: 'セバス先生',
+    icon: '/images/characters/sebas.png',
+    intro: '左様でございます。セバスチャンと申します。\nFP2級合格に向け、誠心誠意お力添えいたします。何なりとお申し付けくださいませ。',
+    correct: '大変よろしゅうございました。正解でございます。',
+    wrong: '惜しゅうございました。共に参りましょう。',
+    next: '次の問題に参りましょうか。',
+    question: '問題でございます。ごゆっくりお読みください。',
+    system: 'あなたは「セバス先生」というFP2級の先生です。英国紳士の執事のように、丁寧で上品な言葉遣いで教えてください。「〜でございます」「〜いたします」などの敬語を使ってください。200字以内で答えてください。'
+  }
+};
+
 /* ===== 問題データ ===== */
 var Qs = [
-  {cat:"ライフ・社会保険",q:"協会けんぽの被保険者に関する記述の空欄にあてはまる組合せとして、最も適切なものはどれか。\n\n特定適用事業所に使用される短時間労働者のうち、次のいずれかに該当する者は、原則として被保険者とならない。\n① 1週間の所定労働時間が（イ）未満の者\n② 所定内賃金が月額（ウ）未満の者\n③ 学生である者\n\nまた短時間労働者の要件として、所定労働時間・労働日数が通常の労働者の（ア）未満であること。",opts:["ア：3分の2　イ：20時間　ウ：5万8千円","ア：3分の2　イ：25時間　ウ：8万8千円","ア：4分の3　イ：20時間　ウ：8万8千円","ア：4分の3　イ：25時間　ウ：5万8千円"],ans:2,ex:"ポイントは3つ！\n\n✅ ア：4分の3 → 通常の4分の3未満が短時間労働者の基準\n✅ イ：20時間 → 週20時間未満はNG\n✅ ウ：8万8千円 → 月額8万8千円未満。「106万円の壁」のライン！\n\n「ハチハチ（88）で切れる！」で覚えよう！"},
-  {cat:"ライフ・社会保険",q:"労働者災害補償保険に関する次の記述のうち、最も不適切なものはどれか。",opts:["労災保険の適用を受ける労働者には、アルバイトやパートタイマーも含まれる","労災保険料の算定に用いられる労災保険率は、適用事業に従事する労働者数に応じて定められている","業務上の傷病が治癒したときに一定の障害が残り、障害等級に該当する場合、障害補償給付が支給される","業務災害で労働者が死亡した場合、遺族に対して遺族補償年金または遺族補償一時金が支給される"],ans:1,ex:"2番が不適切！\n\n✅ 労災保険率は「労働者数」ではなく「業種」で決まる！\n建設業や林業など危険な仕事は率が高く、オフィスワークは低い。\n\n1番「アルバイト・パートも対象」は試験頻出！雇用形態に関係なく全員対象や！"},
-  {cat:"ライフ・社会保険",q:"国民年金の保険料に関する次の記述のうち、最も不適切なものはどれか。",opts:["第1号被保険者は、一定の条件を除き、月額400円の付加保険料を納付できる","産前産後期間の保険料免除制度により免除された期間は、保険料納付済期間として老齢基礎年金の年金額に反映される","保険料免除期間の保険料を追納する場合、追納額は追納する時期にかかわらず、免除された時点の保険料額となる","保険料を前納した第1号被保険者が、前納期間の途中で第2号被保険者になった場合、未経過期間分の保険料の還付を受けられる"],ans:2,ex:"3番が不適切！\n\n✅ 追納は「いつ払うか」で金額が変わる！\n2年以内の追納 → 加算なし\n3年度目以降 → 加算あり（割増！）\n\n「早よ追納せな損するで！」⏰"},
-  {cat:"タックス",q:"わが国の税制に関する次の記述のうち、最も不適切なものはどれか。",opts:["所得税では、課税対象となる所得を10種類に区分し、種類ごとに計算する","相続税では、納税者が申告書に記載した内容に基づき、税務署長が納付税額を決定する賦課課税方式が採用されている","税金を負担する者と納める者が異なる税金を間接税といい、消費税は間接税に該当する","法人税は国税、不動産取得税は地方税に該当する"],ans:1,ex:"2番が不適切！\n\n✅ 相続税は「申告納税方式」！自分で計算して申告する！\n\n📝 申告納税方式：所得税・相続税・贈与税・法人税\n📬 賦課課税方式：固定資産税・住民税・不動産取得税"},
-  {cat:"タックス",q:"所得税における各種所得に関する次の記述のうち、最も適切なものはどれか。",opts:["個人事業主が事業資金で株式を購入し、配当金を受け取ったことによる所得は事業所得となる","給与収入が850万円を超える給与所得者が23歳未満の扶養親族を有する場合、所得金額調整控除として最大10万円が控除される","個人による不動産の貸付が事業的規模で行われている場合、その賃貸収入による所得は事業所得となる","会社員が自宅購入資金として勤務先から無利息で金銭を借り入れたことにより生じた経済的利益は給与所得となる"],ans:3,ex:"4番が正解！\n\n✅ 会社から無利息で借りた→トクした利息分＝経済的利益は「給与所得」！\n\n❌ 1番：株の配当金はどんな目的でも「配当所得」\n❌ 2番：所得金額調整控除の最大は「15万円」\n❌ 3番：不動産貸付は規模に関係なく「不動産所得」"},
+  {cat:"ライフ・社会保険",q:"協会けんぽの被保険者に関する記述の空欄にあてはまる組合せとして、最も適切なものはどれか。\n\n特定適用事業所に使用される短時間労働者のうち、次のいずれかに該当する者は、原則として被保険者とならない。\n① 1週間の所定労働時間が（イ）未満の者\n② 所定内賃金が月額（ウ）未満の者\n③ 学生である者\n\nまた短時間労働者の要件として、所定労働時間・労働日数が通常の労働者の（ア）未満であること。",opts:["ア：3分の2　イ：20時間　ウ：5万8千円","ア：3分の2　イ：25時間　ウ：8万8千円","ア：4分の3　イ：20時間　ウ：8万8千円","ア：4分の3　イ：25時間　ウ：5万8千円"],ans:2,ex:"ポイントは3つ！\n\n✅ ア：4分の3\n✅ イ：20時間\n✅ ウ：8万8千円（106万円の壁）\n\n「ハチハチ（88）で切れる！」で覚えよう！"},
+  {cat:"ライフ・社会保険",q:"労働者災害補償保険に関する次の記述のうち、最も不適切なものはどれか。",opts:["労災保険の適用を受ける労働者には、アルバイトやパートタイマーも含まれる","労災保険料の算定に用いられる労災保険率は、適用事業に従事する労働者数に応じて定められている","業務上の傷病が治癒したときに一定の障害が残り、障害等級に該当する場合、障害補償給付が支給される","業務災害で労働者が死亡した場合、遺族に対して遺族補償年金または遺族補償一時金が支給される"],ans:1,ex:"2番が不適切！\n\n✅ 労災保険率は「労働者数」ではなく「業種」で決まる！\n雇用形態に関係なく全員対象！"},
+  {cat:"ライフ・社会保険",q:"国民年金の保険料に関する次の記述のうち、最も不適切なものはどれか。",opts:["第1号被保険者は、一定の条件を除き、月額400円の付加保険料を納付できる","産前産後期間の保険料免除制度により免除された期間は、保険料納付済期間として老齢基礎年金の年金額に反映される","保険料免除期間の保険料を追納する場合、追納額は追納する時期にかかわらず、免除された時点の保険料額となる","保険料を前納した第1号被保険者が、前納期間の途中で第2号被保険者になった場合、未経過期間分の保険料の還付を受けられる"],ans:2,ex:"3番が不適切！\n\n2年以内の追納 → 加算なし\n3年度目以降 → 加算あり（割増！）\n\n「早よ追納せな損するで！」"},
+  {cat:"タックス",q:"わが国の税制に関する次の記述のうち、最も不適切なものはどれか。",opts:["所得税では、課税対象となる所得を10種類に区分し、種類ごとに計算する","相続税では、納税者が申告書に記載した内容に基づき、税務署長が納付税額を決定する賦課課税方式が採用されている","税金を負担する者と納める者が異なる税金を間接税といい、消費税は間接税に該当する","法人税は国税、不動産取得税は地方税に該当する"],ans:1,ex:"2番が不適切！\n\n✅ 相続税は「申告納税方式」！\n\n申告納税：所得税・相続税・贈与税・法人税\n賦課課税：固定資産税・住民税・不動産取得税"},
+  {cat:"タックス",q:"所得税における各種所得に関する次の記述のうち、最も適切なものはどれか。",opts:["個人事業主が事業資金で株式を購入し、配当金を受け取ったことによる所得は事業所得となる","給与収入が850万円を超える給与所得者が23歳未満の扶養親族を有する場合、所得金額調整控除として最大10万円が控除される","個人による不動産の貸付が事業的規模で行われている場合、その賃貸収入による所得は事業所得となる","会社員が自宅購入資金として勤務先から無利息で金銭を借り入れたことにより生じた経済的利益は給与所得となる"],ans:3,ex:"4番が正解！\n\n✅ 無利息借入の経済的利益 = 給与所得！\n\n❌ 1番：配当金は「配当所得」\n❌ 2番：最大は「15万円」\n❌ 3番：不動産貸付は「不動産所得」"},
 ];
 
 var QsOX = [
-  {cat:"ライフ・社会保険", stmt:"協会けんぽの短時間労働者の被保険者除外条件のうち、所定内賃金が月額8万8千円未満の場合は被保険者とならない。", ans:true, ex:"✅ 正解！\n月額8万8千円（年収106万円の壁）未満は対象外！\n「ハチハチ（88）で切れる！」で覚えよう！"},
-  {cat:"ライフ・社会保険", stmt:"労災保険率は、適用事業に従事する労働者数に応じて定められている。", ans:false, ex:"❌ 不正解！\n労災保険率は「労働者数」ではなく「業種」で決まる！"},
-  {cat:"タックス", stmt:"相続税は、税務署長が納付税額を決定する賦課課税方式が採用されている。", ans:false, ex:"❌ 不正解！\n相続税は「申告納税方式」！自分で計算して申告するのが基本やで！"},
-  {cat:"タックス", stmt:"事業所得の損失は、不動産所得と損益通算できる。", ans:true, ex:"✅ 正解！\n損益通算できるのは「不事山譲（ふじさんじょう）」\n不動産・事業・山林・譲渡の4種類！"},
-  {cat:"タックス", stmt:"婚姻届を提出していない内縁関係の配偶者は、所得税の配偶者控除の対象となる。", ans:false, ex:"❌ 不正解！\n内縁関係は配偶者控除の対象外！\n「健康保険は人情、税金は法律」で覚えよう！"},
+  {cat:"ライフ・社会保険", stmt:"協会けんぽの短時間労働者の被保険者除外条件のうち、所定内賃金が月額8万8千円未満の場合は被保険者とならない。", ans:true, ex:"正解！\n月額8万8千円（年収106万円の壁）未満は対象外！"},
+  {cat:"ライフ・社会保険", stmt:"労災保険率は、適用事業に従事する労働者数に応じて定められている。", ans:false, ex:"不正解！\n労災保険率は「業種」で決まる！"},
+  {cat:"タックス", stmt:"相続税は、税務署長が納付税額を決定する賦課課税方式が採用されている。", ans:false, ex:"不正解！\n相続税は「申告納税方式」！"},
+  {cat:"タックス", stmt:"事業所得の損失は、不動産所得と損益通算できる。", ans:true, ex:"正解！\n不事山譲（ふじさんじょう）で覚えよう！"},
+  {cat:"タックス", stmt:"婚姻届を提出していない内縁関係の配偶者は、所得税の配偶者控除の対象となる。", ans:false, ex:"不正解！\n内縁関係は配偶者控除の対象外！"},
 ];
 
 /* ===== 状態 ===== */
 var cur=0, score=0, answers=[], mode='chat';
+var selectedTeacher = 'yassan';
 var chatApiHist=[];
 var normChatHist=[];
 var hist=[];
 try{hist=JSON.parse(localStorage.getItem('aid_fp2_hist')||'[]');}catch(e){hist=[];}
 
-/* ===== チャットモード状態 ===== */
-var chatPhase=''; // 'intro'→'question'→'opts'→'answered'→'chat'
-var typingTimer=null;
+/* ===== 先生選択 ===== */
+function goTeacherSelect(){
+  show('teacher-select');
+}
+
+function selectTeacher(key){
+  selectedTeacher = key;
+  document.querySelectorAll('.teacher-card').forEach(function(c){c.classList.remove('selected')});
+  document.getElementById('tc-'+key).classList.add('selected');
+  setTimeout(function(){ startQuiz('chat'); }, 200);
+}
 
 /* ===== 画面 ===== */
 function show(id){
@@ -327,11 +425,14 @@ function updateHome(){
 function startQuiz(m){
   mode=m; cur=0; score=0; answers=[];
   if(m==='chat'){
+    var t=TEACHERS[selectedTeacher];
+    document.getElementById('chat-avatar').innerHTML='<img src="'+t.icon+'" alt="'+t.name+'">';
+    document.getElementById('chat-teacher-name').textContent=t.name;
     chatApiHist=[];
     show('chat-mode');
     startChatMode();
   } else if(m==='handsfree'){
-    document.getElementById('hf-badge').textContent=voiceOK?'🎤 音声モード':'👆 タップモード';
+    document.getElementById('hf-badge').textContent=voiceOK?'音声モード':'タップモード';
     initRec();
     show('quiz-hf');
     renderHfQ();
@@ -347,57 +448,47 @@ function startQuiz(m){
 function chatFeed(){return document.getElementById('chat-feed');}
 
 function addBotBubble(text, onDone){
+  var t=TEACHERS[selectedTeacher];
   var feed=chatFeed();
-  var wrap=document.createElement('div');
-  wrap.className='bubble-wrap-bot';
-  var av=document.createElement('div');av.className='bubble-avatar';av.textContent='🖤';
+  var wrap=document.createElement('div');wrap.className='bubble-wrap-bot';
+  var av=document.createElement('div');av.className='bubble-avatar';av.innerHTML='<img src="'+t.icon+'" alt="'+t.name+'">';
   var bub=document.createElement('div');bub.className='bubble-bot';
   wrap.appendChild(av);wrap.appendChild(bub);
   feed.appendChild(wrap);
   scrollFeed();
-  typeText(bub, text, onDone);
+  typeText(bub,text,onDone);
 }
 
 function addUserBubble(text){
   var feed=chatFeed();
-  var wrap=document.createElement('div');
-  wrap.className='bubble-wrap-user';
+  var wrap=document.createElement('div');wrap.className='bubble-wrap-user';
   var bub=document.createElement('div');bub.className='bubble-user';bub.textContent=text;
-  wrap.appendChild(bub);
-  feed.appendChild(wrap);
-  scrollFeed();
+  wrap.appendChild(bub);feed.appendChild(wrap);scrollFeed();
 }
 
-function scrollFeed(){
-  setTimeout(function(){window.scrollTo(0,document.body.scrollHeight);},50);
-}
+function scrollFeed(){setTimeout(function(){window.scrollTo(0,document.body.scrollHeight);},50);}
 
-/* タイピングアニメーション */
-function typeText(el, text, onDone){
+function typeText(el,text,onDone){
   el.textContent='';
-  var cursor=document.createElement('span');
-  cursor.className='typing-cursor';
+  var cursor=document.createElement('span');cursor.className='typing-cursor';
   el.appendChild(cursor);
-  var i=0;
-  var speed=56; // ms/文字
+  var i=0;var speed=56;
   function next(){
     if(i<text.length){
       el.insertBefore(document.createTextNode(text[i]),cursor);
-      i++;
-      scrollFeed();
-      typingTimer=setTimeout(next, speed);
+      i++;scrollFeed();
+      setTimeout(next,speed);
     } else {
-      cursor.remove();
-      if(onDone) onDone();
+      cursor.remove();if(onDone)onDone();
     }
   }
   next();
 }
 
-function setActionBtn(label, show){
+function setActionBtn(label,on){
   var area=document.getElementById('action-area');
   var btn=document.getElementById('action-btn');
-  if(show){btn.textContent=label;area.style.display='block';}
+  if(on){btn.textContent=label;area.style.display='block';}
   else{area.style.display='none';}
 }
 
@@ -406,142 +497,94 @@ function showChatInput(on){
   if(on) setTimeout(function(){document.getElementById('chat-in').focus();},100);
 }
 
-function showOpts(on){
-  document.getElementById('opts-area').style.display=on?'block':'none';
-}
+function showOpts(on){document.getElementById('opts-area').style.display=on?'block':'none';}
 
-/* チャットモード開始 */
+var actionState='';
+
 function startChatMode(){
   document.getElementById('chat-feed').innerHTML='';
-  showOpts(false);
-  showChatInput(false);
-  setActionBtn('',false);
-  updateChatProgress();
-  chatPhase='intro';
-
+  showOpts(false);showChatInput(false);setActionBtn('',false);
+  document.getElementById('chat-q-progress').textContent=(cur+1)+' / '+Qs.length;
+  var t=TEACHERS[selectedTeacher];
   var q=Qs[cur];
-  var intro='よっしゃ！問題'+( cur+1)+'問目いくで〜！\nカテゴリは「'+q.cat+'」やで！\n\nゆっくり読んでな！';
+  var intro = cur===0
+    ? t.intro+'\n\nまず1問目いくで！カテゴリは「'+q.cat+'」やで！'
+    : t.next+'\n問題'+(cur+1)+'問目！カテゴリは「'+q.cat+'」！';
   addBotBubble(intro, function(){
     setTimeout(function(){
-      chatPhase='question';
-      addBotBubble(q.q, function(){
+      addBotBubble(t.question+'\n\n'+q.q, function(){
+        actionState='show-opts';
         setActionBtn('選択肢を見る →', true);
       });
-    }, 400);
+    },400);
   });
 }
 
-function updateChatProgress(){
-  document.getElementById('chat-q-progress').textContent=(cur+1)+' / '+Qs.length;
-}
-
-var actionState=''; // 'show-opts' | 'next-q' | 'result'
-
 function onActionBtn(){
-  if(actionState==='show-opts'){
-    showChoices();
-  } else if(actionState==='next-q'){
-    nextChatQ();
-  } else if(actionState==='result'){
-    finish();
-  } else {
-    // デフォルト：選択肢表示
-    showChoices();
-  }
+  if(actionState==='show-opts') showChoices();
+  else if(actionState==='next-q') nextChatQ();
+  else if(actionState==='result') finish();
 }
 
 function showChoices(){
   setActionBtn('',false);
   var q=Qs[cur];
-  var optsEl=document.getElementById('chat-opts');
-  optsEl.innerHTML=q.opts.map(function(o,i){
+  document.getElementById('chat-opts').innerHTML=q.opts.map(function(o,i){
     return '<button class="opt-btn" id="co'+i+'" onclick="chatPick('+i+')"><span class="opt-num">'+(i+1)+'</span><span>'+o+'</span></button>';
   }).join('');
-  showOpts(true);
-  chatPhase='opts';
-  scrollFeed();
-  // クロちゃんのひとこと
-  addBotBubble('どれやと思う？直感でもええで！🤔');
+  showOpts(true);scrollFeed();
 }
 
 function chatPick(idx){
   showOpts(false);
-  var q=Qs[cur];
+  var q=Qs[cur];var t=TEACHERS[selectedTeacher];
   var ok=idx===q.ans;
-  if(ok) score++;
+  if(ok)score++;
   answers.push({q:cur,sel:idx,ok:ok});
-  chatPhase='answered';
-
-  // ユーザーの選択表示
-  addUserBubble((idx+1)+'番！「'+q.opts[idx]+'」');
-
+  addUserBubble((idx+1)+'番！');
   setTimeout(function(){
-    var reactionMsg = ok
-      ? '🎉 正解やで！めっちゃええやん！\n\n'+q.ex
-      : '💦 惜しい！'+( idx+1)+'番は不正解や〜\n\n正解は'+(q.ans+1)+'番「'+q.opts[q.ans]+'」やで！\n\n'+q.ex;
-
-    addBotBubble(reactionMsg, function(){
+    var msg = ok
+      ? t.correct+'\n\n'+q.ex
+      : t.wrong+'\n\n正解は'+(q.ans+1)+'番「'+q.opts[q.ans]+'」！\n\n'+q.ex;
+    addBotBubble(msg, function(){
       showChatInput(true);
-      chatPhase='chat';
-      // 次へボタン
-      if(cur+1<Qs.length){
-        actionState='next-q';
-        setActionBtn('次の問題へ →', true);
-      } else {
-        actionState='result';
-        setActionBtn('結果を見る 🏁', true);
-      }
-      addBotBubble('わからんことあったら何でも聞いてや！🖤');
+      if(cur+1<Qs.length){actionState='next-q';setActionBtn('次の問題へ →',true);}
+      else{actionState='result';setActionBtn('結果を見る',true);}
+      addBotBubble('わからんことあったら何でも聞いてや！');
     });
-  }, 300);
+  },300);
 }
 
 function nextChatQ(){
-  setActionBtn('',false);
-  showChatInput(false);
-  cur++;
-  chatApiHist=[];
-  startChatMode();
+  setActionBtn('',false);showChatInput(false);
+  cur++;chatApiHist=[];startChatMode();
 }
 
 async function sendChatMsg(){
   var inp=document.getElementById('chat-in');
-  var txt=inp.value.trim();
-  if(!txt) return;
+  var txt=inp.value.trim();if(!txt)return;
   inp.value='';
   document.getElementById('chat-send-btn').disabled=true;
-
   addUserBubble(txt);
   chatApiHist.push({role:'user',content:txt});
-
-  var q=Qs[cur];
-  var sys='あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに、楽しく、わかりやすく教えてください。\n今取り組んでいる問題：\nカテゴリ：'+q.cat+'\n問題：'+q.q+'\n正解：選択肢'+(q.ans+1)+'番「'+q.opts[q.ans]+'」\n解説：'+q.ex+'\n\n「なぜそうなるか」を日常のたとえや具体例で200字以内で答えてください。';
-
-  // ローディング表示
+  var q=Qs[cur];var t=TEACHERS[selectedTeacher];
+  var sys=t.system+'\n\n今の問題：\nカテゴリ：'+q.cat+'\n問題：'+q.q+'\n正解：'+q.opts[q.ans]+'\n解説：'+q.ex;
   var feed=chatFeed();
   var loadWrap=document.createElement('div');loadWrap.className='bubble-wrap-bot';loadWrap.id='chat-loading';
-  var av=document.createElement('div');av.className='bubble-avatar';av.textContent='🖤';
-  var bub=document.createElement('div');bub.className='bubble-bot';bub.textContent='考え中やで...⏳';
+  var av=document.createElement('div');av.className='bubble-avatar';av.innerHTML='<img src="'+t.icon+'" alt="'+t.name+'">';
+  var bub=document.createElement('div');bub.className='bubble-bot';bub.textContent='考え中...';
   loadWrap.appendChild(av);loadWrap.appendChild(bub);
-  feed.appendChild(loadWrap);
-  scrollFeed();
-
+  feed.appendChild(loadWrap);scrollFeed();
   try{
-    var r=await fetch('/api/chat',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({messages:chatApiHist,system:sys})
-    });
+    var r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:chatApiHist,system:sys})});
     var d=await r.json();
-    var rep=d.reply||'ごめん、うまく答えられへんかった！';
+    var rep=d.reply||'うまく答えられんかった！もう一回聞いてや！';
     chatApiHist.push({role:'assistant',content:rep});
-    var loading=document.getElementById('chat-loading');
-    if(loading) loading.remove();
+    var l=document.getElementById('chat-loading');if(l)l.remove();
     addBotBubble(rep);
   }catch(e){
-    var loading=document.getElementById('chat-loading');
-    if(loading) loading.remove();
-    addBotBubble('通信エラーやで！もう一回試してみて！');
+    var l=document.getElementById('chat-loading');if(l)l.remove();
+    addBotBubble('通信エラーやで！もう一回試してや！');
   }
   document.getElementById('chat-send-btn').disabled=false;
 }
@@ -557,42 +600,36 @@ function renderQ(){
   document.getElementById('q-text').textContent=q.q;
   document.getElementById('exbox').style.display='none';
   normChatHist=[];
-  var nm=document.getElementById('norm-chat-msgs');
-  nm.innerHTML='';
-  addNormBot('なんか気になることあったら何でも聞いてや！🖤');
+  document.getElementById('norm-chat-msgs').innerHTML='';
+  addNormBot('なんでも聞いてや！');
   document.getElementById('opts').innerHTML=q.opts.map(function(o,i){
     return '<button class="opt-btn" id="o'+i+'" onclick="pick('+i+')"><span class="opt-num">'+(i+1)+'</span><span>'+o+'</span></button>';
   }).join('');
 }
 
 function pick(idx){
-  var q=Qs[cur];
-  var ok=idx===q.ans;
-  if(ok) score++;
+  var q=Qs[cur];var ok=idx===q.ans;
+  if(ok)score++;
   answers.push({q:cur,sel:idx,ok:ok});
   for(var i=0;i<q.opts.length;i++){
-    var b=document.getElementById('o'+i);
-    b.disabled=true;
+    var b=document.getElementById('o'+i);b.disabled=true;
     b.classList.remove('correct','wrong','dim');
-    if(i===q.ans) b.classList.add('correct');
-    else if(i===idx) b.classList.add('wrong');
+    if(i===q.ans)b.classList.add('correct');
+    else if(i===idx)b.classList.add('wrong');
     else b.classList.add('dim');
   }
-  document.getElementById('ex-title').textContent=ok?'🎉 正解！！':'💦 不正解...';
+  document.getElementById('ex-title').textContent=ok?'正解！！':'不正解...';
   document.getElementById('ex-text').textContent=q.ex;
-  document.getElementById('next-btn').textContent=cur+1<Qs.length?'次の問題へ →':'結果を見る 🏁';
+  document.getElementById('next-btn').textContent=cur+1<Qs.length?'次の問題へ →':'結果を見る';
   document.getElementById('exbox').style.display='block';
 }
 
-function nextQ(){
-  if(cur+1<Qs.length){cur++;renderQ();}
-  else finish();
-}
+function nextQ(){if(cur+1<Qs.length){cur++;renderQ();}else finish();}
 
 function addNormBot(txt){
   var m=document.getElementById('norm-chat-msgs');
   var d=document.createElement('div');d.className='norm-bot-wrap';
-  d.innerHTML='<div style="font-size:16px">🖤</div><div class="norm-bot-bubble">'+txt+'</div>';
+  d.innerHTML='<div style="font-size:16px">♥</div><div class="norm-bot-bubble">'+txt+'</div>';
   m.appendChild(d);m.scrollTop=m.scrollHeight;
 }
 function addNormUser(txt){
@@ -604,26 +641,21 @@ function addNormUser(txt){
 
 async function sendNormChat(){
   var inp=document.getElementById('norm-chat-in');
-  var txt=inp.value.trim();
-  if(!txt) return;
-  inp.value='';
-  addNormUser(txt);
+  var txt=inp.value.trim();if(!txt)return;
+  inp.value='';addNormUser(txt);
   normChatHist.push({role:'user',content:txt});
-  addNormBot('考え中やで...⏳');
+  addNormBot('考え中...');
   var q=Qs[cur];
-  var sys='あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに楽しく教えてください。\nカテゴリ：'+q.cat+'\n問題：'+q.q+'\n正解：'+q.opts[q.ans]+'\n解説：'+q.ex+'\n200字以内で答えてください。';
+  var sys='あなたはFP2級の先生です。わかりやすく丁寧に教えてください。\nカテゴリ：'+q.cat+'\n正解：'+q.opts[q.ans]+'\n解説：'+q.ex+'\n200字以内で答えてください。';
   try{
     var r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:normChatHist,system:sys})});
-    var d=await r.json();
-    var rep=d.reply||'ごめん、うまく答えられへんかった！';
+    var d=await r.json();var rep=d.reply||'うまく答えられんかった！';
     normChatHist.push({role:'assistant',content:rep});
-    var msgs=document.getElementById('norm-chat-msgs');
-    if(msgs.lastChild) msgs.removeChild(msgs.lastChild);
+    var m=document.getElementById('norm-chat-msgs');if(m.lastChild)m.removeChild(m.lastChild);
     addNormBot(rep);
   }catch(e){
-    var msgs=document.getElementById('norm-chat-msgs');
-    if(msgs.lastChild) msgs.removeChild(msgs.lastChild);
-    addNormBot('通信エラーやで！');
+    var m=document.getElementById('norm-chat-msgs');if(m.lastChild)m.removeChild(m.lastChild);
+    addNormBot('通信エラー！もう一回試してや！');
   }
 }
 
@@ -631,8 +663,7 @@ async function sendNormChat(){
    ハンズフリー
    =================================================== */
 var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-var recognition=null;
-var voiceOK=!!SR;
+var recognition=null;var voiceOK=!!SR;
 var synth=window.speechSynthesis;
 
 function speak(text,onEnd){
@@ -640,28 +671,24 @@ function speak(text,onEnd){
   synth.cancel();
   var u=new SpeechSynthesisUtterance(text);
   u.lang='ja-JP';u.rate=0.9;
-  u.onend=function(){if(onEnd)onEnd();};
-  u.onerror=function(){if(onEnd)onEnd();};
+  u.onend=function(){if(onEnd)onEnd();};u.onerror=function(){if(onEnd)onEnd();};
   synth.speak(u);
 }
-
 function initRec(){
   if(!voiceOK)return;
-  recognition=new SR();
-  recognition.lang='ja-JP';recognition.continuous=false;recognition.interimResults=false;
+  recognition=new SR();recognition.lang='ja-JP';recognition.continuous=false;recognition.interimResults=false;
   recognition.onresult=function(e){
-    var txt=e.results[0][0].transcript;
-    stopListen();
+    var txt=e.results[0][0].transcript;stopListen();
     if(txt.includes('まる')||txt.includes('マル')||txt.includes('○')){hfAnswer(true);}
     else if(txt.includes('ばつ')||txt.includes('バツ')||txt.includes('×')||txt.includes('ペケ')){hfAnswer(false);}
-    else{setHfStatus('「まる」か「ばつ」で答えてや！もう一回！','listening');startListen();}
+    else{setHfStatus('「まる」か「ばつ」で答えてや！','listening');startListen();}
   };
   recognition.onerror=function(){stopListen();enableHfBtns();setHfStatus('音声認識エラー。ボタンで答えてね。','');};
 }
 function startListen(){
   if(!voiceOK||!recognition)return;
   document.getElementById('voice-wave').style.display='flex';
-  setHfStatus('「まる」か「ばつ」と言ってや！🎤','listening');
+  setHfStatus('「まる」か「ばつ」と言ってや！','listening');
   try{recognition.start();}catch(e){}
 }
 function stopListen(){
@@ -669,10 +696,7 @@ function stopListen(){
   document.getElementById('voice-wave').style.display='none';
   try{recognition.stop();}catch(e){}
 }
-function setHfStatus(msg,cls){
-  var el=document.getElementById('hf-status');
-  el.textContent=msg;el.className='hf-status'+(cls?' '+cls:'');
-}
+function setHfStatus(msg,cls){var el=document.getElementById('hf-status');el.textContent=msg;el.className='hf-status'+(cls?' '+cls:'');}
 function enableHfBtns(){document.getElementById('btn-maru').disabled=false;document.getElementById('btn-batu').disabled=false;}
 function disableHfBtns(){document.getElementById('btn-maru').disabled=true;document.getElementById('btn-batu').disabled=true;}
 
@@ -684,37 +708,31 @@ function renderHfQ(){
   document.getElementById('hf-stmt').textContent=q.stmt;
   document.getElementById('hf-result').style.display='none';
   document.getElementById('next-btn-hf').style.display='none';
-  disableHfBtns();
-  document.getElementById('voice-wave').style.display='none';
-  setHfStatus('問題を読み上げています...','speaking');
-  speak('問題。'+q.stmt+'。これは○ですか、×ですか？',function(){
+  disableHfBtns();document.getElementById('voice-wave').style.display='none';
+  setHfStatus('読み上げています...','speaking');
+  speak('問題。'+q.stmt+'。○ですか×ですか？',function(){
     enableHfBtns();
     if(voiceOK){setTimeout(startListen,500);}
-    else{setHfStatus('⭕か❌をタップして答えてね！','');}
+    else{setHfStatus('○か×をタップして！','');}
   });
 }
 
 function hfAnswer(ans){
   stopListen();disableHfBtns();
-  var q=QsOX[cur];
-  var ok=(ans===q.ans);
+  var q=QsOX[cur];var ok=(ans===q.ans);
   if(ok)score++;
   answers.push({q:cur,sel:ans,ok:ok});
   document.getElementById('hf-result').style.display='block';
-  document.getElementById('hf-result-icon').textContent=ok?'⭕':'❌';
+  document.getElementById('hf-result-icon').textContent=ok?'○':'×';
   document.getElementById('hf-result-text').textContent=q.ex;
   var nb=document.getElementById('next-btn-hf');
-  nb.textContent=cur+1<QsOX.length?'次の問題へ →':'結果を見る 🏁';
+  nb.textContent=cur+1<QsOX.length?'次の問題へ →':'結果を見る';
   nb.style.display='block';
   speak(ok?'正解！'+q.ex:'不正解！'+q.ex);
-  setHfStatus(ok?'🎉 正解！':'💦 不正解...','');
+  setHfStatus(ok?'正解！':'不正解...','');
 }
 
-function nextHfQ(){
-  synth&&synth.cancel();
-  if(cur+1<QsOX.length){cur++;renderHfQ();}
-  else finish();
-}
+function nextHfQ(){synth&&synth.cancel();if(cur+1<QsOX.length){cur++;renderHfQ();}else finish();}
 
 /* ===================================================
    共通
@@ -729,10 +747,10 @@ function finish(){
   document.getElementById('r-emoji').textContent=pct>=80?'🎉':pct>=60?'💪':'😅';
   document.getElementById('r-score').textContent=score+' / '+total;
   document.getElementById('r-pct').textContent=pct+'%';
-  document.getElementById('r-msg').textContent=pct>=80?'めっちゃええやん！この調子で2級合格や！':pct>=60?'惜しい！あと一歩やで！もう一回チャレンジ！':'ドンマイ！間違いが宝や！解説読んで完全理解しよ！';
+  document.getElementById('r-msg').textContent=pct>=80?'めっちゃええやん！この調子で2級合格や！':pct>=60?'惜しい！あと一歩やで！':'ドンマイ！間違いが宝や！';
   var qs=mode==='handsfree'?QsOX:Qs;
   document.getElementById('review').innerHTML=answers.map(function(a,i){
-    return '<div class="rev-row"><span>'+(a.ok?'✅':'❌')+'</span><span>問'+(i+1)+'：'+qs[a.q].cat+'</span></div>';
+    return '<div class="rev-row"><span>'+(a.ok?'○':'×')+'</span><span>問'+(i+1)+'：'+qs[a.q].cat+'</span></div>';
   }).join('');
   show('result');
 }
