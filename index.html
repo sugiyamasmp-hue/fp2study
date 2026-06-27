@@ -6,318 +6,333 @@
 <title>AID式学習法 FP2級</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#1a1a2e;color:#eee;font-family:sans-serif;min-height:100vh;padding:16px}
-h1{color:#ff8c00;font-size:22px;margin-bottom:4px}
-.sub{color:#ff8c00;font-size:11px;margin-bottom:20px;opacity:0.8}
-.card{background:#16213e;border:1px solid #0f3460;border-radius:16px;padding:20px;margin-bottom:16px}
-.tag{background:#ff8c0022;border:1px solid #ff8c0055;color:#ff8c00;border-radius:20px;padding:2px 10px;font-size:12px;font-weight:700;margin-right:6px}
-.big{font-size:26px;font-weight:900;color:#fff;margin:8px 0}
-.orange{color:#ff8c00}
-.sub2{font-size:13px;color:#888;margin-bottom:16px}
-.stats{display:flex;background:#0f3460;border-radius:10px;padding:12px 0;margin-bottom:16px}
+body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;min-height:100vh}
+.bg{position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(255,140,0,0.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(255,80,80,0.06) 0%,transparent 60%);pointer-events:none;z-index:0}
+.container{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:20px 16px 40px}
+.logo-wrap{display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-top:8px}
+.logo-icon{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#ff8c00,#ff4500);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#fff;box-shadow:0 4px 20px rgba(255,140,0,0.4)}
+.logo-title{font-size:20px;font-weight:800;color:#fff}
+.logo-sub{font-size:11px;color:#ff8c00;letter-spacing:0.1em;font-weight:600}
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:24px 20px;margin-bottom:16px}
+.tag-row{display:flex;gap:8px;margin-bottom:16px}
+.tag{background:rgba(255,140,0,0.15);border:1px solid rgba(255,140,0,0.3);color:#ff8c00;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700}
+.hero-text{font-size:28px;font-weight:900;color:#fff;line-height:1.2}
+.hero-text2{font-size:32px;font-weight:900;background:linear-gradient(90deg,#ff8c00,#ff4500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.hero-sub{font-size:13px;color:#888;margin-bottom:20px}
+.stats-row{display:flex;align-items:center;background:rgba(255,255,255,0.04);border-radius:12px;padding:14px 0;margin-bottom:20px}
 .stat{flex:1;text-align:center}
-.stat-n{font-size:20px;font-weight:800;color:#ff8c00}
-.stat-l{font-size:11px;color:#666;margin-top:2px}
-.divider{width:1px;background:#ffffff22}
-.btn{width:100%;padding:14px;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:12px;color:#fff;font-size:16px;font-weight:800;cursor:pointer;margin-top:4px}
-.btn:hover{opacity:0.9}
-.btn-outline{width:100%;padding:13px;background:transparent;border:2px solid #ff8c00;border-radius:12px;color:#ff8c00;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px}
-.hist-title{font-size:13px;color:#888;font-weight:700;margin-bottom:8px}
-.hist-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #ffffff11;font-size:13px}
-.hist-score{color:#ff8c00;font-weight:700}
+.stat-num{font-size:22px;font-weight:800;color:#ff8c00}
+.stat-label{font-size:11px;color:#666;margin-top:2px}
+.stat-divider{width:1px;height:30px;background:rgba(255,255,255,0.08)}
+
+
+
+
+
+
+.start-btn{width:100%;padding:14px 0;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:14px;color:#fff;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(255,140,0,0.35);margin-bottom:10px}
+.start-btn:hover{opacity:0.9}
+.hf-btn-home{width:100%;padding:13px 0;background:transparent;border:2px solid #ff8c00;border-radius:14px;color:#ff8c00;font-size:15px;font-weight:800;cursor:pointer}
+.hf-btn-home:hover{background:rgba(255,140,0,0.1)}
+.history-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:16px 20px;margin-bottom:16px}
+.history-title{font-size:13px;font-weight:700;color:#888;margin-bottom:10px}
+.history-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.history-date{font-size:13px;color:#666}
+.history-score{font-size:13px;font-weight:700;color:#ff8c00}
+.footer{text-align:center;font-size:12px;color:#444;margin-top:8px}
 .screen{display:none}
 .screen.on{display:block}
-.progress{height:4px;background:#ffffff11;border-radius:4px;margin-bottom:14px;overflow:hidden}
-.progress-bar{height:100%;background:linear-gradient(90deg,#ff8c00,#ff4500);border-radius:4px;transition:width 0.3s}
-.qhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.cat-tag{background:#ff8c0022;border:1px solid #ff8c0055;color:#ff8c00;border-radius:20px;padding:2px 10px;font-size:12px;font-weight:700}
-.qnum{font-size:13px;color:#666;font-weight:700}
-.qbox{background:#16213e;border:1px solid #0f3460;border-radius:14px;padding:16px;margin-bottom:12px}
-.qtext{font-size:14px;line-height:1.8;color:#ddd;white-space:pre-wrap}
-.opts{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
-.opt{display:flex;align-items:flex-start;gap:10px;background:#16213e;border:1px solid #0f3460;border-radius:10px;padding:12px;color:#ddd;font-size:13px;text-align:left;cursor:pointer;line-height:1.6;width:100%}
-.opt:hover{background:#0f3460}
-.opt.correct{background:#00c86422;border-color:#00c864aa}
-.opt.wrong{background:#ff444422;border-color:#ff4444aa}
-.opt.dim{opacity:0.35}
-.opt-n{min-width:22px;height:22px;border-radius:6px;background:#ff8c0022;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#ff8c00;flex-shrink:0;margin-top:1px}
-.exbox{background:#16213e;border:1px solid #0f3460;border-radius:14px;padding:16px;margin-bottom:10px}
-.ex-title{font-size:17px;font-weight:800;color:#fff;margin-bottom:10px}
-.ex-text{font-size:13px;line-height:1.9;color:#ccc;white-space:pre-wrap;margin-bottom:14px}
-.chat-box{background:#0a0a1a;border:1px solid #ff8c0033;border-radius:12px;padding:12px;margin-bottom:12px}
-.chat-head{font-size:13px;font-weight:700;color:#ff8c00;margin-bottom:8px}
-.chat-msgs{max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
-.bot-wrap{display:flex;align-items:flex-start;gap:6px}
-.user-wrap{display:flex;justify-content:flex-end}
-.bot-msg{background:#ffffff0d;border:1px solid #ffffff11;border-radius:4px 12px 12px 12px;padding:8px 10px;font-size:13px;line-height:1.7;color:#ddd;max-width:85%;white-space:pre-wrap}
-.user-msg{background:linear-gradient(135deg,#ff8c00,#ff4500);border-radius:12px 4px 12px 12px;padding:8px 10px;font-size:13px;line-height:1.7;color:#fff;max-width:85%}
-.chat-row{display:flex;gap:6px}
-.chat-input{flex:1;background:#ffffff0d;border:1px solid #ffffff22;border-radius:8px;padding:8px 10px;font-size:13px;color:#fff;outline:none}
-.chat-send{padding:8px 14px;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:800;cursor:pointer}
-.next-btn{width:100%;padding:13px;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:800;cursor:pointer}
-.result-box{background:#16213e;border:1px solid #0f3460;border-radius:16px;padding:28px 20px;text-align:center;margin-bottom:16px}
-.r-emoji{font-size:50px;margin-bottom:12px}
-.r-score{font-size:40px;font-weight:900;color:#fff}
-.r-pct{font-size:22px;font-weight:800;color:#ff8c00;margin-bottom:10px}
-.r-msg{font-size:14px;color:#ccc;margin-bottom:18px;line-height:1.6}
-.review{text-align:left;background:#0f3460;border-radius:10px;padding:12px;margin-bottom:18px}
-.rev-row{display:flex;gap:8px;padding:4px 0;border-bottom:1px solid #ffffff11;font-size:13px;color:#aaa;align-items:center}
-.footer{text-align:center;font-size:12px;color:#444;margin-top:8px}
 
-/* ハンズフリーモード専用スタイル */
-.hf-qbox{background:#16213e;border:2px solid #ff8c0055;border-radius:14px;padding:20px;margin-bottom:16px;text-align:center}
-.hf-qtext{font-size:15px;line-height:1.9;color:#eee;white-space:pre-wrap;text-align:left;margin-bottom:16px}
-.hf-statement{background:#0f3460;border-radius:10px;padding:14px;font-size:16px;line-height:1.8;color:#fff;margin-bottom:16px;font-weight:700;text-align:left}
-.hf-status{text-align:center;font-size:14px;color:#888;margin-bottom:12px;min-height:24px}
-.hf-status.listening{color:#00c864}
+/* クイズ共通 */
+.progress-bar{height:4px;background:rgba(255,255,255,0.08);border-radius:4px;margin-bottom:16px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#ff8c00,#ff4500);border-radius:4px;transition:width 0.4s ease}
+.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.cat-tag{background:rgba(255,140,0,0.15);border:1px solid rgba(255,140,0,0.3);color:#ff8c00;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700}
+.q-count{font-size:13px;color:#666;font-weight:700}
+.question-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:18px 16px;margin-bottom:14px}
+.question-text{font-size:14px;line-height:1.8;color:#e8e8e8;white-space:pre-wrap}
+.options-wrap{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.opt-btn{display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px 14px;color:#e8e8e8;font-size:13px;text-align:left;cursor:pointer;line-height:1.6;width:100%}
+.opt-btn:hover{background:rgba(255,255,255,0.08)}
+.opt-btn.correct{background:rgba(0,200,100,0.1);border-color:rgba(0,200,100,0.4)}
+.opt-btn.wrong{background:rgba(255,60,60,0.1);border-color:rgba(255,60,60,0.4)}
+.opt-btn.dim{opacity:0.4}
+.opt-btn:disabled{cursor:default}
+.opt-num{min-width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#ff8c00;flex-shrink:0;margin-top:1px}
+.ex-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:16px;margin-bottom:8px}
+.ex-label{font-size:18px;font-weight:800;margin-bottom:10px;color:#fff}
+.ex-text{font-size:13px;line-height:1.9;color:#ccc;white-space:pre-wrap;margin-bottom:14px}
+.chat-area{background:rgba(0,0,0,0.3);border:1px solid rgba(255,140,0,0.2);border-radius:14px;padding:12px;margin-bottom:14px}
+.chat-header{font-size:13px;font-weight:700;color:#ff8c00;margin-bottom:10px}
+.chat-msgs{max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.bot-wrap{display:flex;align-items:flex-start;gap:8px}
+.user-wrap{display:flex;justify-content:flex-end}
+.bot-icon{font-size:18px;margin-top:2px}
+.bot-bubble{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:4px 12px 12px 12px;padding:8px 12px;font-size:13px;line-height:1.7;color:#e8e8e8;max-width:85%;white-space:pre-wrap}
+.user-bubble{background:linear-gradient(135deg,#ff8c00,#ff4500);border-radius:12px 4px 12px 12px;padding:8px 12px;font-size:13px;line-height:1.7;color:#fff;max-width:85%}
+.chat-input-row{display:flex;gap:8px}
+.chat-input{flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:9px 12px;font-size:13px;color:#fff;outline:none}
+.chat-send{padding:9px 16px;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:800;cursor:pointer}
+.next-btn{width:100%;padding:13px 0;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+
+/* リザルト */
+.result-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:28px 20px;text-align:center;margin-bottom:16px}
+.r-emoji{font-size:52px;margin-bottom:12px}
+.r-score{font-size:42px;font-weight:900;color:#fff;line-height:1}
+.r-pct{font-size:22px;font-weight:800;color:#ff8c00;margin-bottom:10px}
+.r-msg{font-size:15px;color:#ccc;margin-bottom:20px;line-height:1.6}
+.review-wrap{text-align:left;background:rgba(255,255,255,0.03);border-radius:12px;padding:12px 16px;margin-bottom:20px}
+.rev-row{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;color:#aaa}
+
+/* ハンズフリーモード */
+.hf-box{background:rgba(255,255,255,0.04);border:2px solid rgba(255,140,0,0.3);border-radius:16px;padding:20px;margin-bottom:16px}
+.mode-badge{display:inline-block;background:rgba(255,140,0,0.15);border:1px solid rgba(255,140,0,0.3);color:#ff8c00;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700;margin-bottom:14px}
+.hf-label{font-size:13px;color:#888;margin-bottom:10px}
+.hf-statement{background:rgba(255,255,255,0.06);border-radius:12px;padding:16px;font-size:15px;line-height:1.9;color:#fff;margin-bottom:18px;font-weight:600}
+.hf-status{text-align:center;font-size:14px;color:#888;margin-bottom:10px;min-height:22px}
 .hf-status.speaking{color:#ff8c00}
-.hf-btns{display:flex;gap:12px;margin-bottom:16px}
-.hf-btn-maru{flex:1;padding:28px 12px;background:linear-gradient(135deg,#00c864,#00a050);border:none;border-radius:16px;color:#fff;font-size:32px;font-weight:900;cursor:pointer;line-height:1}
-.hf-btn-batu{flex:1;padding:28px 12px;background:linear-gradient(135deg,#ff4444,#cc2200);border:none;border-radius:16px;color:#fff;font-size:32px;font-weight:900;cursor:pointer;line-height:1}
-.hf-btn-maru:hover{opacity:0.9}
-.hf-btn-batu:hover{opacity:0.9}
-.hf-btn-maru:disabled,.hf-btn-batu:disabled{opacity:0.3;cursor:not-allowed}
-.hf-result-panel{background:#0a0a1a;border-radius:14px;padding:16px;margin-bottom:14px;text-align:center;display:none}
-.hf-result-ok{font-size:48px;color:#00c864}
-.hf-result-ng{font-size:48px;color:#ff4444}
-.hf-result-msg{font-size:15px;color:#ccc;margin-top:8px;line-height:1.6}
-.voice-wave{display:flex;align-items:center;justify-content:center;gap:4px;height:30px;margin-bottom:8px}
-.voice-wave span{display:inline-block;width:4px;background:#ff8c00;border-radius:2px;animation:wave 1s ease-in-out infinite}
+.hf-status.listening{color:#00c864}
+.voice-wave{display:flex;align-items:center;justify-content:center;gap:4px;height:28px;margin-bottom:10px}
+.voice-wave span{display:inline-block;width:4px;background:#00c864;border-radius:2px;animation:wave 1s ease-in-out infinite}
 .voice-wave span:nth-child(2){animation-delay:0.1s}
 .voice-wave span:nth-child(3){animation-delay:0.2s}
 .voice-wave span:nth-child(4){animation-delay:0.3s}
 .voice-wave span:nth-child(5){animation-delay:0.4s}
-@keyframes wave{0%,100%{height:6px}50%{height:24px}}
-.mode-badge{display:inline-block;background:#ff8c0022;border:1px solid #ff8c0055;color:#ff8c00;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700;margin-bottom:12px}
+@keyframes wave{0%,100%{height:5px}50%{height:22px}}
+.hf-btns{display:flex;gap:14px;margin-bottom:16px}
+.hf-maru{flex:1;padding:30px 0;background:linear-gradient(135deg,#00c864,#00a050);border:none;border-radius:18px;color:#fff;font-size:36px;cursor:pointer;box-shadow:0 4px 20px rgba(0,200,100,0.3)}
+.hf-batu{flex:1;padding:30px 0;background:linear-gradient(135deg,#ff4444,#cc2200);border:none;border-radius:18px;color:#fff;font-size:36px;cursor:pointer;box-shadow:0 4px 20px rgba(255,68,68,0.3)}
+.hf-maru:disabled,.hf-batu:disabled{opacity:0.3;cursor:not-allowed;box-shadow:none}
+.hf-result{background:rgba(0,0,0,0.4);border-radius:14px;padding:18px;margin-bottom:14px;text-align:center;display:none}
+.hf-result-icon{font-size:52px;margin-bottom:8px}
+.hf-result-text{font-size:13px;color:#ccc;line-height:1.8;white-space:pre-wrap}
 </style>
 </head>
 <body>
+<div class="bg"></div>
+
 <!-- HOME -->
 <div id="home" class="screen on">
-<h1>AID式学習法</h1>
-<div class="sub">AI Interactive Dialogue</div>
-<div class="card">
-<div><span class="tag">FP2級</span><span class="tag">学科対策</span></div>
-<div class="big">楽しく、気分良く、</div>
-<div class="big orange">完全理解！</div>
-<div class="sub2">暗記じゃなくて「なぜ？」で理解する学習法</div>
-<div class="stats">
-<div class="stat"><div class="stat-n">5</div><div class="stat-l">問題数</div></div>
-<div class="divider"></div>
-<div class="stat"><div class="stat-n" id="s-attempts">0</div><div class="stat-l">挑戦回数</div></div>
-<div class="divider"></div>
-<div class="stat"><div class="stat-n" id="s-latest">--</div><div class="stat-l">最新スコア</div></div>
+<div class="container">
+  <div class="logo-wrap">
+    <div class="logo-icon">A</div>
+    <div>
+      <div class="logo-title">AID式学習法</div>
+      <div class="logo-sub">AI Interactive Dialogue</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="tag-row"><span class="tag">FP2級</span><span class="tag">学科対策</span></div>
+    <div class="hero-text">楽しく、気分良く、</div>
+    <div class="hero-text2">完全理解！</div>
+    <div class="hero-sub">暗記じゃなくて「なぜ？」で理解する学習法</div>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num">5</div><div class="stat-label">問題数</div></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><div class="stat-num" id="s-attempts">0</div><div class="stat-label">挑戦回数</div></div>
+      <div class="stat-divider"></div>
+      <div class="stat"><div class="stat-num" id="s-latest">--</div><div class="stat-label">最新スコア</div></div>
+    </div>
+      <div class="api-key-row">
+        <input class="api-key-input" id="api-key-input" type="password" placeholder="sk-ant-...">
+        <button class="api-key-btn" onclick="setApiKey()">設定</button>
+      </div>
+      <div class="api-key-ok" id="api-key-ok" style="display:none">APIキー設定済み！チャット機能が使えるで🎉</div>
+    </div>
+    <button class="start-btn" onclick="startQuiz('normal')">スタート！🔥</button>
+    <button class="hf-btn-home" onclick="startQuiz('handsfree')">🎤 ハンズフリーモード（○×）</button>
+  </div>
+  <div class="history-card" id="hist-card" style="display:none">
+    <div class="history-title">📊 最近の記録</div>
+    <div id="hist-list"></div>
+  </div>
+  <div class="footer">クロちゃんと一緒に合格めざそ！🖤</div>
 </div>
-<button class="btn" onclick="startQuiz('normal')">スタート！🔥</button>
-<button class="btn-outline" onclick="startQuiz('handsfree')">🎤 ハンズフリーモード</button>
-</div>
-<div class="card" id="hist-card" style="display:none">
-<div class="hist-title">📊 最近の記録</div>
-<div id="hist-list"></div>
-</div>
-<div class="footer">クロちゃんと一緒に合格めざそ！🖤</div>
 </div>
 
-<!-- QUIZ (通常モード) -->
+<!-- QUIZ 通常 -->
 <div id="quiz" class="screen">
-<div class="progress"><div class="progress-bar" id="prog"></div></div>
-<div class="qhead">
-<span class="cat-tag" id="q-cat"></span>
-<span class="qnum" id="q-num"></span>
-</div>
-<div class="qbox"><div class="qtext" id="q-text"></div></div>
-<div class="opts" id="opts"></div>
-<div class="exbox" id="exbox" style="display:none">
-<div class="ex-title" id="ex-title"></div>
-<div class="ex-text" id="ex-text"></div>
-<div class="chat-box">
-<div class="chat-head">🖤 クロちゃんに質問する</div>
-<div class="chat-msgs" id="chat-msgs"></div>
-<div class="chat-row">
-<input class="chat-input" id="chat-in" placeholder="なんでも聞いてや！" onkeydown="if(event.key==='Enter')sendChat()">
-<button class="chat-send" onclick="sendChat()">送信</button>
-</div>
-</div>
-<button class="next-btn" id="next-btn" onclick="nextQ()"></button>
+<div class="container">
+  <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+  <div class="quiz-header">
+    <span class="cat-tag" id="q-cat"></span>
+    <span class="q-count" id="q-num"></span>
+  </div>
+  <div class="question-card"><div class="question-text" id="q-text"></div></div>
+  <div class="options-wrap" id="opts"></div>
+  <div class="ex-card" id="exbox" style="display:none">
+    <div class="ex-label" id="ex-title"></div>
+    <div class="ex-text" id="ex-text"></div>
+    <div class="chat-area">
+      <div class="chat-header">🖤 クロちゃんに質問する</div>
+      <div class="chat-msgs" id="chat-msgs"></div>
+      <div class="chat-input-row">
+        <input class="chat-input" id="chat-in" placeholder="なんでも聞いてや！" onkeydown="if(event.key==='Enter')sendChat()">
+        <button class="chat-send" onclick="sendChat()">送信</button>
+      </div>
+    </div>
+    <button class="next-btn" id="next-btn" onclick="nextQ()"></button>
+  </div>
 </div>
 </div>
 
-<!-- QUIZ (ハンズフリーモード) -->
+<!-- QUIZ ハンズフリー -->
 <div id="quiz-hf" class="screen">
-<div class="progress"><div class="progress-bar" id="prog-hf"></div></div>
-<div class="qhead">
-<span class="cat-tag" id="q-cat-hf"></span>
-<span class="qnum" id="q-num-hf"></span>
-</div>
-<div class="hf-qbox">
-<div class="mode-badge" id="hf-mode-badge">🎤 音声モード</div>
-<div class="hf-qtext" id="hf-q-text"></div>
-<div class="hf-statement" id="hf-statement"></div>
-<div class="hf-status" id="hf-status">問題を読み上げています...</div>
-<div class="voice-wave" id="voice-wave" style="display:none">
-<span></span><span></span><span></span><span></span><span></span>
-</div>
-<div class="hf-btns">
-<button class="hf-btn-maru" id="btn-maru" onclick="hfAnswer(true)" disabled>⭕</button>
-<button class="hf-btn-batu" id="btn-batu" onclick="hfAnswer(false)" disabled>❌</button>
-</div>
-<div class="hf-result-panel" id="hf-result-panel">
-<div id="hf-result-icon"></div>
-<div class="hf-result-msg" id="hf-result-msg"></div>
-</div>
-<button class="next-btn" id="next-btn-hf" onclick="nextHfQ()" style="display:none"></button>
+<div class="container">
+  <div class="progress-bar"><div class="progress-fill" id="prog-hf"></div></div>
+  <div class="quiz-header">
+    <span class="cat-tag" id="q-cat-hf"></span>
+    <span class="q-count" id="q-num-hf"></span>
+  </div>
+  <div class="hf-box">
+    <div class="mode-badge" id="hf-badge">🎤 音声モード</div>
+    <div class="hf-label">次の記述は○か×か？</div>
+    <div class="hf-statement" id="hf-stmt"></div>
+    <div class="hf-status" id="hf-status">問題を読み上げています...</div>
+    <div class="voice-wave" id="voice-wave" style="display:none">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="hf-btns">
+      <button class="hf-maru" id="btn-maru" onclick="hfAnswer(true)" disabled>⭕</button>
+      <button class="hf-batu" id="btn-batu" onclick="hfAnswer(false)" disabled>❌</button>
+    </div>
+    <div class="hf-result" id="hf-result">
+      <div class="hf-result-icon" id="hf-result-icon"></div>
+      <div class="hf-result-text" id="hf-result-text"></div>
+    </div>
+    <button class="next-btn" id="next-btn-hf" onclick="nextHfQ()" style="display:none"></button>
+  </div>
 </div>
 </div>
 
 <!-- RESULT -->
 <div id="result" class="screen">
-<div class="result-box">
-<div class="r-emoji" id="r-emoji"></div>
-<div class="r-score" id="r-score"></div>
-<div class="r-pct" id="r-pct"></div>
-<div class="r-msg" id="r-msg"></div>
-<div class="review" id="review"></div>
-<button class="btn" onclick="goHome()">もう一回挑戦！🔥</button>
+<div class="container">
+  <div class="result-card">
+    <div class="r-emoji" id="r-emoji"></div>
+    <div class="r-score" id="r-score"></div>
+    <div class="r-pct" id="r-pct"></div>
+    <div class="r-msg" id="r-msg"></div>
+    <div class="review-wrap" id="review"></div>
+    <button class="start-btn" onclick="goHome()">もう一回挑戦！🔥</button>
+  </div>
+  <div class="footer">AID式学習法 © amadopapa</div>
 </div>
-<div class="footer">AID式学習法 © amadopapa</div>
 </div>
 
 <script>
-/* ===== 問題データ（○×形式に変換） ===== */
-var QsOX = [
-  {cat:"ライフ・社会保険", statement:"協会けんぽの短時間労働者の被保険者除外条件のうち、所定内賃金が月額8万8千円未満の場合は被保険者とならない。", ans:true, ex:"✅ 正解！\n月額8万8千円（年収106万円の壁）未満は対象外！\n「ハチハチ（88）で切れる！」で覚えよう！"},
-  {cat:"ライフ・社会保険", statement:"労災保険率は、適用事業に従事する労働者数に応じて定められている。", ans:false, ex:"❌ 不正解！\n労災保険率は「労働者数」ではなく「業種」で決まる！\n危険度の高い業種ほど保険料率が高い。"},
-  {cat:"タックス", statement:"相続税は、税務署長が納付税額を決定する賦課課税方式が採用されている。", ans:false, ex:"❌ 不正解！\n相続税は「申告納税方式」！\n自分で計算して申告するのが基本やで！"},
-  {cat:"タックス", statement:"事業所得の損失は、不動産所得と損益通算できる。", ans:true, ex:"✅ 正解！\n損益通算できるのは「不事山譲（ふじさんじょう）」\n不動産・事業・山林・譲渡の4種類！"},
-  {cat:"タックス", statement:"婚姻届を提出していない内縁関係の配偶者は、所得税の配偶者控除の対象となる。", ans:false, ex:"❌ 不正解！\n内縁関係は配偶者控除の対象外！\n健康保険はOKでも税金はNG！\n「健康保険は人情、税金は法律」で覚えよう！"},
+/* ===== データ ===== */
+var Qs = [
+  {cat:"ライフ・社会保険",q:"協会けんぽの被保険者に関する記述の空欄にあてはまる組合せとして、最も適切なものはどれか。\n\n特定適用事業所に使用される短時間労働者のうち、次のいずれかに該当する者は、原則として被保険者とならない。\n① 1週間の所定労働時間が（イ）未満の者\n② 所定内賃金が月額（ウ）未満の者\n③ 学生である者\n\nまた短時間労働者の要件として、所定労働時間・労働日数が通常の労働者の（ア）未満であること。",opts:["ア：3分の2　イ：20時間　ウ：5万8千円","ア：3分の2　イ：25時間　ウ：8万8千円","ア：4分の3　イ：20時間　ウ：8万8千円","ア：4分の3　イ：25時間　ウ：5万8千円"],ans:2,ex:"ポイントは3つ！\n\n✅ ア：4分の3 → 所定労働時間・日数が通常の4分の3未満が短時間労働者の基準\n✅ イ：20時間 → 週20時間未満はNG\n✅ ウ：8万8千円 → 月額8万8千円未満がポイント。これは「106万円の壁」のライン！\n\n「ハチハチ（88）で切れる！」で覚えよう！"},
+  {cat:"ライフ・社会保険",q:"労働者災害補償保険に関する次の記述のうち、最も不適切なものはどれか。",opts:["労災保険の適用を受ける労働者には、アルバイトやパートタイマーも含まれる","労災保険料の算定に用いられる労災保険率は、適用事業に従事する労働者数に応じて定められている","業務上の傷病が治癒したときに一定の障害が残り、障害等級に該当する場合、障害補償給付が支給される","業務災害で労働者が死亡した場合、遺族に対して遺族補償年金または遺族補償一時金が支給される"],ans:1,ex:"2番が不適切！\n\n✅ 労災保険率は「労働者数」ではなく「業種（事業の種類）」で決まる！\n\n建設業や林業など危険な仕事は率が高く、オフィスワークは低い。\n\nまた1番の「アルバイト・パートも対象」は試験頻出！労災は雇用形態に関係なく全員対象や！"},
+  {cat:"ライフ・社会保険",q:"国民年金の保険料に関する次の記述のうち、最も不適切なものはどれか。",opts:["第1号被保険者は、一定の条件を除き、月額400円の付加保険料を納付できる","産前産後期間の保険料免除制度により免除された期間は、保険料納付済期間として老齢基礎年金の年金額に反映される","保険料免除期間の保険料を追納する場合、追納額は追納する時期にかかわらず、免除された時点の保険料額となる","保険料を前納した第1号被保険者が、前納期間の途中で第2号被保険者になった場合、未経過期間分の保険料の還付を受けられる"],ans:2,ex:"3番が不適切！\n\n✅ 追納する場合、免除された時点の保険料そのままではない！\n\n2年以内の追納 → 加算なし（当時の保険料額）\n3年度目以降の追納 → 加算あり（割増になる！）\n\n「早よ追納せな損するで！」で覚えよう！⏰"},
+  {cat:"タックス",q:"わが国の税制に関する次の記述のうち、最も不適切なものはどれか。",opts:["所得税では、課税対象となる所得を10種類に区分し、種類ごとに計算する","相続税では、納税者が申告書に記載した内容に基づき、税務署長が納付税額を決定する賦課課税方式が採用されている","税金を負担する者と納める者が異なる税金を間接税といい、消費税は間接税に該当する","法人税は国税、不動産取得税は地方税に該当する"],ans:1,ex:"2番が不適切！\n\n✅ 相続税は「申告納税方式」！自分で計算して申告する！\n\n📝 申告納税方式 → 自分で申告（所得税・相続税・贈与税・法人税）\n📬 賦課課税方式 → 役所から通知（固定資産税・住民税・不動産取得税）"},
+  {cat:"タックス",q:"所得税における各種所得に関する次の記述のうち、最も適切なものはどれか。",opts:["個人事業主が事業資金で株式を購入し、配当金を受け取ったことによる所得は事業所得となる","給与収入が850万円を超える給与所得者が23歳未満の扶養親族を有する場合、所得金額調整控除として最大10万円が控除される","個人による不動産の貸付が事業的規模で行われている場合、その賃貸収入による所得は事業所得となる","会社員が自宅購入資金として勤務先から無利息で金銭を借り入れたことにより生じた経済的利益は給与所得となる"],ans:3,ex:"4番が正解！\n\n✅ 会社から無利息で借りたら、トクした利息分＝経済的利益は「給与所得」！\n\n❌ 1番：株の配当金はどんな目的で買っても「配当所得」\n❌ 2番：所得金額調整控除の最大は「15万円」\n❌ 3番：不動産貸付は規模に関係なく「不動産所得」"},
 ];
 
+var QsOX = [
+  {cat:"ライフ・社会保険", stmt:"協会けんぽの短時間労働者の被保険者除外条件のうち、所定内賃金が月額8万8千円未満の場合は被保険者とならない。", ans:true, ex:"✅ 正解！\n月額8万8千円（年収106万円の壁）未満は対象外！\n「ハチハチ（88）で切れる！」で覚えよう！"},
+  {cat:"ライフ・社会保険", stmt:"労災保険率は、適用事業に従事する労働者数に応じて定められている。", ans:false, ex:"❌ 不正解！\n労災保険率は「労働者数」ではなく「業種」で決まる！\n危険度の高い業種ほど保険料率が高い。"},
+  {cat:"タックス", stmt:"相続税は、税務署長が納付税額を決定する賦課課税方式が採用されている。", ans:false, ex:"❌ 不正解！\n相続税は「申告納税方式」！\n自分で計算して申告するのが基本やで！"},
+  {cat:"タックス", stmt:"事業所得の損失は、不動産所得と損益通算できる。", ans:true, ex:"✅ 正解！\n損益通算できるのは「不事山譲（ふじさんじょう）」\n不動産・事業・山林・譲渡の4種類！"},
+  {cat:"タックス", stmt:"婚姻届を提出していない内縁関係の配偶者は、所得税の配偶者控除の対象となる。", ans:false, ex:"❌ 不正解！\n内縁関係は配偶者控除の対象外！\n健康保険はOKでも税金はNG！\n「健康保険は人情、税金は法律」で覚えよう！"},
+];
+
+/* ===== 状態 ===== */
 var cur=0, score=0, answers=[], mode='normal';
-var hist=JSON.parse(localStorage.getItem('aid_hist')||'[]');
-var chatHist=[];
+
+var chatHist = [];
+var hist = [];
+
+try { hist = JSON.parse(localStorage.getItem('aid_fp2_hist') || '[]'); } catch(e) { hist=[]; }
+
+/* ===== API Key ===== */
+
 
 /* ===== TTS ===== */
 var synth = window.speechSynthesis;
-var isSpeaking = false;
-
 function speak(text, onEnd) {
   if (!synth) { if(onEnd) onEnd(); return; }
   synth.cancel();
-  var utter = new SpeechSynthesisUtterance(text);
-  utter.lang = 'ja-JP';
-  utter.rate = 0.9;
-  utter.onend = function() { isSpeaking=false; if(onEnd) onEnd(); };
-  utter.onerror = function() { isSpeaking=false; if(onEnd) onEnd(); };
-  isSpeaking = true;
-  synth.speak(utter);
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ja-JP'; u.rate = 0.9;
+  u.onend = function(){ if(onEnd) onEnd(); };
+  u.onerror = function(){ if(onEnd) onEnd(); };
+  synth.speak(u);
 }
 
 /* ===== 音声認識 ===== */
-var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 var recognition = null;
-var voiceSupported = !!SpeechRecognition;
+var voiceOK = !!SR;
 
-function initRecognition() {
-  if (!voiceSupported) return;
-  recognition = new SpeechRecognition();
+function initRec() {
+  if (!voiceOK) return;
+  recognition = new SR();
   recognition.lang = 'ja-JP';
   recognition.continuous = false;
   recognition.interimResults = false;
   recognition.onresult = function(e) {
     var txt = e.results[0][0].transcript;
-    console.log('認識結果:', txt);
-    stopListening();
-    if (txt.includes('まる') || txt.includes('マル') || txt.includes('○')) {
-      hfAnswer(true);
-    } else if (txt.includes('ばつ') || txt.includes('バツ') || txt.includes('×') || txt.includes('ペケ')) {
-      hfAnswer(false);
-    } else {
-      // 再試行
-      setStatus('「まる」か「ばつ」で答えてや！もう一回！', 'listening');
-      startListening();
-    }
+    stopListen();
+    if (txt.includes('まる')||txt.includes('マル')||txt.includes('○')) { hfAnswer(true); }
+    else if (txt.includes('ばつ')||txt.includes('バツ')||txt.includes('×')||txt.includes('ペケ')) { hfAnswer(false); }
+    else { setHfStatus('「まる」か「ばつ」で答えてや！もう一回！','listening'); startListen(); }
   };
   recognition.onerror = function(e) {
-    console.log('音声認識エラー:', e.error);
-    stopListening();
-    enableButtons();
-    setStatus('音声認識エラー。ボタンで答えてね。', '');
-  };
-  recognition.onend = function() {
-    // 意図的に止めた場合はそのまま
+    stopListen(); enableHfBtns();
+    setHfStatus('音声認識エラー。ボタンで答えてね。','');
   };
 }
-
-function startListening() {
-  if (!voiceSupported || !recognition) return;
-  showWave(true);
-  setStatus('「まる」か「ばつ」と言ってや！🎤', 'listening');
-  try { recognition.start(); } catch(e) { console.log(e); }
+function startListen() {
+  if (!voiceOK||!recognition) return;
+  document.getElementById('voice-wave').style.display='flex';
+  setHfStatus('「まる」か「ばつ」と言ってや！🎤','listening');
+  try { recognition.start(); } catch(e) {}
 }
-
-function stopListening() {
-  if (!voiceSupported || !recognition) return;
-  showWave(false);
+function stopListen() {
+  if (!voiceOK||!recognition) return;
+  document.getElementById('voice-wave').style.display='none';
   try { recognition.stop(); } catch(e) {}
 }
-
-function showWave(on) {
-  document.getElementById('voice-wave').style.display = on ? 'flex' : 'none';
+function setHfStatus(msg, cls) {
+  var el=document.getElementById('hf-status');
+  el.textContent=msg;
+  el.className='hf-status'+(cls?' '+cls:'');
+}
+function enableHfBtns() {
+  document.getElementById('btn-maru').disabled=false;
+  document.getElementById('btn-batu').disabled=false;
+}
+function disableHfBtns() {
+  document.getElementById('btn-maru').disabled=true;
+  document.getElementById('btn-batu').disabled=true;
 }
 
-function setStatus(msg, cls) {
-  var el = document.getElementById('hf-status');
-  el.textContent = msg;
-  el.className = 'hf-status' + (cls ? ' '+cls : '');
-}
-
-function enableButtons() {
-  document.getElementById('btn-maru').disabled = false;
-  document.getElementById('btn-batu').disabled = false;
-}
-
-function disableButtons() {
-  document.getElementById('btn-maru').disabled = true;
-  document.getElementById('btn-batu').disabled = true;
-}
-
-/* ===== 画面切替 ===== */
-function show(id){
+/* ===== 画面 ===== */
+function show(id) {
   document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on')});
   document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
 }
 
-function updateHome(){
-  document.getElementById('s-attempts').textContent=hist.length;
-  if(hist.length>0){
-    document.getElementById('s-latest').textContent=Math.round(hist[0].score/hist[0].total*100)+'%';
-    document.getElementById('hist-card').style.display='block';
-    document.getElementById('hist-list').innerHTML=hist.slice(0,3).map(function(h){
-      return '<div class="hist-row"><span>'+h.date+'</span><span class="hist-score">'+h.score+'/'+h.total+' ('+Math.round(h.score/h.total*100)+'%)</span></div>';
+function updateHome() {
+  document.getElementById('s-attempts').textContent = hist.length;
+  if (hist.length > 0) {
+    document.getElementById('s-latest').textContent = Math.round(hist[0].score/hist[0].total*100)+'%';
+    document.getElementById('hist-card').style.display = 'block';
+    document.getElementById('hist-list').innerHTML = hist.slice(0,3).map(function(h){
+      return '<div class="history-row"><span class="history-date">'+h.date+'</span><span class="history-score">'+h.score+'/'+h.total+' ('+Math.round(h.score/h.total*100)+'%)</span></div>';
     }).join('');
   }
 }
 
-/* ===== 通常モード ===== */
-var Qs=[
-  {cat:"ライフ・社会保険",q:"協会けんぽの被保険者に関する記述の空欄にあてはまる組合せとして、最も適切なものはどれか。\n\n短時間労働者のうち次のいずれかに該当する者は被保険者とならない。\n①1週間の所定労働時間が（イ）未満\n②所定内賃金が月額（ウ）未満\n③学生\n\nまた所定労働時間・日数が通常の労働者の（ア）未満であること。",opts:["ア：3分の2 イ：20時間 ウ：5万8千円","ア：3分の2 イ：25時間 ウ：8万8千円","ア：4分の3 イ：20時間 ウ：8万8千円","ア：4分の3 イ：25時間 ウ：5万8千円"],ans:2,ex:"✅ ア：4分の3\n✅ イ：20時間\n✅ ウ：8万8千円（106万円の壁のライン！）\n\n「ハチハチ（88）で切れる！」で覚えよう！"},
-  {cat:"ライフ・社会保険",q:"労働者災害補償保険に関する次の記述のうち、最も不適切なものはどれか。",opts:["労災保険の適用を受ける労働者には、アルバイトやパートタイマーも含まれる","労災保険率は、適用事業に従事する労働者数に応じて定められている","業務上の傷病が治癒したときに一定の障害が残り障害等級に該当する場合、障害補償給付が支給される","業務災害で労働者が死亡した場合、遺族補償年金または遺族補償一時金が支給される"],ans:1,ex:"2番が不適切！\n\n✅ 労災保険率は「労働者数」ではなく「業種」で決まる！\n\n労災は雇用形態に関係なく全員対象！"},
-  {cat:"タックス",q:"わが国の税制に関する次の記述のうち、最も不適切なものはどれか。",opts:["所得税では課税対象となる所得を10種類に区分し種類ごとに計算する","相続税では税務署長が納付税額を決定する賦課課税方式が採用されている","消費税は間接税に該当する","法人税は国税、不動産取得税は地方税に該当する"],ans:1,ex:"2番が不適切！\n\n✅ 相続税は「申告納税方式」！自分で計算して申告！\n\n📝 申告納税方式：所得税・相続税・贈与税・法人税\n📬 賦課課税方式：固定資産税・住民税・不動産取得税"},
-  {cat:"タックス",q:"所得税における損益通算に関する次の記述のうち、最も適切なものはどれか。",opts:["不動産所得の損失のうち土地取得の負債利子は給与所得と損益通算できる","先物取引の雑所得の損失は不動産所得と損益通算できる","生活用自家用車を売却した譲渡所得の損失は給与所得と損益通算できる","コンサルティング事業の事業所得の損失は不動産所得と損益通算できる"],ans:3,ex:"4番が正解！\n\n✅ 事業所得の損失は他の所得と損益通算できる！\n\n損益通算できる所得は「不事山譲（ふじさんじょう）」！\n不動産・事業・山林・譲渡の4つや！"},
-  {cat:"タックス",q:"所得税における所得控除に関する次の記述のうち、最も不適切なものはどれか。",opts:["19歳以上23歳未満の扶養親族は特定扶養親族に該当する","70歳以上の扶養親族は老人扶養親族に該当する","合計所得金額が1,000万円を超える場合、配偶者控除の適用を受けることはできない","婚姻届を提出していなくても内縁関係にある者は控除対象配偶者に該当する"],ans:3,ex:"4番が不適切！\n\n✅ 内縁関係は配偶者控除の対象外！戸籍上の配偶者のみ！\n\n健康保険はOKでも税金はNG！\n「健康保険は人情、税金は法律」で覚えよう！"},
-];
-
-function startQuiz(m){
+function startQuiz(m) {
   mode=m; cur=0; score=0; answers=[];
   synth && synth.cancel();
-  if(m==='handsfree'){
-    // 音声サポート確認
-    if(!voiceSupported){
-      document.getElementById('hf-mode-badge').textContent='👆 タップモード（音声非対応）';
-    } else {
-      document.getElementById('hf-mode-badge').textContent='🎤 音声モード';
-    }
-    initRecognition();
+  if (m==='handsfree') {
+    document.getElementById('hf-badge').textContent = voiceOK ? '🎤 音声モード' : '👆 タップモード';
+    initRec();
     show('quiz-hf');
     renderHfQ();
   } else {
@@ -326,8 +341,8 @@ function startQuiz(m){
   }
 }
 
-/* ===== 通常モード描画 ===== */
-function renderQ(){
+/* ===== 通常モード ===== */
+function renderQ() {
   var q=Qs[cur];
   document.getElementById('prog').style.width=((cur+1)/Qs.length*100)+'%';
   document.getElementById('q-cat').textContent=q.cat;
@@ -335,25 +350,26 @@ function renderQ(){
   document.getElementById('q-text').textContent=q.q;
   document.getElementById('exbox').style.display='none';
   chatHist=[];
-  document.getElementById('chat-msgs').innerHTML='';
+  var cm=document.getElementById('chat-msgs');
+  cm.innerHTML='';
   addBot('なんか気になることあったら何でも聞いてや！🖤');
-  var opts=document.getElementById('opts');
-  opts.innerHTML=q.opts.map(function(o,i){
-    return '<button class="opt" id="o'+i+'" onclick="pick('+i+')"><span class="opt-n">'+(i+1)+'</span><span>'+o+'</span></button>';
+  document.getElementById('opts').innerHTML=q.opts.map(function(o,i){
+    return '<button class="opt-btn" id="o'+i+'" onclick="pick('+i+')"><span class="opt-num">'+(i+1)+'</span><span>'+o+'</span></button>';
   }).join('');
   speak(q.q);
 }
 
-function pick(idx){
+function pick(idx) {
   var q=Qs[cur];
   var ok=idx===q.ans;
-  if(ok)score++;
+  if(ok) score++;
   answers.push({q:cur,sel:idx,ok:ok});
   for(var i=0;i<q.opts.length;i++){
     var b=document.getElementById('o'+i);
     b.disabled=true;
-    if(i===q.ans)b.classList.add('correct');
-    else if(i===idx)b.classList.add('wrong');
+    b.classList.remove('correct','wrong','dim');
+    if(i===q.ans) b.classList.add('correct');
+    else if(i===idx) b.classList.add('wrong');
     else b.classList.add('dim');
   }
   document.getElementById('ex-title').textContent=ok?'🎉 正解！！':'💦 不正解...';
@@ -362,129 +378,118 @@ function pick(idx){
   document.getElementById('exbox').style.display='block';
 }
 
-function nextQ(){
+function nextQ() {
   if(cur+1<Qs.length){cur++;renderQ();}
   else finish();
 }
 
-/* ===== ハンズフリーモード描画 ===== */
-function renderHfQ(){
+/* ===== ハンズフリーモード ===== */
+function renderHfQ() {
   var q=QsOX[cur];
   document.getElementById('prog-hf').style.width=((cur+1)/QsOX.length*100)+'%';
   document.getElementById('q-cat-hf').textContent=q.cat;
   document.getElementById('q-num-hf').textContent=(cur+1)+' / '+QsOX.length;
-  document.getElementById('hf-q-text').textContent='次の記述は○か×か？';
-  document.getElementById('hf-statement').textContent=q.statement;
-  document.getElementById('hf-result-panel').style.display='none';
+  document.getElementById('hf-stmt').textContent=q.stmt;
+  document.getElementById('hf-result').style.display='none';
   document.getElementById('next-btn-hf').style.display='none';
-  disableButtons();
-  showWave(false);
-
-  // TTS読み上げ後に入力受付
-  setStatus('問題を読み上げています...', 'speaking');
-  var readText = '問題。' + q.statement + '。これは○ですか、×ですか？';
-  speak(readText, function(){
-    setStatus('', '');
-    enableButtons();
-    if(voiceSupported){
-      // 少し間をおいてから音声認識開始
-      setTimeout(startListening, 500);
+  disableHfBtns();
+  document.getElementById('voice-wave').style.display='none';
+  setHfStatus('問題を読み上げています...','speaking');
+  speak('問題。'+q.stmt+'。これは○ですか、×ですか？', function(){
+    enableHfBtns();
+    if(voiceOK) {
+      setTimeout(startListen, 500);
     } else {
-      setStatus('⭕か❌をタップして答えてね！', '');
+      setHfStatus('⭕か❌をタップして答えてね！','');
     }
   });
 }
 
-function hfAnswer(userSaysTrue){
-  stopListening();
-  disableButtons();
-  showWave(false);
-
+function hfAnswer(ans) {
+  stopListen(); disableHfBtns();
   var q=QsOX[cur];
-  var ok=(userSaysTrue===q.ans);
-  if(ok)score++;
-  answers.push({q:cur,sel:userSaysTrue,ok:ok});
-
-  var panel=document.getElementById('hf-result-panel');
+  var ok=(ans===q.ans);
+  if(ok) score++;
+  answers.push({q:cur,sel:ans,ok:ok});
+  var panel=document.getElementById('hf-result');
   panel.style.display='block';
   document.getElementById('hf-result-icon').textContent=ok?'⭕':'❌';
-  document.getElementById('hf-result-msg').textContent=q.ex;
-
-  var nextBtn=document.getElementById('next-btn-hf');
-  nextBtn.textContent=cur+1<QsOX.length?'次の問題へ →':'結果を見る 🏁';
-  nextBtn.style.display='block';
-
-  // 正誤を読み上げ
+  document.getElementById('hf-result-text').textContent=q.ex;
+  var nb=document.getElementById('next-btn-hf');
+  nb.textContent=cur+1<QsOX.length?'次の問題へ →':'結果を見る 🏁';
+  nb.style.display='block';
   speak(ok?'正解！'+q.ex:'不正解！'+q.ex);
-  setStatus(ok?'🎉 正解！':'💦 不正解...', '');
+  setHfStatus(ok?'🎉 正解！':'💦 不正解...','');
 }
 
-function nextHfQ(){
-  synth && synth.cancel();
+function nextHfQ() {
+  synth&&synth.cancel();
   if(cur+1<QsOX.length){cur++;renderHfQ();}
   else finish();
 }
 
 /* ===== 共通 ===== */
-function finish(){
-  synth && synth.cancel();
+function finish() {
+  synth&&synth.cancel();
   var total=mode==='handsfree'?QsOX.length:Qs.length;
   var rec={date:new Date().toLocaleDateString('ja-JP'),score:score,total:total};
   hist=[rec].concat(hist).slice(0,10);
-  localStorage.setItem('aid_hist',JSON.stringify(hist));
+  try{localStorage.setItem('aid_fp2_hist',JSON.stringify(hist));}catch(e){}
   var pct=Math.round(score/total*100);
   document.getElementById('r-emoji').textContent=pct>=80?'🎉':pct>=60?'💪':'😅';
   document.getElementById('r-score').textContent=score+' / '+total;
   document.getElementById('r-pct').textContent=pct+'%';
-  document.getElementById('r-msg').textContent=pct>=80?'めっちゃええやん！この調子で2級合格や！':pct>=60?'惜しい！あと一歩やで！':'ドンマイ！間違いが宝や！解説読んで完全理解しよ！';
+  document.getElementById('r-msg').textContent=pct>=80?'めっちゃええやん！この調子で2級合格や！':pct>=60?'惜しい！あと一歩やで！もう一回チャレンジ！':'ドンマイ！間違いが宝や！解説読んで完全理解しよ！';
+  var qs=mode==='handsfree'?QsOX:Qs;
   document.getElementById('review').innerHTML=answers.map(function(a,i){
-    var q=mode==='handsfree'?QsOX[a.q]:Qs[a.q];
-    return '<div class="rev-row"><span>'+(a.ok?'✅':'❌')+'</span><span>問'+(i+1)+'：'+q.cat+'</span></div>';
+    return '<div class="rev-row"><span>'+(a.ok?'✅':'❌')+'</span><span>問'+(i+1)+'：'+qs[a.q].cat+'</span></div>';
   }).join('');
   show('result');
 }
 
-function goHome(){synth&&synth.cancel();updateHome();show('home')}
+function goHome(){synth&&synth.cancel();updateHome();show('home');}
 
 /* ===== チャット ===== */
 function addBot(txt){
   var m=document.getElementById('chat-msgs');
   var d=document.createElement('div');d.className='bot-wrap';
-  d.innerHTML='<div style="font-size:18px;flex-shrink:0">🖤</div><div class="bot-msg">'+txt+'</div>';
+  d.innerHTML='<div class="bot-icon">🖤</div><div class="bot-bubble">'+txt+'</div>';
   m.appendChild(d);m.scrollTop=m.scrollHeight;
 }
 function addUser(txt){
   var m=document.getElementById('chat-msgs');
   var d=document.createElement('div');d.className='user-wrap';
-  d.innerHTML='<div class="user-msg">'+txt+'</div>';
+  d.innerHTML='<div class="user-bubble">'+txt+'</div>';
   m.appendChild(d);m.scrollTop=m.scrollHeight;
 }
 function removeLast(){
   var m=document.getElementById('chat-msgs');
   if(m.lastChild)m.removeChild(m.lastChild);
 }
+
 async function sendChat(){
   var inp=document.getElementById('chat-in');
   var txt=inp.value.trim();
-  if(!txt)return;
+  if(!txt) return;
   inp.value='';
   addUser(txt);
   chatHist.push({role:'user',content:txt});
   addBot('考え中やで...⏳');
   var q=Qs[cur];
-  var sys='あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに楽しく教えてください。\n今の問題：'+q.cat+'\n問題：'+q.q+'\n正解：'+q.opts[q.ans]+'\n解説：'+q.ex+'\n200字以内で簡潔に答えてください。';
-  try{
-    var r=await fetch('/api/chat',{
+  var sys='あなたは「クロちゃん」というFP2級の先生です。関西弁でフレンドリーに、楽しく、わかりやすく教えてください。\n今取り組んでいる問題：\nカテゴリ：'+q.cat+'\n問題：'+q.q+'\n正解：選択肢'+(q.ans+1)+'番「'+q.opts[q.ans]+'」\n解説：'+q.ex+'\n\nユーザーが質問したことに対して、「なぜそうなるか」を日常のたとえや具体例を使って完全理解できるよう説明してください。200字以内で簡潔に答えてください。';
+
+  try {
+    var r = await fetch('/api/chat',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({messages:chatHist, system:sys})
     });
-    var d=await r.json();
-    var rep=d.reply||'ごめん、うまく答えられへんかった！';
+    var d = await r.json();
+    var rep = d.reply || 'ごめん、うまく答えられへんかった！';
     chatHist.push({role:'assistant',content:rep});
-    removeLast();addBot(rep);
-  }catch(e){
-    removeLast();addBot('通信エラーやで！もう一回試してみて！');
+    removeLast(); addBot(rep);
+  } catch(e) {
+    removeLast(); addBot('通信エラーやで！もう一回試してみて！');
   }
 }
 
