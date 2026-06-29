@@ -137,6 +137,22 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 .r-msg{font-size:15px;color:#ccc;margin-bottom:20px;line-height:1.6}
 .review-wrap{text-align:left;background:rgba(255,255,255,0.03);border-radius:12px;padding:12px 16px;margin-bottom:20px}
 .rev-row{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;color:#aaa}
+
+/* アマドポップアップ */
+.amado-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.amado-popup{background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid #ff8c00;border-radius:24px;padding:24px 20px;text-align:center;max-width:300px;width:90%;animation:popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275)}
+@keyframes popIn{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
+.amado-popup.rare{border-color:#ffd700;box-shadow:0 0 30px rgba(255,215,0,0.5)}
+.amado-badge{font-size:12px;font-weight:800;padding:4px 14px;border-radius:20px;display:inline-block;margin-bottom:12px}
+.amado-badge.normal{background:rgba(255,140,0,0.2);color:#ff8c00;border:1px solid #ff8c00}
+.amado-badge.rare{background:rgba(255,215,0,0.2);color:#ffd700;border:1px solid #ffd700}
+.amado-img{width:180px;height:180px;object-fit:cover;border-radius:16px;margin-bottom:14px;border:3px solid rgba(255,255,255,0.1)}
+.amado-popup.rare .amado-img{border-color:#ffd700}
+.amado-msg{font-size:16px;font-weight:800;color:#fff;margin-bottom:6px}
+.amado-sub{font-size:12px;color:#888;margin-bottom:16px}
+.amado-close{padding:10px 28px;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:800;cursor:pointer}
+.streak-badge{display:inline-block;background:rgba(255,140,0,0.15);border:1px solid rgba(255,140,0,0.4);color:#ff8c00;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700;margin-left:8px}
 </style>
 </head>
 <body>
@@ -164,7 +180,8 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
       <div class="stat-divider"></div>
       <div class="stat"><div class="stat-num" id="s-latest">--</div><div class="stat-label">最新スコア</div></div>
     </div>
-    <button class="start-btn" onclick="goTeacherSelect()">先生を選んで学習！</button>
+    <button class="start-btn" onclick="goTeacherSelect('random')">先生を選んでスタート！（ランダム）</button>
+    <button class="outline-btn" onclick="goTeacherSelect('continue')" id="continue-btn" style="margin-bottom:10px;display:none">続きから再開する（<span id="continue-info"></span>）</button>
     <button class="outline-btn" onclick="startQuiz('normal')">通常クイズ</button>
     <button class="outline-btn" onclick="startQuiz('handsfree')">ハンズフリーモード（○×）</button>
   </div>
@@ -369,11 +386,11 @@ var TEACHERS = {
 
 /* ===== 問題データ ===== */
 var Qs = [
-  {cat:"ライフ・社会保険",q:"協会けんぽの被保険者に関する記述の空欄にあてはまる組合せとして、最も適切なものはどれか。\n\n特定適用事業所に使用される短時間労働者のうち、次のいずれかに該当する者は、原則として被保険者とならない。\n① 1週間の所定労働時間が（イ）未満の者\n② 所定内賃金が月額（ウ）未満の者\n③ 学生である者\n\nまた短時間労働者の要件として、所定労働時間・労働日数が通常の労働者の（ア）未満であること。",opts:["ア：3分の2　イ：20時間　ウ：5万8千円","ア：3分の2　イ：25時間　ウ：8万8千円","ア：4分の3　イ：20時間　ウ：8万8千円","ア：4分の3　イ：25時間　ウ：5万8千円"],ans:2,ex:"ポイントは3つ！\n\n✅ ア：4分の3\n✅ イ：20時間\n✅ ウ：8万8千円（106万円の壁）\n\n「ハチハチ（88）で切れる！」で覚えよう！"},
-  {cat:"ライフ・社会保険",q:"労働者災害補償保険に関する次の記述のうち、最も不適切なものはどれか。",opts:["労災保険の適用を受ける労働者には、アルバイトやパートタイマーも含まれる","労災保険料の算定に用いられる労災保険率は、適用事業に従事する労働者数に応じて定められている","業務上の傷病が治癒したときに一定の障害が残り、障害等級に該当する場合、障害補償給付が支給される","業務災害で労働者が死亡した場合、遺族に対して遺族補償年金または遺族補償一時金が支給される"],ans:1,ex:"2番が不適切！\n\n✅ 労災保険率は「労働者数」ではなく「業種」で決まる！\n雇用形態に関係なく全員対象！"},
+  {cat:"ライフ・社会保険",q:"協会けんぽの被保険者に関する記述の空欄にあてはまる組合せとして、最も適切なものはどれか。\n\n特定適用事業所に使用される短時間労働者のうち、次のいずれかに該当する者は、原則として被保険者とならない。\n① 1週間の所定労働時間が（イ）未満の者\n② 所定内賃金が月額（ウ）未満の者\n③ 学生である者\n\nまた短時間労働者の要件として、所定労働時間・労働日数が通常の労働者の（ア）未満であること。",opts:["ア：3分の2　イ：20時間　ウ：5万8千円","ア：3分の2　イ：25時間　ウ：8万8千円","ア：4分の3　イ：20時間　ウ：8万8千円","ア：4分の3　イ：25時間　ウ：5万8千円"],ans:2,ex:"ポイントは3つ！\n\n〇 ア：4分の3\n〇 イ：20時間\n〇 ウ：8万8千円（106万円の壁）\n\n「ハチハチ（88）で切れる！」で覚えよう！"},
+  {cat:"ライフ・社会保険",q:"労働者災害補償保険に関する次の記述のうち、最も不適切なものはどれか。",opts:["労災保険の適用を受ける労働者には、アルバイトやパートタイマーも含まれる","労災保険料の算定に用いられる労災保険率は、適用事業に従事する労働者数に応じて定められている","業務上の傷病が治癒したときに一定の障害が残り、障害等級に該当する場合、障害補償給付が支給される","業務災害で労働者が死亡した場合、遺族に対して遺族補償年金または遺族補償一時金が支給される"],ans:1,ex:"2番が不適切！\n\n〇 労災保険率は「労働者数」ではなく「業種」で決まる！\n雇用形態に関係なく全員対象！"},
   {cat:"ライフ・社会保険",q:"国民年金の保険料に関する次の記述のうち、最も不適切なものはどれか。",opts:["第1号被保険者は、一定の条件を除き、月額400円の付加保険料を納付できる","産前産後期間の保険料免除制度により免除された期間は、保険料納付済期間として老齢基礎年金の年金額に反映される","保険料免除期間の保険料を追納する場合、追納額は追納する時期にかかわらず、免除された時点の保険料額となる","保険料を前納した第1号被保険者が、前納期間の途中で第2号被保険者になった場合、未経過期間分の保険料の還付を受けられる"],ans:2,ex:"3番が不適切！\n\n2年以内の追納 → 加算なし\n3年度目以降 → 加算あり（割増！）\n\n「早よ追納せな損するで！」"},
-  {cat:"タックス",q:"わが国の税制に関する次の記述のうち、最も不適切なものはどれか。",opts:["所得税では、課税対象となる所得を10種類に区分し、種類ごとに計算する","相続税では、納税者が申告書に記載した内容に基づき、税務署長が納付税額を決定する賦課課税方式が採用されている","税金を負担する者と納める者が異なる税金を間接税といい、消費税は間接税に該当する","法人税は国税、不動産取得税は地方税に該当する"],ans:1,ex:"2番が不適切！\n\n✅ 相続税は「申告納税方式」！\n\n申告納税：所得税・相続税・贈与税・法人税\n賦課課税：固定資産税・住民税・不動産取得税"},
-  {cat:"タックス",q:"所得税における各種所得に関する次の記述のうち、最も適切なものはどれか。",opts:["個人事業主が事業資金で株式を購入し、配当金を受け取ったことによる所得は事業所得となる","給与収入が850万円を超える給与所得者が23歳未満の扶養親族を有する場合、所得金額調整控除として最大10万円が控除される","個人による不動産の貸付が事業的規模で行われている場合、その賃貸収入による所得は事業所得となる","会社員が自宅購入資金として勤務先から無利息で金銭を借り入れたことにより生じた経済的利益は給与所得となる"],ans:3,ex:"4番が正解！\n\n✅ 無利息借入の経済的利益 = 給与所得！\n\n❌ 1番：配当金は「配当所得」\n❌ 2番：最大は「15万円」\n❌ 3番：不動産貸付は「不動産所得」"},
+  {cat:"タックス",q:"わが国の税制に関する次の記述のうち、最も不適切なものはどれか。",opts:["所得税では、課税対象となる所得を10種類に区分し、種類ごとに計算する","相続税では、納税者が申告書に記載した内容に基づき、税務署長が納付税額を決定する賦課課税方式が採用されている","税金を負担する者と納める者が異なる税金を間接税といい、消費税は間接税に該当する","法人税は国税、不動産取得税は地方税に該当する"],ans:1,ex:"2番が不適切！\n\n〇 相続税は「申告納税方式」！\n\n申告納税：所得税・相続税・贈与税・法人税\n賦課課税：固定資産税・住民税・不動産取得税"},
+  {cat:"タックス",q:"所得税における各種所得に関する次の記述のうち、最も適切なものはどれか。",opts:["個人事業主が事業資金で株式を購入し、配当金を受け取ったことによる所得は事業所得となる","給与収入が850万円を超える給与所得者が23歳未満の扶養親族を有する場合、所得金額調整控除として最大10万円が控除される","個人による不動産の貸付が事業的規模で行われている場合、その賃貸収入による所得は事業所得となる","会社員が自宅購入資金として勤務先から無利息で金銭を借り入れたことにより生じた経済的利益は給与所得となる"],ans:3,ex:"4番が正解！\n\n〇 無利息借入の経済的利益 = 給与所得！\n\n× 1番：配当金は「配当所得」\n× 2番：最大は「15万円」\n× 3番：不動産貸付は「不動産所得」"},
 ];
 
 var QsOX = [
@@ -388,20 +405,69 @@ var QsOX = [
 var cur=0, score=0, answers=[], mode='chat';
 var selectedTeacher = 'yassan';
 var chatApiHist=[];
+var questionOrder=[];
 var normChatHist=[];
 var hist=[];
 try{hist=JSON.parse(localStorage.getItem('aid_fp2_hist')||'[]');}catch(e){hist=[];}
 
 /* ===== 先生選択 ===== */
-function goTeacherSelect(){
+var startMode = 'random';
+
+function goTeacherSelect(m){
+  startMode = m;
   show('teacher-select');
+}
+
+function updateContinueBtn(){
+  try {
+    var prog = JSON.parse(localStorage.getItem('aid_fp2_progress') || 'null');
+    var btn = document.getElementById('continue-btn');
+    var info = document.getElementById('continue-info');
+    if(prog && prog.cur > 0){
+      btn.style.display = 'block';
+      info.textContent = (prog.cur+1) + '問目から・' + (prog.teacher ? TEACHERS[prog.teacher].name : '');
+    } else {
+      btn.style.display = 'none';
+    }
+  } catch(e) {}
 }
 
 function selectTeacher(key){
   selectedTeacher = key;
   document.querySelectorAll('.teacher-card').forEach(function(c){c.classList.remove('selected')});
   document.getElementById('tc-'+key).classList.add('selected');
-  setTimeout(function(){ startQuiz('chat'); }, 200);
+  setTimeout(function(){
+    if(startMode === 'continue'){
+      try {
+        var prog = JSON.parse(localStorage.getItem('aid_fp2_progress') || 'null');
+        if(prog && prog.cur > 0){
+          cur = prog.cur;
+          score = prog.score || 0;
+          answers = prog.answers || [];
+          questionOrder = prog.order || makeOrder('continue');
+        } else {
+          questionOrder = makeOrder('random');
+        }
+      } catch(e) {
+        questionOrder = makeOrder('random');
+      }
+    } else {
+      questionOrder = makeOrder('random');
+    }
+    startQuiz('chat');
+  }, 200);
+}
+
+function makeOrder(m){
+  var order = Qs.map(function(_,i){return i;});
+  if(m === 'random'){
+    // Fisher-Yatesシャッフル
+    for(var i=order.length-1;i>0;i--){
+      var j=Math.floor(Math.random()*(i+1));
+      var tmp=order[i];order[i]=order[j];order[j]=tmp;
+    }
+  }
+  return order;
 }
 
 /* ===== 画面 ===== */
@@ -506,10 +572,12 @@ function startChatMode(){
   showOpts(false);showChatInput(false);setActionBtn('',false);
   document.getElementById('chat-q-progress').textContent=(cur+1)+' / '+Qs.length;
   var t=TEACHERS[selectedTeacher];
-  var q=Qs[cur];
+  var q=Qs[questionOrder[cur]];
   var intro = cur===0
     ? t.intro+'\n\nまず1問目いくで！カテゴリは「'+q.cat+'」やで！'
     : t.next+'\n問題'+(cur+1)+'問目！カテゴリは「'+q.cat+'」！';
+  // 問題表示と同時にチャット入力を開放
+  showChatInput(true);
   addBotBubble(intro, function(){
     setTimeout(function(){
       addBotBubble(t.question+'\n\n'+q.q, function(){
@@ -537,10 +605,11 @@ function showChoices(){
 
 function chatPick(idx){
   showOpts(false);
-  var q=Qs[cur];var t=TEACHERS[selectedTeacher];
+  var q=Qs[questionOrder[cur]];var t=TEACHERS[selectedTeacher];
   var ok=idx===q.ans;
   if(ok)score++;
   answers.push({q:cur,sel:idx,ok:ok});
+  showAmado(ok);
   addUserBubble((idx+1)+'番！');
   setTimeout(function(){
     var msg = ok
@@ -555,9 +624,20 @@ function chatPick(idx){
   },300);
 }
 
+function saveProgress(){
+  try {
+    localStorage.setItem('aid_fp2_progress', JSON.stringify({
+      cur: cur, score: score, answers: answers,
+      order: questionOrder, teacher: selectedTeacher
+    }));
+  } catch(e) {}
+}
+
 function nextChatQ(){
   setActionBtn('',false);showChatInput(false);
-  cur++;chatApiHist=[];startChatMode();
+  cur++;chatApiHist=[];
+  saveProgress();
+  startChatMode();
 }
 
 async function sendChatMsg(){
@@ -567,7 +647,7 @@ async function sendChatMsg(){
   document.getElementById('chat-send-btn').disabled=true;
   addUserBubble(txt);
   chatApiHist.push({role:'user',content:txt});
-  var q=Qs[cur];var t=TEACHERS[selectedTeacher];
+  var q=Qs[questionOrder[cur]];var t=TEACHERS[selectedTeacher];
   var sys=t.system+'\n\n今の問題：\nカテゴリ：'+q.cat+'\n問題：'+q.q+'\n正解：'+q.opts[q.ans]+'\n解説：'+q.ex;
   var feed=chatFeed();
   var loadWrap=document.createElement('div');loadWrap.className='bubble-wrap-bot';loadWrap.id='chat-loading';
@@ -611,6 +691,7 @@ function pick(idx){
   var q=Qs[cur];var ok=idx===q.ans;
   if(ok)score++;
   answers.push({q:cur,sel:idx,ok:ok});
+  showAmado(ok);
   for(var i=0;i<q.opts.length;i++){
     var b=document.getElementById('o'+i);b.disabled=true;
     b.classList.remove('correct','wrong','dim');
@@ -737,6 +818,7 @@ function hfAnswer(ans){
   var q=QsOX[cur];var ok=(ans===q.ans);
   if(ok)score++;
   answers.push({q:cur,sel:ans,ok:ok});
+  showAmado(ok);
   document.getElementById('hf-result').style.display='block';
   document.getElementById('hf-result-icon').textContent=ok?'○':'×';
   document.getElementById('hf-result-text').textContent=q.ex;
@@ -761,13 +843,14 @@ function nextHfQ(){hfWaitingNext=false;stopListen();synth&&synth.cancel();if(cur
    共通
    =================================================== */
 function finish(){
+  try{localStorage.removeItem('aid_fp2_progress');}catch(e){}
   synth&&synth.cancel();
   var total=mode==='handsfree'?QsOX.length:Qs.length;
   var rec={date:new Date().toLocaleDateString('ja-JP'),score:score,total:total,mode:mode};
   hist=[rec].concat(hist).slice(0,10);
   try{localStorage.setItem('aid_fp2_hist',JSON.stringify(hist));}catch(e){}
   var pct=Math.round(score/total*100);
-  document.getElementById('r-emoji').textContent=pct>=80?'🎉':pct>=60?'💪':'😅';
+  document.getElementById('r-emoji').textContent=pct>=80?'':pct>=60?'':'';
   document.getElementById('r-score').textContent=score+' / '+total;
   document.getElementById('r-pct').textContent=pct+'%';
   document.getElementById('r-msg').textContent=pct>=80?'めっちゃええやん！この調子で2級合格や！':pct>=60?'惜しい！あと一歩やで！':'ドンマイ！間違いが宝や！';
@@ -778,9 +861,146 @@ function finish(){
   show('result');
 }
 
-function goHome(){synth&&synth.cancel();updateHome();show('home');}
+function goHome(){synth&&synth.cancel();
+/* ===== アマドシステム ===== */
+var streak = 0;
+
+var amadoNormal = [
+  '/images/amado/amado_seikai.png',
+  '/images/amado/amado_seikai_1.png',
+  '/images/amado/amado_seikai_2.png',
+];
+
+var amadoRare = [
+  '/images/amado/rare/22F60F4F-7AC3-4E8C-9468-ED29E191F28C.png',
+  '/images/amado/rare/AB9F1AD6-D107-46C2-B5E3-1234567890AB.png',
+  '/images/amado/rare/IMG_2487.PNG',
+  '/images/amado/rare/IMG_2655.PNG',
+  '/images/amado/rare/IMG_2656.PNG',
+  '/images/amado/rare/IMG_2658.PNG',
+];
+
+var lastAmadoIdx = -1;
+
+function getRandomAmado(arr) {
+  if(arr.length === 1) return arr[0];
+  var idx;
+  do { idx = Math.floor(Math.random() * arr.length); } while(idx === lastAmadoIdx);
+  lastAmadoIdx = idx;
+  return arr[idx];
+}
+
+function showAmado(isCorrect) {
+  if(!isCorrect){ streak=0; return; }
+  streak++;
+  var isRare = (streak === 3 || streak === 5 || streak === 7);
+  var overlay = document.getElementById('amado-overlay');
+  var popup = document.getElementById('amado-popup');
+  var badge = document.getElementById('amado-badge');
+  var img = document.getElementById('amado-img');
+  var msg = document.getElementById('amado-msg');
+  var sub = document.getElementById('amado-sub');
+
+  if(isRare){
+    img.src = getRandomAmado(amadoRare);
+    popup.className = 'amado-popup rare';
+    badge.className = 'amado-badge rare';
+    badge.textContent = streak + '連続正解！レアアマド出現！';
+    msg.textContent = 'レアアマド！！';
+    sub.textContent = 'すごい！' + streak + '問連続正解やで！';
+  } else {
+    img.src = getRandomAmado(amadoNormal);
+    popup.className = 'amado-popup';
+    badge.className = 'amado-badge normal';
+    badge.textContent = '正解！';
+    msg.textContent = 'アマド登場！';
+    sub.textContent = streak > 1 ? streak + '問連続正解中！' : 'よくできました！';
+  }
+  overlay.style.display = 'flex';
+}
+
+function closeAmado(){
+  document.getElementById('amado-overlay').style.display = 'none';
+}
 
 updateHome();
+updateContinueBtn();show('home');}
+
+
+/* ===== アマドシステム ===== */
+var streak = 0;
+
+var amadoNormal = [
+  '/images/amado/amado_seikai.png',
+  '/images/amado/amado_seikai_1.png',
+  '/images/amado/amado_seikai_2.png',
+];
+
+var amadoRare = [
+  '/images/amado/rare/22F60F4F-7AC3-4E8C-9468-ED29E191F28C.png',
+  '/images/amado/rare/AB9F1AD6-D107-46C2-B5E3-1234567890AB.png',
+  '/images/amado/rare/IMG_2487.PNG',
+  '/images/amado/rare/IMG_2655.PNG',
+  '/images/amado/rare/IMG_2656.PNG',
+  '/images/amado/rare/IMG_2658.PNG',
+];
+
+var lastAmadoIdx = -1;
+
+function getRandomAmado(arr) {
+  if(arr.length === 1) return arr[0];
+  var idx;
+  do { idx = Math.floor(Math.random() * arr.length); } while(idx === lastAmadoIdx);
+  lastAmadoIdx = idx;
+  return arr[idx];
+}
+
+function showAmado(isCorrect) {
+  if(!isCorrect){ streak=0; return; }
+  streak++;
+  var isRare = (streak === 3 || streak === 5 || streak === 7);
+  var overlay = document.getElementById('amado-overlay');
+  var popup = document.getElementById('amado-popup');
+  var badge = document.getElementById('amado-badge');
+  var img = document.getElementById('amado-img');
+  var msg = document.getElementById('amado-msg');
+  var sub = document.getElementById('amado-sub');
+
+  if(isRare){
+    img.src = getRandomAmado(amadoRare);
+    popup.className = 'amado-popup rare';
+    badge.className = 'amado-badge rare';
+    badge.textContent = streak + '連続正解！レアアマド出現！';
+    msg.textContent = 'レアアマド！！';
+    sub.textContent = 'すごい！' + streak + '問連続正解やで！';
+  } else {
+    img.src = getRandomAmado(amadoNormal);
+    popup.className = 'amado-popup';
+    badge.className = 'amado-badge normal';
+    badge.textContent = '正解！';
+    msg.textContent = 'アマド登場！';
+    sub.textContent = streak > 1 ? streak + '問連続正解中！' : 'よくできました！';
+  }
+  overlay.style.display = 'flex';
+}
+
+function closeAmado(){
+  document.getElementById('amado-overlay').style.display = 'none';
+}
+
+updateHome();
+updateContinueBtn();
 </script>
+
+<!-- アマドポップアップ -->
+<div id="amado-overlay" class="amado-overlay" style="display:none" onclick="closeAmado()">
+  <div id="amado-popup" class="amado-popup" onclick="event.stopPropagation()">
+    <div id="amado-badge" class="amado-badge normal">正解！</div>
+    <img id="amado-img" class="amado-img" src="" alt="アマド">
+    <div id="amado-msg" class="amado-msg"></div>
+    <div id="amado-sub" class="amado-sub"></div>
+    <button class="amado-close" onclick="closeAmado()">とじる</button>
+  </div>
+</div>
 </body>
 </html>
