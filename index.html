@@ -881,14 +881,8 @@ var amadoRare = [
   '/images/amado/rare/amado_rare_7.png',
 ];
 
-var lastAmadoIdx = -1;
-
 function getRandomAmado(arr) {
-  if(arr.length === 1) return arr[0];
-  var idx;
-  do { idx = Math.floor(Math.random() * arr.length); } while(idx === lastAmadoIdx);
-  lastAmadoIdx = idx;
-  return arr[idx];
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 
 function showAmado(isCorrect) {
@@ -947,14 +941,8 @@ var amadoRare = [
   '/images/amado/rare/amado_rare_7.png',
 ];
 
-var lastAmadoIdx = -1;
-
 function getRandomAmado(arr) {
-  if(arr.length === 1) return arr[0];
-  var idx;
-  do { idx = Math.floor(Math.random() * arr.length); } while(idx === lastAmadoIdx);
-  lastAmadoIdx = idx;
-  return arr[idx];
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 
 function showAmado(isCorrect) {
