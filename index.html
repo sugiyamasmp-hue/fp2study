@@ -144,13 +144,14 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 .amado-popup{background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid #ff8c00;border-radius:24px;padding:24px 20px;text-align:center;max-width:300px;width:90%;animation:popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275)}
 @keyframes popIn{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
 .amado-popup.rare{border-color:#ffd700;box-shadow:0 0 30px rgba(255,215,0,0.5)}
-.amado-badge{font-size:12px;font-weight:800;padding:4px 14px;border-radius:20px;display:inline-block;margin-bottom:12px}
+.amado-badge{font-size:12px;font-weight:800;padding:4px 14px;border-radius:20px;display:inline-block;margin-bottom:12px;transition:opacity 0.6s ease}
 .amado-badge.normal{background:rgba(255,140,0,0.2);color:#ff8c00;border:1px solid #ff8c00}
 .amado-badge.rare{background:rgba(255,215,0,0.2);color:#ffd700;border:1px solid #ffd700}
 .amado-img{width:180px;height:180px;object-fit:cover;border-radius:16px;margin-bottom:14px;border:3px solid rgba(255,255,255,0.1)}
 .amado-popup.rare .amado-img{border-color:#ffd700}
-.amado-msg{font-size:16px;font-weight:800;color:#fff;margin-bottom:6px}
-.amado-sub{font-size:12px;color:#888;margin-bottom:16px}
+.amado-msg{font-size:16px;font-weight:800;color:#fff;margin-bottom:6px;transition:opacity 0.6s ease}
+.amado-sub{font-size:12px;color:#888;margin-bottom:16px;transition:opacity 0.6s ease}
+.amado-popup.text-fade .amado-badge,.amado-popup.text-fade .amado-msg,.amado-popup.text-fade .amado-sub{opacity:0}
 .amado-close{padding:10px 28px;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:800;cursor:pointer}
 .streak-badge{display:inline-block;background:rgba(255,140,0,0.15);border:1px solid rgba(255,140,0,0.4);color:#ff8c00;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700;margin-left:8px}
 </style>
@@ -862,62 +863,6 @@ function finish(){
 }
 
 function goHome(){synth&&synth.cancel();
-/* ===== アマドシステム ===== */
-var streak = 0;
-
-var amadoNormal = [
-  '/images/amado/amado_seikai.png',
-  '/images/amado/amado_seikai_1.png',
-  '/images/amado/amado_seikai_2.png',
-];
-
-var amadoRare = [
-  '/images/amado/rare/amado_rare_1.png',
-  '/images/amado/rare/amado_rare_2.png',
-  '/images/amado/rare/amado_rare_3.png',
-  '/images/amado/rare/amado_rare_4.png',
-  '/images/amado/rare/amado_rare_5.png',
-  '/images/amado/rare/amado_rare_6.png',
-  '/images/amado/rare/amado_rare_7.png',
-];
-
-function getRandomAmado(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function showAmado(isCorrect) {
-  if(!isCorrect){ streak=0; return; }
-  streak++;
-  var isRare = (streak === 3 || streak === 5 || streak === 7);
-  var overlay = document.getElementById('amado-overlay');
-  var popup = document.getElementById('amado-popup');
-  var badge = document.getElementById('amado-badge');
-  var img = document.getElementById('amado-img');
-  var msg = document.getElementById('amado-msg');
-  var sub = document.getElementById('amado-sub');
-
-  if(isRare){
-    img.src = getRandomAmado(amadoRare);
-    popup.className = 'amado-popup rare';
-    badge.className = 'amado-badge rare';
-    badge.textContent = streak + '連続正解！レアアマド出現！';
-    msg.textContent = 'レアアマド！！';
-    sub.textContent = 'すごい！' + streak + '問連続正解やで！';
-  } else {
-    img.src = getRandomAmado(amadoNormal);
-    popup.className = 'amado-popup';
-    badge.className = 'amado-badge normal';
-    badge.textContent = '正解！';
-    msg.textContent = 'アマド登場！';
-    sub.textContent = streak > 1 ? streak + '問連続正解中！' : 'よくできました！';
-  }
-  overlay.style.display = 'flex';
-}
-
-function closeAmado(){
-  document.getElementById('amado-overlay').style.display = 'none';
-}
-
 updateHome();
 updateContinueBtn();show('home');}
 
@@ -945,6 +890,8 @@ function getRandomAmado(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+var amadoFadeTimer = null;
+
 function showAmado(isCorrect) {
   if(!isCorrect){ streak=0; return; }
   streak++;
@@ -955,6 +902,9 @@ function showAmado(isCorrect) {
   var img = document.getElementById('amado-img');
   var msg = document.getElementById('amado-msg');
   var sub = document.getElementById('amado-sub');
+
+  clearTimeout(amadoFadeTimer);
+  popup.classList.remove('text-fade');
 
   if(isRare){
     img.src = getRandomAmado(amadoRare);
@@ -972,9 +922,14 @@ function showAmado(isCorrect) {
     sub.textContent = streak > 1 ? streak + '問連続正解中！' : 'よくできました！';
   }
   overlay.style.display = 'flex';
+
+  amadoFadeTimer = setTimeout(function(){
+    popup.classList.add('text-fade');
+  }, 3000);
 }
 
 function closeAmado(){
+  clearTimeout(amadoFadeTimer);
   document.getElementById('amado-overlay').style.display = 'none';
 }
 
