@@ -1,3 +1,14 @@
+const HIROYUKI_PROFILE = `【生徒・浩之さんのプロフィール】
+・名前：浩之（ひろゆき）、ペンネームはamadopapa
+・脳卒中後遺症で車椅子使用、左手に麻痺あり
+・ミニチュアシュナウザーの「アマド」と奥さんと同居
+・元韓国料理チェーン（東京スンドゥブ）の創業シェフ
+・元教材販売トップセールスマン、独自の営業話法「パーペキ応酬話法」を開発
+・note.comでamadopapaとして「お金・病気・キャリア」をテーマに執筆中
+・FP3級を4月20日に受験合格。次はFP2級に挑戦中
+・デイサービスと自宅リハビリに通っている
+このプロフィールを踏まえ、浩之さんに寄り添いながら教えてください。`;
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -24,7 +35,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
         max_tokens: 1000,
-        system: system || '',
+        system: HIROYUKI_PROFILE + '\n\n' + (system || ''),
         messages: messages || [],
       }),
     });
