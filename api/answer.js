@@ -1,19 +1,5 @@
-const { initializeApp, getApps, cert } = require('firebase-admin/app');
-const { getFirestore, FieldValue } = require('firebase-admin/firestore');
-
-if (!getApps().length) {
-  initializeApp({
-    credential: cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY
-        ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-        : undefined,
-    }),
-  });
-}
-
-const db = getFirestore();
+const { db, FieldValue, todayJST, addDaysToDateStr } = require('../lib/db');
+const { mapCategoryToDomain } = require('../lib/categoryDomains');
 const PROMOTION_RATE = 0.6;
 
 module.exports = async function handler(req, res) {
@@ -78,6 +64,49 @@ module.exports = async function handler(req, res) {
       newLevel = lvl;
       tx.set(statsRef, { cat, totalAnswered, totalCorrect, level: lvl }, { merge: true });
     });
+
+    // ダッシュボード用：今日の解答数・正答率・連続学習日数
+    const today = todayJST();
+    const progressRef = db.collection('user_progress').doc('main');
+    await db.runTransaction(async (tx) => {
+      const snap = await tx.get(progressRef);
+      const cur = snap.exists ? snap.data() : {};
+      let todayAnswered = cur.todayDate === today ? (cur.todayAnswered || 0) : 0;
+      let todayCorrect = cur.todayDate === today ? (cur.todayCorrect || 0) : 0;
+      let currentStreak = cur.currentStreak || 0;
+      let longestStreak = cur.longestStreak || 0;
+
+      if (cur.lastAnsweredDate !== today) {
+        // 今日初めての解答。前回が「昨日」なら連続記録を伸ばし、それ以外（初回・間が空いた）はリセットして1から
+        currentStreak = cur.lastAnsweredDate === addDaysToDateStr(today, -1) ? currentStreak + 1 : 1;
+        longestStreak = Math.max(longestStreak, currentStreak);
+      }
+
+      todayAnswered += 1;
+      if (isCorrect) todayCorrect += 1;
+
+      tx.set(progressRef, {
+        todayDate: today,
+        todayAnswered,
+        todayCorrect,
+        lastAnsweredDate: today,
+        currentStreak,
+        longestStreak,
+      }, { merge: true });
+    });
+
+    // ジャンル別（6分野）正答率
+    const domain = mapCategoryToDomain(cat);
+    if (domain) {
+      const domainRef = db.collection('category_progress').doc(domain);
+      await db.runTransaction(async (tx) => {
+        const snap = await tx.get(domainRef);
+        const cur = snap.exists ? snap.data() : { answered: 0, correct: 0 };
+        const answered = (cur.answered || 0) + 1;
+        const correct = (cur.correct || 0) + (isCorrect ? 1 : 0);
+        tx.set(domainRef, { domain, answered, correct }, { merge: true });
+      });
+    }
 
     return res.status(200).json({ ok: true, leveledUp, newLevel, rate });
 

@@ -44,6 +44,37 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 .loading-spinner{width:40px;height:40px;border:3px solid rgba(255,140,0,0.2);border-top-color:#ff8c00;border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* 学習進捗ダッシュボード／弱点チェック（白背景・カードUI） */
+.light-screen{background:#f7f7fa;min-height:100vh;position:relative;z-index:1}
+.light-header{display:flex;align-items:center;gap:12px;padding:20px 16px 8px}
+.light-back{background:none;border:none;font-size:20px;color:#333;cursor:pointer;padding:4px 8px}
+.light-title{font-size:19px;font-weight:800;color:#222}
+.light-card{background:#fff;border-radius:16px;padding:18px 16px;margin:0 16px 16px;box-shadow:0 2px 10px rgba(0,0,0,0.06)}
+.light-stats-row{display:flex;gap:10px}
+.light-stat{flex:1;text-align:center;background:#fff;border-radius:14px;padding:16px 8px;box-shadow:0 2px 10px rgba(0,0,0,0.06)}
+.light-stat-num{font-size:26px;font-weight:800;color:#ff8c00}
+.light-stat-label{font-size:12px;color:#888;margin-top:4px;font-weight:600}
+.light-section-title{font-size:14px;font-weight:800;color:#444;margin:20px 16px 10px}
+.cat-card{background:#fff;border-radius:14px;padding:14px 16px;margin:0 16px 10px;box-shadow:0 2px 10px rgba(0,0,0,0.06);display:flex;align-items:center;gap:12px}
+.cat-card-info{flex:1;min-width:0}
+.cat-card-name{font-size:14px;font-weight:700;color:#222;margin-bottom:6px}
+.cat-bar-track{background:#eee;border-radius:6px;height:8px;overflow:hidden}
+.cat-bar-fill{height:100%;border-radius:6px}
+.cat-bar-fill.good{background:#22c55e}
+.cat-bar-fill.mid{background:#f5b400}
+.cat-bar-fill.bad{background:#ef4444}
+.cat-bar-fill.none{background:#ddd}
+.cat-card-pct{font-size:18px;font-weight:800;min-width:56px;text-align:right}
+.cat-card-pct.good{color:#16a34a}
+.cat-card-pct.mid{color:#c98f00}
+.cat-card-pct.bad{color:#dc2626}
+.cat-card-pct.none{color:#aaa}
+.cat-card-sub{font-size:11px;color:#999;margin-top:2px}
+.analyze-btn{display:block;width:calc(100% - 32px);margin:8px 16px 20px;padding:14px 0;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:14px;color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+.analyze-btn:disabled{opacity:0.5;cursor:default}
+.analyze-result{background:#fff8ec;border:1.5px solid #ffd699;border-radius:14px;padding:16px;margin:0 16px 20px;font-size:14px;line-height:1.8;color:#333;white-space:pre-wrap}
+.light-empty{text-align:center;color:#999;font-size:13px;padding:20px 16px}
+
 /* 先生選択 */
 .teacher-title{font-size:18px;font-weight:800;color:#fff;margin-bottom:6px}
 .teacher-sub{font-size:14px;color:#888;margin-bottom:20px}
@@ -200,6 +231,7 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
     <button class="outline-btn" onclick="goTeacherSelect('continue')" id="continue-btn" style="margin-bottom:10px;display:none">続きから再開する（<span id="continue-info"></span>）</button>
     <button class="outline-btn" onclick="beginQuiz('normal')">通常クイズ</button>
     <button class="outline-btn" onclick="beginQuiz('handsfree')">ハンズフリーモード（○×）</button>
+    <button class="outline-btn" onclick="openDashboard()">📊 学習進捗を見る</button>
   </div>
   <div class="history-card" id="hist-card" style="display:none">
     <div class="history-title">最近の記録</div>
@@ -214,6 +246,41 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 <div class="container" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh">
   <div class="loading-spinner"></div>
   <div style="margin-top:16px;color:#888;font-size:14px">問題を読み込み中...</div>
+</div>
+</div>
+
+<!-- 学習進捗ダッシュボード -->
+<div id="dashboard" class="screen">
+<div class="light-screen">
+  <div class="light-header">
+    <button class="light-back" onclick="goHome()">←</button>
+    <div class="light-title">📊 学習進捗</div>
+  </div>
+  <div id="dash-loading" class="light-empty">読み込み中...</div>
+  <div id="dash-body" style="display:none">
+    <div class="light-stats-row" style="margin:0 16px 16px">
+      <div class="light-stat"><div class="light-stat-num" id="dash-today-count">0</div><div class="light-stat-label">今日解いた問題数</div></div>
+      <div class="light-stat"><div class="light-stat-num" id="dash-today-rate">0%</div><div class="light-stat-label">今日の正答率</div></div>
+      <div class="light-stat"><div class="light-stat-num" id="dash-streak">0</div><div class="light-stat-label">連続学習日数</div></div>
+    </div>
+    <button class="analyze-btn" style="width:calc(100% - 32px);margin:0 16px 10px;background:#fff;color:#ff8c00;border:2px solid #ff8c00" onclick="show('weakness');loadWeakness();">🔎 ジャンル別正答率・弱点チェックを見る</button>
+    <button class="analyze-btn" id="dash-analyze-btn" onclick="analyzeWithTeacher('dash')">🧑‍🏫 先生に分析してもらう</button>
+    <div id="dash-analyze-result"></div>
+  </div>
+</div>
+</div>
+
+<!-- ジャンル別正答率・弱点チェック -->
+<div id="weakness" class="screen">
+<div class="light-screen">
+  <div class="light-header">
+    <button class="light-back" onclick="show('dashboard')">←</button>
+    <div class="light-title">🔎 ジャンル別正答率</div>
+  </div>
+  <div id="weak-loading" class="light-empty">読み込み中...</div>
+  <div id="weak-list"></div>
+  <button class="analyze-btn" id="weak-analyze-btn" style="display:none" onclick="analyzeWithTeacher('weak')">🧑‍🏫 先生に分析してもらう</button>
+  <div id="weak-analyze-result"></div>
 </div>
 </div>
 
@@ -666,6 +733,7 @@ function chatPick(idx){
   var ok=idx===q.ans;
   if(ok)score++;
   answers.push({q:cur,sel:idx,ok:ok});
+  recordAnswer(q,ok,'chat');
   showAmado(ok);
   addUserBubble((idx+1)+'番！');
   setTimeout(function(){
@@ -748,6 +816,7 @@ function pick(idx){
   var q=Qs[cur];var ok=idx===q.ans;
   if(ok)score++;
   answers.push({q:cur,sel:idx,ok:ok});
+  recordAnswer(q,ok,'normal');
   showAmado(ok);
   for(var i=0;i<q.opts.length;i++){
     var b=document.getElementById('o'+i);b.disabled=true;
@@ -875,6 +944,7 @@ function hfAnswer(ans){
   var q=QsOX[cur];var ok=(ans===q.ans);
   if(ok)score++;
   answers.push({q:cur,sel:ans,ok:ok});
+  recordAnswer(q,ok,'handsfree');
   showAmado(ok);
   document.getElementById('hf-result').style.display='block';
   document.getElementById('hf-result-icon').textContent=ok?'○':'×';
@@ -922,6 +992,114 @@ function goHome(){synth&&synth.cancel();
 updateHome();
 updateContinueBtn();show('home');}
 
+/* ===================================================
+   解答記録（学習進捗ダッシュボード用）
+   =================================================== */
+function recordAnswer(q, isCorrect, mode){
+  try{
+    fetch('/api/answer',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        questionId: q.id || ('local-'+mode+'-'+cur),
+        cat: q.cat,
+        isCorrect: isCorrect,
+        level: q.level,
+        mode: mode,
+        q: q.q || q.stmt || '',
+        opts: q.opts || [],
+        ans: q.ans,
+        ex: q.ex,
+      }),
+    }).catch(function(){});
+  }catch(e){}
+}
+
+/* ===================================================
+   学習進捗ダッシュボード／弱点チェック
+   =================================================== */
+var lastProgressData = null;
+
+function openDashboard(){
+  show('dashboard');
+  document.getElementById('dash-body').style.display='none';
+  document.getElementById('dash-loading').style.display='block';
+  document.getElementById('dash-analyze-result').innerHTML='';
+  fetchProgress().then(function(data){
+    lastProgressData = data;
+    document.getElementById('dash-today-count').textContent = data.today.answered;
+    document.getElementById('dash-today-rate').textContent = data.today.accuracy+'%';
+    document.getElementById('dash-streak').textContent = data.streak.current;
+    document.getElementById('dash-loading').style.display='none';
+    document.getElementById('dash-body').style.display='block';
+  }).catch(function(){
+    document.getElementById('dash-loading').textContent='読み込みに失敗しました。';
+  });
+}
+
+function fetchProgress(){
+  return fetch('/api/progress').then(function(r){return r.json();});
+}
+
+function accuracyClass(accuracy){
+  if(accuracy===null) return 'none';
+  if(accuracy>=80) return 'good';
+  if(accuracy>=50) return 'mid';
+  return 'bad';
+}
+
+function loadWeakness(){
+  document.getElementById('weak-list').innerHTML='';
+  document.getElementById('weak-loading').style.display='block';
+  document.getElementById('weak-analyze-btn').style.display='none';
+  document.getElementById('weak-analyze-result').innerHTML='';
+  fetchProgress().then(function(data){
+    lastProgressData = data;
+    document.getElementById('weak-loading').style.display='none';
+    document.getElementById('weak-analyze-btn').style.display='block';
+    document.getElementById('weak-list').innerHTML = data.categories.map(function(c){
+      var cls = accuracyClass(c.accuracy);
+      var pctLabel = c.accuracy===null ? '--' : c.accuracy+'%';
+      var widthPct = c.accuracy===null ? 0 : c.accuracy;
+      return '<div class="cat-card">'
+        + '<div class="cat-card-info">'
+        + '<div class="cat-card-name">'+c.domain+'</div>'
+        + '<div class="cat-bar-track"><div class="cat-bar-fill '+cls+'" style="width:'+widthPct+'%"></div></div>'
+        + '<div class="cat-card-sub">'+(c.answered>0 ? c.answered+'問中'+c.correct+'問正解' : 'まだ挑戦していません')+'</div>'
+        + '</div>'
+        + '<div class="cat-card-pct '+cls+'">'+pctLabel+'</div>'
+        + '</div>';
+    }).join('');
+  }).catch(function(){
+    document.getElementById('weak-loading').textContent='読み込みに失敗しました。';
+  });
+}
+
+function analyzeWithTeacher(from){
+  var btnId = from==='dash' ? 'dash-analyze-btn' : 'weak-analyze-btn';
+  var resultId = from==='dash' ? 'dash-analyze-result' : 'weak-analyze-result';
+  var btn = document.getElementById(btnId);
+  var resultEl = document.getElementById(resultId);
+  btn.disabled = true;
+  var t = TEACHERS[selectedTeacher];
+  resultEl.innerHTML = '<div class="light-empty">'+t.name+'が分析中...</div>';
+
+  fetch('/api/analyze',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({character:selectedTeacher}),
+  }).then(function(r){return r.json();}).then(function(d){
+    btn.disabled = false;
+    if(d.noData){
+      resultEl.innerHTML = '<div class="light-empty">まだ解答データがありません。まずは問題を解いてみましょう！</div>';
+      return;
+    }
+    resultEl.innerHTML = '<div class="analyze-result">'+(d.reply||'分析に失敗しました。').replace(/</g,'&lt;')+'</div>';
+  }).catch(function(){
+    btn.disabled = false;
+    resultEl.innerHTML = '<div class="light-empty">通信エラーが発生しました。もう一度お試しください。</div>';
+  });
+}
 
 /* ===== アマドシステム ===== */
 var streak = 0;
