@@ -374,10 +374,10 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
     <div class="ex-label" id="ex-title"></div>
     <div class="ex-text" id="ex-text"></div>
     <div class="norm-chat-area">
-      <div class="norm-chat-head" id="norm-chat-head">クロちゃんに質問する</div>
+      <div class="norm-chat-head" id="norm-chat-head">先生に質問する</div>
       <div class="norm-chat-msgs" id="norm-chat-msgs"></div>
       <div class="norm-input-row">
-        <input class="norm-input" id="norm-chat-in" placeholder="なんでも聞いてや！" onkeydown="if(event.key==='Enter')sendNormChat()">
+        <input class="norm-input" id="norm-chat-in" placeholder="質問してや！" onkeydown="if(event.key==='Enter')sendNormChat()">
         <button class="norm-send" onclick="sendNormChat()">送信</button>
       </div>
     </div>
@@ -441,7 +441,9 @@ var TEACHERS = {
     wrong: 'ちゃうちゃう！惜しいけどな！',
     next: 'よっしゃ、次いくで！',
     question: 'ほな問題や！ゆっくり読んでや！',
-    placeholder: '質問してや！'
+    placeholder: '質問してや！',
+    hint: 'わからんことあったら何でも聞いてや！',
+    error: '通信エラーやで！もう一回試してや！'
   },
   bon: {
     name: 'ボン先生',
@@ -451,7 +453,9 @@ var TEACHERS = {
     wrong: 'ちがうのだ！でも大丈夫なのだ！',
     next: 'では次の問題なのだ！',
     question: 'では問題なのだ！よく読むのだ！',
-    placeholder: '質問するのだ！'
+    placeholder: '質問するのだ！',
+    hint: 'わからないことがあったら何でも聞くのだ！',
+    error: '通信エラーなのだ！もう一回試すのだ！'
   },
   gal: {
     name: 'ギャル先生',
@@ -461,7 +465,9 @@ var TEACHERS = {
     wrong: 'えー！惜しかったじゃん！ドンマイ！',
     next: 'じゃあ次いこ！テンション上げてこ！',
     question: 'じゃあ問題ね！ちゃんと読んでよ！',
-    placeholder: '質問して〜！'
+    placeholder: '質問して〜！',
+    hint: 'わからないことがあったら何でも聞いてね！',
+    error: '通信エラーだよ！もう一回試して！'
   },
   sebas: {
     name: 'セバス先生',
@@ -471,7 +477,9 @@ var TEACHERS = {
     wrong: '惜しゅうございました。共に参りましょう。',
     next: '次の問題に参りましょうか。',
     question: '問題でございます。ごゆっくりお読みください。',
-    placeholder: 'ご質問はございますか？'
+    placeholder: 'ご質問はございますか？',
+    hint: '何かご不明な点がございましたら、何なりとお申し付けくださいませ。',
+    error: '通信エラーが発生いたしました。恐れ入りますが、もう一度お試しくださいませ。'
   }
 };
 
@@ -703,7 +711,7 @@ function startChatMode(){
   var t=TEACHERS[selectedTeacher];
   var q=Qs[questionOrder[cur]];
   var intro = cur===0
-    ? t.intro+'\n\nまず1問目いくで！カテゴリは「'+q.cat+'」やで！'
+    ? t.intro+'\n\nまず1問目！カテゴリは「'+q.cat+'」！'
     : t.next+'\n問題'+(cur+1)+'問目！カテゴリは「'+q.cat+'」！';
   // 問題表示と同時にチャット入力を開放
   showChatInput(true);
@@ -749,7 +757,7 @@ function chatPick(idx){
       showChatInput(true);
       if(cur+1<Qs.length){actionState='next-q';setActionBtn('次の問題へ →',true);}
       else{actionState='result';setActionBtn('結果を見る',true);}
-      addBotBubble('わからんことあったら何でも聞いてや！');
+      addBotBubble(t.hint);
     });
   },300);
 }
@@ -788,13 +796,13 @@ async function sendChatMsg(){
   try{
     var r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:chatApiHist,character:selectedTeacher,system:ctx})});
     var d=await r.json();
-    var rep=d.reply||'うまく答えられんかった！もう一回聞いてや！';
+    var rep=d.reply||t.error;
     chatApiHist.push({role:'assistant',content:rep});
     var l=document.getElementById('chat-loading');if(l)l.remove();
     addBotBubble(rep);
   }catch(e){
     var l=document.getElementById('chat-loading');if(l)l.remove();
-    addBotBubble('通信エラーやで！もう一回試してや！');
+    addBotBubble(t.error);
   }
   document.getElementById('chat-send-btn').disabled=false;
 }
@@ -803,15 +811,17 @@ async function sendChatMsg(){
    通常クイズ
    =================================================== */
 function renderQ(){
-  var q=Qs[cur];
+  var q=Qs[cur];var t=TEACHERS[selectedTeacher];
   document.getElementById('prog').style.width=((cur+1)/Qs.length*100)+'%';
   document.getElementById('q-cat').textContent=q.cat;
   document.getElementById('q-num').textContent=(cur+1)+' / '+Qs.length;
   document.getElementById('q-text').textContent=q.q;
   document.getElementById('exbox').style.display='none';
   normChatHist=[];
+  document.getElementById('norm-chat-head').textContent=t.name+'に質問する';
+  document.getElementById('norm-chat-in').placeholder=t.placeholder;
   document.getElementById('norm-chat-msgs').innerHTML='';
-  addNormBot('なんでも聞いてや！');
+  addNormBot(t.hint);
   document.getElementById('opts').innerHTML=q.opts.map(function(o,i){
     return '<button class="opt-btn" id="o'+i+'" onclick="pick('+i+')"><span class="opt-num">'+(i+1)+'</span><span>'+o+'</span></button>';
   }).join('');
@@ -857,17 +867,17 @@ async function sendNormChat(){
   inp.value='';addNormUser(txt);
   normChatHist.push({role:'user',content:txt});
   addNormBot('考え中...');
-  var q=Qs[cur];
-  var sys='あなたはFP2級の先生です。わかりやすく丁寧に教えてください。\nカテゴリ：'+q.cat+'\n正解：'+q.opts[q.ans]+'\n解説：'+q.ex+'\n200字以内で答えてください。';
+  var q=Qs[cur];var t=TEACHERS[selectedTeacher];
+  var ctx='今の問題：\nカテゴリ：'+q.cat+'\n問題：'+q.q+'\n正解：'+q.opts[q.ans]+'\n解説：'+q.ex;
   try{
-    var r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:normChatHist,system:sys})});
-    var d=await r.json();var rep=d.reply||'うまく答えられんかった！';
+    var r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:normChatHist,character:selectedTeacher,system:ctx})});
+    var d=await r.json();var rep=d.reply||t.error;
     normChatHist.push({role:'assistant',content:rep});
     var m=document.getElementById('norm-chat-msgs');if(m.lastChild)m.removeChild(m.lastChild);
     addNormBot(rep);
   }catch(e){
     var m=document.getElementById('norm-chat-msgs');if(m.lastChild)m.removeChild(m.lastChild);
-    addNormBot('通信エラー！もう一回試してや！');
+    addNormBot(t.error);
   }
 }
 
