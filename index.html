@@ -36,6 +36,13 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 .footer{text-align:center;font-size:12px;color:#444;margin-top:8px}
 .screen{display:none}
 .screen.on{display:block}
+.count-select{margin-bottom:16px}
+.count-select-label{font-size:12px;color:#888;margin-bottom:8px;font-weight:700}
+.count-btns{display:flex;gap:8px}
+.count-btn{flex:1;padding:10px 0;background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.08);border-radius:10px;color:#e8e8e8;font-size:14px;font-weight:700;cursor:pointer}
+.count-btn.selected{background:rgba(255,140,0,0.15);border-color:#ff8c00;color:#ff8c00}
+.loading-spinner{width:40px;height:40px;border:3px solid rgba(255,140,0,0.2);border-top-color:#ff8c00;border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* 先生選択 */
 .teacher-title{font-size:18px;font-weight:800;color:#fff;margin-bottom:6px}
@@ -175,22 +182,38 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
     <div class="hero-text2">完全理解！</div>
     <div class="hero-sub">暗記じゃなくて「なぜ？」で理解する学習法</div>
     <div class="stats-row">
-      <div class="stat"><div class="stat-num">5</div><div class="stat-label">問題数</div></div>
+      <div class="stat"><div class="stat-num" id="s-qcount">10</div><div class="stat-label">問題数</div></div>
       <div class="stat-divider"></div>
       <div class="stat"><div class="stat-num" id="s-attempts">0</div><div class="stat-label">挑戦回数</div></div>
       <div class="stat-divider"></div>
       <div class="stat"><div class="stat-num" id="s-latest">--</div><div class="stat-label">最新スコア</div></div>
     </div>
+    <div class="count-select">
+      <div class="count-select-label">出題数</div>
+      <div class="count-btns">
+        <button class="count-btn" data-n="5" onclick="selectCount(5)">5問</button>
+        <button class="count-btn selected" data-n="10" onclick="selectCount(10)">10問</button>
+        <button class="count-btn" data-n="20" onclick="selectCount(20)">20問</button>
+      </div>
+    </div>
     <button class="start-btn" onclick="goTeacherSelect('random')">先生を選んでスタート！（ランダム）</button>
     <button class="outline-btn" onclick="goTeacherSelect('continue')" id="continue-btn" style="margin-bottom:10px;display:none">続きから再開する（<span id="continue-info"></span>）</button>
-    <button class="outline-btn" onclick="startQuiz('normal')">通常クイズ</button>
-    <button class="outline-btn" onclick="startQuiz('handsfree')">ハンズフリーモード（○×）</button>
+    <button class="outline-btn" onclick="beginQuiz('normal')">通常クイズ</button>
+    <button class="outline-btn" onclick="beginQuiz('handsfree')">ハンズフリーモード（○×）</button>
   </div>
   <div class="history-card" id="hist-card" style="display:none">
     <div class="history-title">最近の記録</div>
     <div id="hist-list"></div>
   </div>
   <div class="footer">AID式学習法 © amadopapa</div>
+</div>
+</div>
+
+<!-- 読み込み中 -->
+<div id="loading" class="screen">
+<div class="container" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh">
+  <div class="loading-spinner"></div>
+  <div style="margin-top:16px;color:#888;font-size:14px">問題を読み込み中...</div>
 </div>
 </div>
 
@@ -381,16 +404,15 @@ var TEACHERS = {
   }
 };
 
-/* ===== 問題データ ===== */
-var Qs = [
-  {cat:"ライフ・社会保険",q:"協会けんぽの被保険者に関する記述の空欄にあてはまる組合せとして、最も適切なものはどれか。\n\n特定適用事業所に使用される短時間労働者のうち、次のいずれかに該当する者は、原則として被保険者とならない。\n① 1週間の所定労働時間が（イ）未満の者\n② 所定内賃金が月額（ウ）未満の者\n③ 学生である者\n\nまた短時間労働者の要件として、所定労働時間・労働日数が通常の労働者の（ア）未満であること。",opts:["ア：3分の2　イ：20時間　ウ：5万8千円","ア：3分の2　イ：25時間　ウ：8万8千円","ア：4分の3　イ：20時間　ウ：8万8千円","ア：4分の3　イ：25時間　ウ：5万8千円"],ans:2,ex:"ポイントは3つ！\n\n〇 ア：4分の3\n〇 イ：20時間\n〇 ウ：8万8千円（106万円の壁）\n\n「ハチハチ（88）で切れる！」で覚えよう！"},
-  {cat:"ライフ・社会保険",q:"労働者災害補償保険に関する次の記述のうち、最も不適切なものはどれか。",opts:["労災保険の適用を受ける労働者には、アルバイトやパートタイマーも含まれる","労災保険料の算定に用いられる労災保険率は、適用事業に従事する労働者数に応じて定められている","業務上の傷病が治癒したときに一定の障害が残り、障害等級に該当する場合、障害補償給付が支給される","業務災害で労働者が死亡した場合、遺族に対して遺族補償年金または遺族補償一時金が支給される"],ans:1,ex:"2番が不適切！\n\n〇 労災保険率は「労働者数」ではなく「業種」で決まる！\n雇用形態に関係なく全員対象！"},
-  {cat:"ライフ・社会保険",q:"国民年金の保険料に関する次の記述のうち、最も不適切なものはどれか。",opts:["第1号被保険者は、一定の条件を除き、月額400円の付加保険料を納付できる","産前産後期間の保険料免除制度により免除された期間は、保険料納付済期間として老齢基礎年金の年金額に反映される","保険料免除期間の保険料を追納する場合、追納額は追納する時期にかかわらず、免除された時点の保険料額となる","保険料を前納した第1号被保険者が、前納期間の途中で第2号被保険者になった場合、未経過期間分の保険料の還付を受けられる"],ans:2,ex:"3番が不適切！\n\n2年以内の追納 → 加算なし\n3年度目以降 → 加算あり（割増！）\n\n「早よ追納せな損するで！」"},
-  {cat:"タックス",q:"わが国の税制に関する次の記述のうち、最も不適切なものはどれか。",opts:["所得税では、課税対象となる所得を10種類に区分し、種類ごとに計算する","相続税では、納税者が申告書に記載した内容に基づき、税務署長が納付税額を決定する賦課課税方式が採用されている","税金を負担する者と納める者が異なる税金を間接税といい、消費税は間接税に該当する","法人税は国税、不動産取得税は地方税に該当する"],ans:1,ex:"2番が不適切！\n\n〇 相続税は「申告納税方式」！\n\n申告納税：所得税・相続税・贈与税・法人税\n賦課課税：固定資産税・住民税・不動産取得税"},
-  {cat:"タックス",q:"所得税における各種所得に関する次の記述のうち、最も適切なものはどれか。",opts:["個人事業主が事業資金で株式を購入し、配当金を受け取ったことによる所得は事業所得となる","給与収入が850万円を超える給与所得者が23歳未満の扶養親族を有する場合、所得金額調整控除として最大10万円が控除される","個人による不動産の貸付が事業的規模で行われている場合、その賃貸収入による所得は事業所得となる","会社員が自宅購入資金として勤務先から無利息で金銭を借り入れたことにより生じた経済的利益は給与所得となる"],ans:3,ex:"4番が正解！\n\n〇 無利息借入の経済的利益 = 給与所得！\n\n× 1番：配当金は「配当所得」\n× 2番：最大は「15万円」\n× 3番：不動産貸付は「不動産所得」"},
-];
+/* ===== 問題データ（通常/チャットは /api/questions から動的取得。ロード前は空） ===== */
+var Qs = [];
+var QsOX = [];
 
-var QsOX = [
+// ハンズフリー（○×）用の固定セット。
+// Firestoreのquestions_oxコレクションはconvert_to_ox.jsの正誤判定に既知の不具合があり
+// （「最も不適切なものはどれか」型の設問で正誤が反転する）修正するまではAPI接続を見送り、
+// 内容を手で確認済みのこの固定セットを使う。
+var QsOX_FALLBACK = [
   {cat:"ライフ・社会保険", stmt:"協会けんぽの短時間労働者の被保険者除外条件のうち、所定内賃金が月額8万8千円未満の場合は被保険者とならない。", ans:true, ex:"正解！\n月額8万8千円（年収106万円の壁）未満は対象外！"},
   {cat:"ライフ・社会保険", stmt:"労災保険率は、適用事業に従事する労働者数に応じて定められている。", ans:false, ex:"不正解！\n労災保険率は「業種」で決まる！"},
   {cat:"タックス", stmt:"相続税は、税務署長が納付税額を決定する賦課課税方式が採用されている。", ans:false, ex:"不正解！\n相続税は「申告納税方式」！"},
@@ -400,6 +422,15 @@ var QsOX = [
 
 /* ===== 状態 ===== */
 var cur=0, score=0, answers=[], mode='chat';
+var selectedCount = 10;
+
+function selectCount(n){
+  selectedCount = n;
+  document.querySelectorAll('.count-btn').forEach(function(b){
+    b.classList.toggle('selected', Number(b.dataset.n)===n);
+  });
+  document.getElementById('s-qcount').textContent = n;
+}
 var selectedTeacher = 'yassan';
 var chatApiHist=[];
 var questionOrder=[];
@@ -434,24 +465,21 @@ function selectTeacher(key){
   document.querySelectorAll('.teacher-card').forEach(function(c){c.classList.remove('selected')});
   document.getElementById('tc-'+key).classList.add('selected');
   setTimeout(function(){
+    var resumed = false;
     if(startMode === 'continue'){
       try {
         var prog = JSON.parse(localStorage.getItem('aid_fp2_progress') || 'null');
-        if(prog && prog.cur > 0){
+        if(prog && prog.cur > 0 && prog.questions && prog.questions.length){
           cur = prog.cur;
           score = prog.score || 0;
           answers = prog.answers || [];
           questionOrder = prog.order || makeOrder('continue');
-        } else {
-          questionOrder = makeOrder('random');
+          Qs = prog.questions;
+          resumed = true;
         }
-      } catch(e) {
-        questionOrder = makeOrder('random');
-      }
-    } else {
-      questionOrder = makeOrder('random');
+      } catch(e) {}
     }
-    startQuiz('chat');
+    beginQuiz('chat', resumed);
   }, 200);
 }
 
@@ -485,8 +513,36 @@ function updateHome(){
   }
 }
 
+async function loadQuestions(n){
+  var url = '/api/questions?category=all&limit='+n;
+  var r = await fetch(url);
+  var d = await r.json();
+  if (d.error || !d.questions || d.questions.length === 0) throw new Error(d.error || 'empty');
+  return d.questions;
+}
+
+async function beginQuiz(m, resumed){
+  if(!resumed){
+    cur=0; score=0; answers=[];
+    if(m==='handsfree'){
+      QsOX = QsOX_FALLBACK.slice();
+    } else {
+      show('loading');
+      try{
+        Qs = await loadQuestions(selectedCount);
+      }catch(e){
+        alert('問題の読み込みに失敗しました。通信環境をご確認のうえ、もう一度お試しください。');
+        show('home');
+        return;
+      }
+      if(m==='chat') questionOrder = makeOrder('random');
+    }
+  }
+  startQuiz(m);
+}
+
 function startQuiz(m){
-  mode=m; cur=0; score=0; answers=[];
+  mode=m;
   if(m==='chat'){
     var t=TEACHERS[selectedTeacher];
     document.getElementById('chat-avatar').innerHTML='<img src="'+t.icon+'" alt="'+t.name+'">';
@@ -625,7 +681,7 @@ function saveProgress(){
   try {
     localStorage.setItem('aid_fp2_progress', JSON.stringify({
       cur: cur, score: score, answers: answers,
-      order: questionOrder, teacher: selectedTeacher
+      order: questionOrder, teacher: selectedTeacher, questions: Qs
     }));
   } catch(e) {}
 }
