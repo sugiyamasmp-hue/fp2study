@@ -440,7 +440,8 @@ var TEACHERS = {
     correct: 'そうや！正解やで！さすがやな！',
     wrong: 'ちゃうちゃう！惜しいけどな！',
     next: 'よっしゃ、次いくで！',
-    question: 'ほな問題や！ゆっくり読んでや！'
+    question: 'ほな問題や！ゆっくり読んでや！',
+    placeholder: '質問してや！'
   },
   bon: {
     name: 'ボン先生',
@@ -449,7 +450,8 @@ var TEACHERS = {
     correct: 'これでいいのだ！正解なのだ！',
     wrong: 'ちがうのだ！でも大丈夫なのだ！',
     next: 'では次の問題なのだ！',
-    question: 'では問題なのだ！よく読むのだ！'
+    question: 'では問題なのだ！よく読むのだ！',
+    placeholder: '質問するのだ！'
   },
   gal: {
     name: 'ギャル先生',
@@ -458,7 +460,8 @@ var TEACHERS = {
     correct: 'やばっ！！正解じゃん！マジ天才！',
     wrong: 'えー！惜しかったじゃん！ドンマイ！',
     next: 'じゃあ次いこ！テンション上げてこ！',
-    question: 'じゃあ問題ね！ちゃんと読んでよ！'
+    question: 'じゃあ問題ね！ちゃんと読んでよ！',
+    placeholder: '質問して〜！'
   },
   sebas: {
     name: 'セバス先生',
@@ -467,7 +470,8 @@ var TEACHERS = {
     correct: '大変よろしゅうございました。正解でございます。',
     wrong: '惜しゅうございました。共に参りましょう。',
     next: '次の問題に参りましょうか。',
-    question: '問題でございます。ごゆっくりお読みください。'
+    question: '問題でございます。ごゆっくりお読みください。',
+    placeholder: 'ご質問はございますか？'
   }
 };
 
@@ -614,6 +618,7 @@ function startQuiz(m){
     var t=TEACHERS[selectedTeacher];
     document.getElementById('chat-avatar').innerHTML='<img src="'+t.icon+'" alt="'+t.name+'">';
     document.getElementById('chat-teacher-name').textContent=t.name;
+    document.getElementById('chat-in').placeholder=t.placeholder;
     chatApiHist=[];
     show('chat-mode');
     startChatMode();
