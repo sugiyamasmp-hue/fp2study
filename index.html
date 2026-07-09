@@ -591,10 +591,14 @@ function typeText(el,text,onDone){
   el.textContent='';
   var cursor=document.createElement('span');cursor.className='typing-cursor';
   el.appendChild(cursor);
+  // Array.from()でUnicodeコードポイント単位に分割する。
+  // text[i]や生のインデックスで1文字ずつ切り出すと、絵文字（サロゲートペア）が
+  // 上位/下位サロゲートに分断され、それぞれが不正な文字として□□のように文字化けする。
+  var chars=Array.from(text);
   var i=0;var speed=56;
   function next(){
-    if(i<text.length){
-      el.insertBefore(document.createTextNode(text[i]),cursor);
+    if(i<chars.length){
+      el.insertBefore(document.createTextNode(chars[i]),cursor);
       i++;scrollFeed();
       setTimeout(next,speed);
     } else {
