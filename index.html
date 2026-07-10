@@ -192,6 +192,15 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 .amado-popup.text-fade .amado-badge,.amado-popup.text-fade .amado-msg,.amado-popup.text-fade .amado-sub{opacity:0}
 .amado-close{padding:10px 28px;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:800;cursor:pointer}
 .streak-badge{display:inline-block;background:rgba(255,140,0,0.15);border:1px solid rgba(255,140,0,0.4);color:#ff8c00;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700;margin-left:8px}
+
+/* 今日の格言 */
+.quote-card{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,140,0,0.25);border-radius:18px;padding:16px;margin-bottom:16px}
+.quote-amado-img{width:64px;height:64px;object-fit:cover;border-radius:14px;flex-shrink:0;border:2px solid rgba(255,140,0,0.4)}
+.quote-body{flex:1;min-width:0}
+.quote-label{font-size:11px;font-weight:800;color:#ff8c00;letter-spacing:0.05em;margin-bottom:6px}
+.quote-en{font-size:13px;font-style:italic;color:#e8e8e8;line-height:1.5;margin-bottom:4px}
+.quote-ja{font-size:13px;color:#ccc;line-height:1.5;margin-bottom:6px}
+.quote-author{font-size:12px;color:#ff8c00;font-weight:700;text-align:left}
 </style>
 </head>
 <body>
@@ -205,6 +214,15 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
     <div>
       <div class="logo-title">AID式学習法</div>
       <div class="logo-sub">AI Interactive Dialogue</div>
+    </div>
+  </div>
+  <div class="quote-card" id="quote-card">
+    <img class="quote-amado-img" src="/images/amado/amado_study.png" alt="アマド">
+    <div class="quote-body">
+      <div class="quote-label">今日の格言</div>
+      <div class="quote-en" id="quote-en"></div>
+      <div class="quote-ja" id="quote-ja"></div>
+      <div class="quote-author" id="quote-author"></div>
     </div>
   </div>
   <div class="card">
@@ -434,6 +452,7 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 </div>
 </div>
 
+<script src="/quotes.js"></script>
 <script>
 /* ===== 先生データ ===== */
 var TEACHERS = {
@@ -583,6 +602,20 @@ function show(id){
   document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on')});
   document.getElementById(id).classList.add('on');
   window.scrollTo(0,0);
+}
+
+function renderDailyQuote(){
+  if(typeof QUOTES === 'undefined' || !QUOTES.length) return;
+  var today = new Date();
+  var seed = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+  var hash = 0;
+  for(var i=0;i<seed.length;i++){
+    hash = (hash*31 + seed.charCodeAt(i)) >>> 0;
+  }
+  var q = QUOTES[hash % QUOTES.length];
+  document.getElementById('quote-en').textContent = '"'+q.en+'"';
+  document.getElementById('quote-ja').textContent = q.ja;
+  document.getElementById('quote-author').textContent = '— '+q.author+(q.authorJa?'（'+q.authorJa+'）':'');
 }
 
 function updateHome(){
@@ -1196,6 +1229,7 @@ function closeAmado(){
 
 updateHome();
 updateContinueBtn();
+renderDailyQuote();
 </script>
 
 <!-- アマドポップアップ -->
