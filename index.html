@@ -279,6 +279,10 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
   </div>
   <div id="weak-loading" class="light-empty">読み込み中...</div>
   <div id="weak-list"></div>
+  <div id="weak-mock-section" style="display:none">
+    <div class="light-title" style="margin:16px 16px 8px">📝 模擬試験（総合）</div>
+    <div id="weak-mock-list"></div>
+  </div>
   <button class="analyze-btn" id="weak-analyze-btn" style="display:none" onclick="analyzeWithTeacher('weak')">🧑‍🏫 先生に分析してもらう</button>
   <div id="weak-analyze-result"></div>
 </div>
@@ -1063,8 +1067,24 @@ function accuracyClass(accuracy){
   return 'bad';
 }
 
+function renderCatCard(c){
+  var cls = accuracyClass(c.accuracy);
+  var pctLabel = c.accuracy===null ? '--' : c.accuracy+'%';
+  var widthPct = c.accuracy===null ? 0 : c.accuracy;
+  return '<div class="cat-card">'
+    + '<div class="cat-card-info">'
+    + '<div class="cat-card-name">'+c.domain+'</div>'
+    + '<div class="cat-bar-track"><div class="cat-bar-fill '+cls+'" style="width:'+widthPct+'%"></div></div>'
+    + '<div class="cat-card-sub">'+(c.answered>0 ? c.answered+'問中'+c.correct+'問正解' : 'まだ挑戦していません')+'</div>'
+    + '</div>'
+    + '<div class="cat-card-pct '+cls+'">'+pctLabel+'</div>'
+    + '</div>';
+}
+
 function loadWeakness(){
   document.getElementById('weak-list').innerHTML='';
+  document.getElementById('weak-mock-section').style.display='none';
+  document.getElementById('weak-mock-list').innerHTML='';
   document.getElementById('weak-loading').style.display='block';
   document.getElementById('weak-analyze-btn').style.display='none';
   document.getElementById('weak-analyze-result').innerHTML='';
@@ -1072,19 +1092,11 @@ function loadWeakness(){
     lastProgressData = data;
     document.getElementById('weak-loading').style.display='none';
     document.getElementById('weak-analyze-btn').style.display='block';
-    document.getElementById('weak-list').innerHTML = data.categories.map(function(c){
-      var cls = accuracyClass(c.accuracy);
-      var pctLabel = c.accuracy===null ? '--' : c.accuracy+'%';
-      var widthPct = c.accuracy===null ? 0 : c.accuracy;
-      return '<div class="cat-card">'
-        + '<div class="cat-card-info">'
-        + '<div class="cat-card-name">'+c.domain+'</div>'
-        + '<div class="cat-bar-track"><div class="cat-bar-fill '+cls+'" style="width:'+widthPct+'%"></div></div>'
-        + '<div class="cat-card-sub">'+(c.answered>0 ? c.answered+'問中'+c.correct+'問正解' : 'まだ挑戦していません')+'</div>'
-        + '</div>'
-        + '<div class="cat-card-pct '+cls+'">'+pctLabel+'</div>'
-        + '</div>';
-    }).join('');
+    document.getElementById('weak-list').innerHTML = data.categories.map(renderCatCard).join('');
+    if(data.mockExam){
+      document.getElementById('weak-mock-list').innerHTML = renderCatCard(data.mockExam);
+      document.getElementById('weak-mock-section').style.display='block';
+    }
   }).catch(function(){
     document.getElementById('weak-loading').textContent='読み込みに失敗しました。';
   });

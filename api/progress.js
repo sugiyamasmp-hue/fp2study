@@ -1,5 +1,5 @@
 const { db, todayJST, addDaysToDateStr } = require('../lib/db');
-const { DOMAINS } = require('../lib/categoryDomains');
+const { DOMAINS, MOCK_EXAM_CATEGORY } = require('../lib/categoryDomains');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -40,10 +40,22 @@ module.exports = async function handler(req, res) {
       return a.accuracy - b.accuracy;
     });
 
+    const mockSnap = await db.collection('category_progress').doc(MOCK_EXAM_CATEGORY).get();
+    const m = mockSnap.exists ? mockSnap.data() : { answered: 0, correct: 0 };
+    const mockAnswered = m.answered || 0;
+    const mockCorrect = m.correct || 0;
+    const mockExam = {
+      domain: MOCK_EXAM_CATEGORY,
+      answered: mockAnswered,
+      correct: mockCorrect,
+      accuracy: mockAnswered > 0 ? Math.round((mockCorrect / mockAnswered) * 100) : null,
+    };
+
     return res.status(200).json({
       today: { answered: todayAnswered, correct: todayCorrect, accuracy: todayAccuracy },
       streak: { current: currentStreak, longest: p.longestStreak || 0 },
       categories,
+      mockExam,
     });
   } catch (error) {
     return res.status(200).json({ error: error.message });
