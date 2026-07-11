@@ -42,6 +42,12 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 .count-btns{display:flex;gap:8px}
 .count-btn{flex:1;padding:10px 0;background:var(--surface);border:2px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;cursor:pointer}
 .count-btn.selected{background:rgba(37,99,235,0.15);border-color:#2563eb;color:#2563eb}
+.category-select{margin-bottom:16px}
+.category-select-label{font-size:12px;color:var(--text-secondary);margin-bottom:8px;font-weight:700}
+.category-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.category-btn{padding:10px 6px;background:var(--surface);border:2px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-weight:700;cursor:pointer;line-height:1.3}
+.category-btn.all{grid-column:1 / -1}
+.category-btn.selected{background:rgba(37,99,235,0.15);border-color:#2563eb;color:#2563eb}
 .loading-spinner{width:40px;height:40px;border:3px solid rgba(37,99,235,0.2);border-top-color:#2563eb;border-radius:50%;animation:spin 0.8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
@@ -326,6 +332,10 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
       <div class="stat"><div class="stat-num" id="s-attempts">0</div><div class="stat-label">挑戦回数</div></div>
       <div class="stat-divider"></div>
       <div class="stat"><div class="stat-num" id="s-latest">--</div><div class="stat-label">最新スコア</div></div>
+    </div>
+    <div class="category-select">
+      <div class="category-select-label">出題分野</div>
+      <div class="category-btns" id="category-btns"></div>
     </div>
     <div class="count-select">
       <div class="count-select-label">出題数</div>
@@ -667,6 +677,34 @@ function selectCount(n){
   });
   document.getElementById('s-qcount').textContent = n;
 }
+
+/* ===== 分野選択 ===== */
+var CATEGORIES = [
+  {key:'all', label:'全分野おまかせ（ランダム）', all:true},
+  {key:'ライフプランニング・社会保険', label:'ライフプランニング・社会保険'},
+  {key:'リスク管理・保険', label:'リスク管理・保険'},
+  {key:'金融資産運用', label:'金融資産運用'},
+  {key:'タックスプランニング', label:'タックスプランニング'},
+  {key:'不動産', label:'不動産'},
+  {key:'相続・事業承継', label:'相続・事業承継'},
+  {key:'模擬試験', label:'模擬試験'},
+];
+var selectedCategory = 'all';
+
+function renderCategoryBtns(){
+  var wrap = document.getElementById('category-btns');
+  wrap.innerHTML = CATEGORIES.map(function(c){
+    var cls = 'category-btn' + (c.all ? ' all' : '') + (c.key===selectedCategory ? ' selected' : '');
+    return '<button class="'+cls+'" data-cat="'+c.key+'" onclick="selectCategory(\''+c.key+'\')">'+c.label+'</button>';
+  }).join('');
+}
+
+function selectCategory(key){
+  selectedCategory = key;
+  document.querySelectorAll('.category-btn').forEach(function(b){
+    b.classList.toggle('selected', b.dataset.cat===key);
+  });
+}
 var selectedTeacher = 'yassan';
 var chatApiHist=[];
 var questionOrder=[];
@@ -764,7 +802,7 @@ function updateHome(){
 }
 
 async function loadQuestions(n){
-  var url = '/api/questions?category=all&limit='+n;
+  var url = '/api/questions?category='+encodeURIComponent(selectedCategory)+'&limit='+n;
   var r = await fetch(url);
   var d = await r.json();
   if (d.error || !d.questions || d.questions.length === 0) throw new Error(d.error || 'empty');
@@ -1493,6 +1531,7 @@ function closeAmado(){
 updateHome();
 updateContinueBtn();
 renderDailyQuote();
+renderCategoryBtns();
 </script>
 
 <!-- アマドポップアップ -->
