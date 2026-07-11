@@ -202,13 +202,81 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 .quote-en{font-size:13px;font-style:italic;color:var(--text);line-height:1.5;margin-bottom:4px}
 .quote-ja{font-size:13px;color:var(--text-secondary);line-height:1.5;margin-bottom:6px}
 .quote-author{font-size:12px;color:#2563eb;font-weight:700;text-align:left}
+
+/* ===== BLAKE PASSPORT スプラッシュ（トップページ） ===== */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Serif+JP:wght@400;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap');
+.bp-stage{position:relative;z-index:1;min-height:100vh;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse at 50% 20%,rgba(79,211,255,0.08) 0%,transparent 50%),radial-gradient(ellipse at 50% 80%,rgba(201,164,76,0.06) 0%,transparent 50%),linear-gradient(180deg,#050a14 0%,#0a1628 50%,#060c1a 100%)}
+.bp-circuit-bg{position:absolute;inset:0;opacity:0.15;background-image:linear-gradient(90deg,transparent 49%,rgba(79,211,255,0.3) 49.5%,rgba(79,211,255,0.3) 50%,transparent 50.5%),linear-gradient(0deg,transparent 49%,rgba(79,211,255,0.15) 49.5%,rgba(79,211,255,0.15) 50%,transparent 50.5%);background-size:80px 80px;animation:bpDrift 40s linear infinite}
+@keyframes bpDrift{from{background-position:0 0}to{background-position:160px 160px}}
+.bp-particle{position:absolute;width:3px;height:3px;background:#4fd3ff;border-radius:50%;box-shadow:0 0 6px 2px rgba(79,211,255,0.6);opacity:0;animation:bpRise 6s ease-in infinite}
+@keyframes bpRise{0%{opacity:0;transform:translateY(0) scale(0.5)}10%{opacity:0.8}90%{opacity:0.4}100%{opacity:0;transform:translateY(-100vh) scale(1.2)}}
+.bp-logo-wrap{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;animation:bpEmerge 1.4s cubic-bezier(0.16,1,0.3,1) both}
+@keyframes bpEmerge{0%{opacity:0;transform:translateY(30px) scale(0.92);filter:blur(8px)}100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+.bp-logo-glow{position:relative;width:168px;height:auto}
+.bp-logo-glow img{width:100%;height:auto;display:block;filter:drop-shadow(0 0 24px rgba(79,211,255,0.35)) drop-shadow(0 8px 20px rgba(0,0,0,0.6));animation:bpBreathe 4s ease-in-out infinite}
+@keyframes bpBreathe{0%,100%{filter:drop-shadow(0 0 24px rgba(79,211,255,0.35)) drop-shadow(0 8px 20px rgba(0,0,0,0.6))}50%{filter:drop-shadow(0 0 34px rgba(79,211,255,0.55)) drop-shadow(0 8px 20px rgba(0,0,0,0.6))}}
+.bp-ring{position:absolute;top:50%;left:50%;width:220px;height:220px;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(201,164,76,0.25);animation:bpSpin 20s linear infinite}
+.bp-ring::before{content:'';position:absolute;top:-1px;left:50%;width:6px;height:6px;background:#c9a44c;border-radius:50%;box-shadow:0 0 8px 2px rgba(201,164,76,0.8);transform:translateX(-50%)}
+@keyframes bpSpin{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+.bp-brand{margin-top:28px;text-align:center}
+.bp-brand-en{font-family:'Cinzel',serif;font-size:30px;font-weight:600;letter-spacing:0.12em;background:linear-gradient(180deg,#f0dca0 0%,#c9a44c 55%,#9a7c33 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 8px rgba(201,164,76,0.25))}
+.bp-brand-jp{margin-top:8px;font-family:'Noto Serif JP',serif;font-size:13px;letter-spacing:0.3em;color:#6f8199;font-weight:600}
+.bp-divider{margin:26px 0;width:64px;height:1px;background:linear-gradient(90deg,transparent,#c9a44c,transparent);position:relative}
+.bp-divider::before{content:'◆';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:6px;color:#c9a44c;background:#060b16;padding:0 6px}
+.bp-cta{position:relative;z-index:2;padding:16px 56px;background:linear-gradient(180deg,rgba(201,164,76,0.12),rgba(201,164,76,0.04));border:1px solid rgba(201,164,76,0.5);border-radius:2px;color:#f0dca0;font-family:'Noto Serif JP',serif;font-size:15px;font-weight:600;letter-spacing:0.15em;cursor:pointer;transition:all 0.35s ease;overflow:hidden;animation:bpEmerge 1.4s cubic-bezier(0.16,1,0.3,1) 0.3s both}
+.bp-cta::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);transition:left 0.6s ease}
+.bp-cta:hover{border-color:#f0dca0;background:linear-gradient(180deg,rgba(201,164,76,0.22),rgba(201,164,76,0.08));box-shadow:0 0 24px rgba(201,164,76,0.25);transform:translateY(-1px)}
+.bp-cta:hover::before{left:100%}
+.bp-footer-line{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);font-family:'Zen Kaku Gothic New',sans-serif;font-size:11px;letter-spacing:0.15em;color:#3d4a5c;animation:bpEmerge 1.4s cubic-bezier(0.16,1,0.3,1) 0.5s both}
+.bp-corner{position:absolute;width:20px;height:20px;border:1px solid rgba(201,164,76,0.35)}
+.bp-corner-tl{top:24px;left:24px;border-right:none;border-bottom:none}
+.bp-corner-tr{top:24px;right:24px;border-left:none;border-bottom:none}
+.bp-corner-bl{bottom:24px;left:24px;border-right:none;border-top:none}
+.bp-corner-br{bottom:24px;right:24px;border-left:none;border-top:none}
 </style>
 </head>
 <body>
 <div class="bg"></div>
 
+<!-- BLAKE PASSPORT スプラッシュ（トップページ） -->
+<div id="splash" class="screen on">
+<div class="bp-stage">
+  <div class="bp-circuit-bg"></div>
+
+  <div class="bp-particle" style="left:15%;animation-delay:0s"></div>
+  <div class="bp-particle" style="left:30%;animation-delay:1.2s"></div>
+  <div class="bp-particle" style="left:50%;animation-delay:2.4s"></div>
+  <div class="bp-particle" style="left:68%;animation-delay:0.6s"></div>
+  <div class="bp-particle" style="left:82%;animation-delay:3.1s"></div>
+  <div class="bp-particle" style="left:40%;animation-delay:4.2s"></div>
+  <div class="bp-particle" style="left:75%;animation-delay:1.8s"></div>
+
+  <div class="bp-corner bp-corner-tl"></div>
+  <div class="bp-corner bp-corner-tr"></div>
+  <div class="bp-corner bp-corner-bl"></div>
+  <div class="bp-corner bp-corner-br"></div>
+
+  <div class="bp-logo-wrap">
+    <div class="bp-logo-glow">
+      <div class="bp-ring"></div>
+      <img src="/images/brand/blake_passport_logo.png" alt="Blake Passport">
+    </div>
+    <div class="bp-brand">
+      <div class="bp-brand-en">BLAKE PASSPORT</div>
+      <div class="bp-brand-jp">合 格 へ の 通 行 証</div>
+    </div>
+  </div>
+
+  <div class="bp-divider"></div>
+
+  <button class="bp-cta" onclick="show('home')">学習をはじめる</button>
+
+  <div class="bp-footer-line">FP2級 &nbsp;·&nbsp; AID式学習法</div>
+</div>
+</div>
+
 <!-- HOME -->
-<div id="home" class="screen on">
+<div id="home" class="screen">
 <div class="container">
   <div class="logo-wrap">
     <div class="logo-icon">A</div>
