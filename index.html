@@ -107,19 +107,27 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 .typing-cursor{display:inline-block;width:2px;height:1em;background:#2563eb;margin-left:2px;animation:blink 0.7s step-end infinite;vertical-align:text-bottom}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .opts-wrap{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
-.opt-btn{display:flex;align-items:flex-start;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:16px;text-align:left;cursor:pointer;line-height:1.7;width:100%;transition:background 0.15s}
-.opt-btn:hover{background:rgba(37,99,235,0.1);border-color:rgba(37,99,235,0.3)}
+.opt-btn{position:relative;overflow:hidden;display:flex;align-items:flex-start;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:16px;text-align:left;cursor:pointer;line-height:1.7;width:100%;transition:background 0.15s,border-color 0.15s,box-shadow 0.15s}
+.opt-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(240,220,160,0.35),transparent);transition:left 0.5s ease;pointer-events:none}
+.opt-btn:hover{background:rgba(201,164,76,0.12);border-color:rgba(201,164,76,0.55);box-shadow:0 0 14px rgba(201,164,76,0.25)}
+.opt-btn:hover::before{left:100%}
 .opt-btn.correct{background:rgba(0,200,100,0.12);border-color:rgba(0,200,100,0.5)}
 .opt-btn.wrong{background:rgba(255,60,60,0.12);border-color:rgba(255,60,60,0.5)}
 .opt-btn.dim{opacity:0.35}
 .opt-btn:disabled{cursor:default}
-.opt-num{min-width:26px;height:26px;border-radius:7px;background:rgba(37,99,235,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#2563eb;flex-shrink:0;margin-top:1px}
+.opt-num{min-width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#c9a44c,#9a7c33);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;margin-top:1px}
 .action-area{margin-bottom:12px}
-.action-btn{width:100%;padding:13px 0;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+.action-btn{position:relative;overflow:hidden;width:100%;padding:13px 0;background:linear-gradient(135deg,#f0dca0 0%,#c9a44c 55%,#9a7c33 100%);border:1px solid rgba(154,124,51,0.5);border-radius:12px;color:#2a1f08;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(201,164,76,0.35);transition:box-shadow 0.25s ease,transform 0.25s ease}
+.action-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent);transition:left 0.6s ease}
+.action-btn:hover{box-shadow:0 4px 26px rgba(201,164,76,0.55);transform:translateY(-1px)}
+.action-btn:hover::before{left:100%}
 .chat-input-area{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 12px;display:flex;gap:8px;align-items:center}
 .chat-input{flex:1;background:transparent;border:none;font-size:15px;color:var(--text);outline:none;padding:4px 0}
 .chat-input::placeholder{color:var(--text-tertiary)}
-.chat-send{padding:8px 16px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;border-radius:9px;color:#fff;font-size:13px;font-weight:800;cursor:pointer}
+.chat-send{position:relative;overflow:hidden;padding:8px 16px;background:linear-gradient(135deg,#f0dca0 0%,#c9a44c 55%,#9a7c33 100%);border:1px solid rgba(154,124,51,0.5);border-radius:9px;color:#2a1f08;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 2px 12px rgba(201,164,76,0.35);transition:box-shadow 0.25s ease,transform 0.25s ease}
+.chat-send::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent);transition:left 0.6s ease}
+.chat-send:hover:not(:disabled){box-shadow:0 2px 16px rgba(201,164,76,0.55);transform:translateY(-1px)}
+.chat-send:hover:not(:disabled)::before{left:100%}
 .chat-send:disabled{opacity:0.4;cursor:not-allowed}
 
 /* 通常クイズ */
