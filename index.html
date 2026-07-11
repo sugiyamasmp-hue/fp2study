@@ -201,6 +201,27 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 .quote-en{font-size:13px;font-style:italic;color:#e8e8e8;line-height:1.5;margin-bottom:4px}
 .quote-ja{font-size:13px;color:#ccc;line-height:1.5;margin-bottom:6px}
 .quote-author{font-size:12px;color:#ff8c00;font-weight:700;text-align:left}
+
+/* 実技試験モード */
+.q-section{font-size:12px;color:#ff8c00;font-weight:700;margin-bottom:6px}
+.jitsugi-ox-wrap{display:flex;gap:14px;margin-bottom:12px}
+.jitsugi-ox-wrap .opt-btn{justify-content:center;font-size:26px;font-weight:800;flex:1;padding:22px 0}
+.jitsugi-self-grade{display:flex;gap:10px;margin:14px 0}
+.jitsugi-self-grade .opt-btn{justify-content:center;font-weight:700;flex:1}
+
+/* 電卓 */
+.calc-fab{position:fixed;right:18px;bottom:18px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#ff8c00,#ff4500);border:none;color:#fff;font-size:24px;box-shadow:0 4px 16px rgba(255,140,0,0.4);cursor:pointer;z-index:50}
+.calc-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:60;align-items:center;justify-content:center}
+.calc-modal.on{display:flex}
+.calc-box{background:#1a1a1e;border:1px solid rgba(255,255,255,0.12);border-radius:18px;padding:16px;width:280px;max-width:88vw}
+.calc-header{display:flex;justify-content:space-between;align-items:center;color:#e8e8e8;font-weight:700;margin-bottom:10px;font-size:15px}
+.calc-close{background:none;border:none;color:#e8e8e8;font-size:22px;line-height:1;cursor:pointer;padding:0 4px}
+.calc-display{background:rgba(255,255,255,0.06);border-radius:10px;padding:14px;text-align:right;font-size:26px;color:#fff;margin-bottom:10px;word-break:break-all;min-height:34px}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.calc-grid button{padding:15px 0;border:none;border-radius:10px;background:rgba(255,255,255,0.08);color:#e8e8e8;font-size:18px;cursor:pointer}
+.calc-grid button:active{background:rgba(255,140,0,0.3)}
+.calc-zero{grid-column:span 2}
+.calc-eq{background:linear-gradient(135deg,#ff8c00,#ff4500) !important;color:#fff}
 </style>
 </head>
 <body>
@@ -249,6 +270,7 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
     <button class="outline-btn" onclick="goTeacherSelect('continue')" id="continue-btn" style="margin-bottom:10px;display:none">続きから再開する（<span id="continue-info"></span>）</button>
     <button class="outline-btn" onclick="beginQuiz('normal')">通常クイズ</button>
     <button class="outline-btn" onclick="beginQuiz('handsfree')">ハンズフリーモード（○×）</button>
+    <button class="outline-btn" onclick="beginJitsugi()">🧮 実技試験モード</button>
     <button class="outline-btn" onclick="openDashboard()">📊 学習進捗を見る</button>
   </div>
   <div class="history-card" id="hist-card" style="display:none">
@@ -437,6 +459,48 @@ body{background:#0a0a0f;color:#f0f0f0;font-family:'Hiragino Kaku Gothic ProN','N
 </div>
 </div>
 
+<!-- 実技試験モード -->
+<div id="jitsugi-quiz" class="screen">
+<div class="container">
+  <div class="progress-bar"><div class="progress-fill" id="prog-jitsugi"></div></div>
+  <div class="quiz-header">
+    <span class="cat-tag">実技試験</span>
+    <span class="q-count" id="q-num-jitsugi"></span>
+  </div>
+  <div class="question-card">
+    <div class="q-section" id="jitsugi-section"></div>
+    <div class="question-text" id="jitsugi-text"></div>
+  </div>
+  <div class="jitsugi-ox-wrap" id="jitsugi-ox-opts"></div>
+  <div id="jitsugi-reveal-area">
+    <button class="next-btn" id="jitsugi-reveal-btn" onclick="revealJitsugiAnswer()">🧮 電卓で計算したら解答を見る</button>
+  </div>
+  <div class="ex-card" id="jitsugi-exbox" style="display:none">
+    <div class="ex-label" id="jitsugi-ex-title"></div>
+    <div class="ex-text" id="jitsugi-ex-text"></div>
+    <div class="jitsugi-self-grade" id="jitsugi-self-grade" style="display:none">
+      <button class="opt-btn correct" onclick="jitsugiSelfGrade(true)">✓ 正解だった</button>
+      <button class="opt-btn wrong" onclick="jitsugiSelfGrade(false)">✗ 不正解だった</button>
+    </div>
+    <button class="next-btn" id="jitsugi-next-btn" onclick="nextJitsuguQ()" style="display:none"></button>
+  </div>
+</div>
+<button class="calc-fab" onclick="toggleCalc()" aria-label="電卓を開く">🧮</button>
+<div class="calc-modal" id="calc-modal">
+  <div class="calc-box">
+    <div class="calc-header"><span>電卓</span><button class="calc-close" onclick="toggleCalc()">×</button></div>
+    <div class="calc-display" id="calc-display">0</div>
+    <div class="calc-grid">
+      <button onclick="calcInput('C')">C</button><button onclick="calcInput('⌫')">⌫</button><button onclick="calcInput('%')">%</button><button onclick="calcInput('/')">÷</button>
+      <button onclick="calcInput('7')">7</button><button onclick="calcInput('8')">8</button><button onclick="calcInput('9')">9</button><button onclick="calcInput('*')">×</button>
+      <button onclick="calcInput('4')">4</button><button onclick="calcInput('5')">5</button><button onclick="calcInput('6')">6</button><button onclick="calcInput('-')">−</button>
+      <button onclick="calcInput('1')">1</button><button onclick="calcInput('2')">2</button><button onclick="calcInput('3')">3</button><button onclick="calcInput('+')">+</button>
+      <button onclick="calcInput('0')" class="calc-zero">0</button><button onclick="calcInput('.')">.</button><button onclick="calcInput('=')" class="calc-eq">=</button>
+    </div>
+  </div>
+</div>
+</div>
+
 <!-- RESULT -->
 <div id="result" class="screen">
 <div class="container">
@@ -509,6 +573,7 @@ var TEACHERS = {
 /* ===== 問題データ（通常/チャットは /api/questions から動的取得。ロード前は空） ===== */
 var Qs = [];
 var QsOX = [];
+var QsJitsugi = [];
 
 // ハンズフリー（○×）用の固定セット。
 // Firestoreのquestions_oxコレクションはconvert_to_ox.jsの正誤判定に既知の不具合があり
@@ -672,6 +737,9 @@ function startQuiz(m){
     initRec();
     show('quiz-hf');
     renderHfQ();
+  } else if(m==='jitsugi'){
+    show('jitsugi-quiz');
+    renderJitsuguQ();
   } else {
     show('quiz');
     renderQ();
@@ -1019,12 +1087,138 @@ function hfAnswer(ans){
 function nextHfQ(){hfWaitingNext=false;stopListen();synth&&synth.cancel();if(cur+1<QsOX.length){cur++;renderHfQ();}else finish();}
 
 /* ===================================================
+   実技試験モード
+   問題ごとにtype:'ox'（選択肢○×が判明している設問）とtype:'reveal'
+   （元データに誤答選択肢の文言が残っておらず、電卓で計算後に自己採点する設問）が混在する。
+   =================================================== */
+function shuffleArray(arr){
+  for(var i=arr.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var tmp=arr[i];arr[i]=arr[j];arr[j]=tmp;
+  }
+  return arr;
+}
+
+async function loadJitsugiQuestions(){
+  var r = await fetch('/api/jitsugi-questions');
+  var d = await r.json();
+  if (d.error || !d.questions || d.questions.length === 0) throw new Error(d.error || 'empty');
+  return d.questions;
+}
+
+async function beginJitsugi(){
+  cur=0; score=0; answers=[];
+  show('loading');
+  try{
+    QsJitsugi = shuffleArray(await loadJitsugiQuestions());
+  }catch(e){
+    alert('実技問題の読み込みに失敗しました。通信環境をご確認のうえ、もう一度お試しください。');
+    show('home');
+    return;
+  }
+  startQuiz('jitsugi');
+}
+
+function renderJitsuguQ(){
+  var q=QsJitsugi[cur];
+  document.getElementById('prog-jitsugi').style.width=((cur+1)/QsJitsugi.length*100)+'%';
+  document.getElementById('q-num-jitsugi').textContent=(cur+1)+' / '+QsJitsugi.length;
+  document.getElementById('jitsugi-section').textContent=q.section||'';
+  document.getElementById('jitsugi-text').textContent=q.q;
+  document.getElementById('jitsugi-exbox').style.display='none';
+  document.getElementById('jitsugi-self-grade').style.display='none';
+  document.getElementById('jitsugi-next-btn').style.display='none';
+  var oxArea=document.getElementById('jitsugi-ox-opts');
+  var revealArea=document.getElementById('jitsugi-reveal-area');
+  if(q.type==='ox'){
+    revealArea.style.display='none';
+    oxArea.style.display='flex';
+    oxArea.innerHTML=q.opts.map(function(label,i){
+      return '<button class="opt-btn" id="jo'+i+'" onclick="pickJitsugiOX('+i+')">'+label+'</button>';
+    }).join('');
+  } else {
+    oxArea.style.display='none';
+    oxArea.innerHTML='';
+    revealArea.style.display='block';
+    document.getElementById('jitsugi-reveal-btn').disabled=false;
+  }
+}
+
+function pickJitsugiOX(idx){
+  var q=QsJitsugi[cur];var ok=idx===q.ans;
+  if(ok)score++;
+  answers.push({q:cur,sel:idx,ok:ok});
+  recordAnswer(q,ok,'jitsugi');
+  var opts=document.getElementById('jitsugi-ox-opts').children;
+  for(var i=0;i<opts.length;i++){
+    opts[i].disabled=true;
+    opts[i].classList.remove('correct','wrong','dim');
+    if(i===q.ans)opts[i].classList.add('correct');
+    else if(i===idx)opts[i].classList.add('wrong');
+    else opts[i].classList.add('dim');
+  }
+  document.getElementById('jitsugi-ex-title').textContent=ok?'正解！！':'不正解...';
+  document.getElementById('jitsugi-ex-text').textContent=q.ex;
+  document.getElementById('jitsugi-next-btn').textContent=cur+1<QsJitsugi.length?'次の問題へ →':'結果を見る';
+  document.getElementById('jitsugi-next-btn').style.display='block';
+  document.getElementById('jitsugi-exbox').style.display='block';
+}
+
+function revealJitsugiAnswer(){
+  var q=QsJitsugi[cur];
+  document.getElementById('jitsugi-reveal-btn').disabled=true;
+  document.getElementById('jitsugi-ex-title').textContent='正解：'+q.answerText;
+  document.getElementById('jitsugi-ex-text').textContent=q.ex;
+  document.getElementById('jitsugi-self-grade').style.display='flex';
+  document.getElementById('jitsugi-exbox').style.display='block';
+}
+
+function jitsugiSelfGrade(ok){
+  var q=QsJitsugi[cur];
+  if(ok)score++;
+  answers.push({q:cur,sel:null,ok:ok});
+  recordAnswer(q,ok,'jitsugi');
+  document.getElementById('jitsugi-self-grade').style.display='none';
+  document.getElementById('jitsugi-next-btn').textContent=cur+1<QsJitsugi.length?'次の問題へ →':'結果を見る';
+  document.getElementById('jitsugi-next-btn').style.display='block';
+}
+
+function nextJitsuguQ(){
+  if(cur+1<QsJitsugi.length){cur++;renderJitsuguQ();}else finish();
+}
+
+/* ===================================================
+   電卓（実技試験モード中に呼び出し可能）
+   =================================================== */
+var calcExpr='';
+function toggleCalc(){
+  document.getElementById('calc-modal').classList.toggle('on');
+}
+function calcInput(key){
+  var disp=document.getElementById('calc-display');
+  if(key==='C'){calcExpr='';disp.textContent='0';return;}
+  if(key==='⌫'){calcExpr=calcExpr.slice(0,-1);disp.textContent=calcExpr||'0';return;}
+  if(key==='='){
+    try{
+      if(!/^[0-9+\-*/.%\s]+$/.test(calcExpr))throw new Error('invalid');
+      var result=Function('"use strict";return ('+calcExpr.replace(/%/g,'/100')+')')();
+      if(typeof result!=='number'||!isFinite(result))throw new Error('invalid result');
+      disp.textContent=String(Math.round(result*10000)/10000);
+      calcExpr=String(result);
+    }catch(e){disp.textContent='エラー';calcExpr='';}
+    return;
+  }
+  calcExpr+=key;
+  disp.textContent=calcExpr;
+}
+
+/* ===================================================
    共通
    =================================================== */
 function finish(){
   try{localStorage.removeItem('aid_fp2_progress');}catch(e){}
   synth&&synth.cancel();
-  var total=mode==='handsfree'?QsOX.length:Qs.length;
+  var total=mode==='handsfree'?QsOX.length:mode==='jitsugi'?QsJitsugi.length:Qs.length;
   var rec={date:new Date().toLocaleDateString('ja-JP'),score:score,total:total,mode:mode};
   hist=[rec].concat(hist).slice(0,10);
   try{localStorage.setItem('aid_fp2_hist',JSON.stringify(hist));}catch(e){}
@@ -1033,7 +1227,7 @@ function finish(){
   document.getElementById('r-score').textContent=score+' / '+total;
   document.getElementById('r-pct').textContent=pct+'%';
   document.getElementById('r-msg').textContent=pct>=80?'めっちゃええやん！この調子で2級合格や！':pct>=60?'惜しい！あと一歩やで！':'ドンマイ！間違いが宝や！';
-  var qs=mode==='handsfree'?QsOX:Qs;
+  var qs=mode==='handsfree'?QsOX:mode==='jitsugi'?QsJitsugi:Qs;
   document.getElementById('review').innerHTML=answers.map(function(a,i){
     return '<div class="rev-row"><span>'+(a.ok?'○':'×')+'</span><span>問'+(i+1)+'：'+qs[a.q].cat+'</span></div>';
   }).join('');
