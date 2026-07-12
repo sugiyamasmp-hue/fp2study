@@ -90,8 +90,10 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 
 /* 差分論点まとめ */
 .gap-topic-card{background:var(--bg);border-radius:16px;padding:16px;margin:0 16px 16px;box-shadow:0 2px 10px rgba(0,0,0,0.06)}
-.gap-topic-title{font-size:15px;font-weight:800;color:#d97706;margin-bottom:6px}
+.gap-topic-title{font-size:15px;font-weight:800;color:#d97706;margin-bottom:6px;display:flex;align-items:center;flex-wrap:wrap}
 .gap-topic-count{font-size:11px;font-weight:700;color:#999;margin-left:6px}
+.gap-speak-btn{margin-left:auto;padding:6px 12px;background:rgba(217,119,6,0.12);border:1.5px solid #d97706;border-radius:20px;color:#d97706;font-size:12px;font-weight:700;cursor:pointer}
+.gap-speak-btn.speaking{background:#d97706;color:#fff}
 .gap-topic-desc{font-size:13px;color:#555;line-height:1.6;margin-bottom:14px}
 .gap-q-item{border-top:1px solid var(--border);padding:12px 0}
 .gap-q-item:first-of-type{border-top:none;padding-top:0}
@@ -434,7 +436,7 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 <div id="gap-summary" class="screen">
 <div class="light-screen">
   <div class="light-header">
-    <button class="light-back" onclick="goHome()">←</button>
+    <button class="light-back" onclick="stopGapSpeak();goHome()">←</button>
     <div class="light-title">📖 差分論点を解説で読む</div>
   </div>
   <div id="gap-summary-loading" class="light-empty">読み込み中...</div>
@@ -782,6 +784,9 @@ var GAP_TOPIC_INFO = [
   {key:'取引相場のない株式評価・事業承継税制', desc:'非上場企業のオーナーの相続・事業承継対策として、自社株の評価方法（類似業種比準方式・純資産価額方式）や事業承継税制（納税猶予制度）が新規に登場します。'},
 ];
 var gapSummaryLoaded = false;
+var gapTopicsData = []; // [{key, desc, questions, speakTexts}]
+var gapSpeakToken = 0;
+var gapSpeakingIdx = -1;
 
 function openGapSummary(){
   show('gap-summary');
@@ -809,10 +814,22 @@ async function loadGapSummary(){
     var orderedKeys = GAP_TOPIC_INFO.map(function(t){return t.key}).filter(function(k){return byTopic[k]});
     Object.keys(byTopic).forEach(function(k){ if(orderedKeys.indexOf(k)===-1) orderedKeys.push(k); });
 
-    body.innerHTML = orderedKeys.map(function(key){
+    gapTopicsData = orderedKeys.map(function(key){
       var info = GAP_TOPIC_INFO.find(function(t){return t.key===key});
       var list = byTopic[key];
-      var qsHtml = list.map(function(q){
+      var speakTexts = [];
+      if(info) speakTexts.push(info.desc);
+      list.forEach(function(q){
+        var ans = (q.opts && q.ans!=null) ? q.opts[q.ans] : '';
+        speakTexts.push('問題。'+(q.q||''));
+        if(ans) speakTexts.push('正解。'+ans);
+        if(q.ex) speakTexts.push('解説。'+q.ex);
+      });
+      return { key: key, desc: info ? info.desc : '', questions: list, speakTexts: speakTexts };
+    });
+
+    body.innerHTML = gapTopicsData.map(function(topic, idx){
+      var qsHtml = topic.questions.map(function(q){
         var ans = (q.opts && q.ans!=null) ? q.opts[q.ans] : '';
         return '<div class="gap-q-item">'
           + '<div class="gap-q-text">Q. '+escapeHtml(q.q||'')+'</div>'
@@ -821,8 +838,10 @@ async function loadGapSummary(){
           + '</div>';
       }).join('');
       return '<div class="gap-topic-card">'
-        + '<div class="gap-topic-title">'+escapeHtml(key)+'<span class="gap-topic-count">'+list.length+'問</span></div>'
-        + (info ? '<div class="gap-topic-desc">'+escapeHtml(info.desc)+'</div>' : '')
+        + '<div class="gap-topic-title">'+escapeHtml(topic.key)+'<span class="gap-topic-count">'+topic.questions.length+'問</span>'
+        + '<button class="gap-speak-btn" data-idx="'+idx+'" onclick="toggleSpeakTopic('+idx+')">🔊 読み上げる</button>'
+        + '</div>'
+        + (topic.desc ? '<div class="gap-topic-desc">'+escapeHtml(topic.desc)+'</div>' : '')
         + qsHtml
         + '</div>';
     }).join('');
@@ -832,6 +851,44 @@ async function loadGapSummary(){
     return;
   }
   loading.style.display = 'none';
+}
+
+function renderGapSpeakButtons(){
+  document.querySelectorAll('.gap-speak-btn').forEach(function(btn){
+    var idx = Number(btn.dataset.idx);
+    var isSpeaking = idx === gapSpeakingIdx;
+    btn.classList.toggle('speaking', isSpeaking);
+    btn.textContent = isSpeaking ? '⏹ 停止' : '🔊 読み上げる';
+  });
+}
+
+function toggleSpeakTopic(idx){
+  if(gapSpeakingIdx === idx){
+    stopGapSpeak();
+    return;
+  }
+  var myToken = ++gapSpeakToken;
+  gapSpeakingIdx = idx;
+  renderGapSpeakButtons();
+  var texts = gapTopicsData[idx].speakTexts;
+  var i = 0;
+  function next(){
+    if(myToken !== gapSpeakToken) return;
+    if(i >= texts.length){
+      gapSpeakingIdx = -1;
+      renderGapSpeakButtons();
+      return;
+    }
+    speak(texts[i++], next);
+  }
+  next();
+}
+
+function stopGapSpeak(){
+  gapSpeakToken++;
+  if(typeof synth !== 'undefined' && synth) synth.cancel();
+  gapSpeakingIdx = -1;
+  renderGapSpeakButtons();
 }
 
 function escapeHtml(s){
