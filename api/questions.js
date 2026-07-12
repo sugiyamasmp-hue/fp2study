@@ -36,9 +36,11 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { category, limit = 10, mode, set } = req.query;
+    const { category, limit = 10, mode, set, levelType } = req.query;
     const limitNum = Number(limit);
     const collectionName = set === 'ox' ? 'questions_ox' : 'questions';
+    // 差分優先モード：2級から新しく登場する論点（level_type === 'gap'）だけに絞り込む
+    const gapOnly = levelType === 'gap';
 
     // 復習モード：間違えた問題を優先して出題
     if (mode === 'review') {
@@ -54,8 +56,10 @@ module.exports = async function handler(req, res) {
     let questions = [];
 
     if (!category || category === 'all') {
-      // 全分野
-      const snapshot = await db.collection(collectionName).limit(limitNum * 3).get();
+      // 全分野（差分優先モードは母集団が偏るため全件取得してから絞り込む）
+      const snapshot = gapOnly
+        ? await db.collection(collectionName).get()
+        : await db.collection(collectionName).limit(limitNum * 3).get();
       snapshot.forEach(doc => questions.push({ id: doc.id, ...doc.data() }));
     } else if (category === '模擬試験') {
       // 模擬試験系は前方一致
@@ -70,7 +74,9 @@ module.exports = async function handler(req, res) {
       // 複数cat対応（カンマ区切り）。分野ごとの現在のレベルに応じて出題を絞り込む
       const cats = category.split(',').map(c => c.trim());
       for (const cat of cats) {
-        const snapshot = await db.collection(collectionName).where('cat', '==', cat).limit(limitNum * 3).get();
+        const snapshot = gapOnly
+          ? await db.collection(collectionName).where('cat', '==', cat).get()
+          : await db.collection(collectionName).where('cat', '==', cat).limit(limitNum * 3).get();
         const docs = [];
         snapshot.forEach(doc => docs.push({ id: doc.id, ...doc.data() }));
         const level = await getCategoryLevel(cat);
@@ -78,11 +84,15 @@ module.exports = async function handler(req, res) {
       }
     }
 
+    if (gapOnly) {
+      questions = questions.filter(q => q.level_type === 'gap');
+    }
+
     // シャッフルして件数制限
     questions.sort(() => Math.random() - 0.5);
     questions = questions.slice(0, limitNum);
 
-    return res.status(200).json({ questions });
+    return res.status(200).json({ questions, gapEmpty: gapOnly && questions.length === 0 });
 
   } catch (error) {
     return res.status(200).json({ error: error.message, questions: [] });
