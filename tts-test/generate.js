@@ -26,6 +26,12 @@ async function main() {
   console.log(`音声を生成中... (model: ${MODEL}, voice: ${VOICE})`);
   console.log(`テキスト: ${text}`);
 
+  // 生成に失敗したときに「前回のファイルが残っていて成功したように見える」事故を防ぐため、
+  // 新しい音声が届く前に古いファイルを消しておく
+  if (fs.existsSync(OUTPUT_FILE)) {
+    fs.unlinkSync(OUTPUT_FILE);
+  }
+
   const response = await client.audio.speech.create({
     model: MODEL,
     voice: VOICE,
@@ -34,12 +40,26 @@ async function main() {
   });
 
   const buffer = Buffer.from(await response.arrayBuffer());
+  if (buffer.length === 0) {
+    throw new Error("生成された音声データが空でした（APIレスポンスが不正な可能性があります）。");
+  }
   fs.writeFileSync(OUTPUT_FILE, buffer);
 
-  console.log(`保存しました: ${OUTPUT_FILE}`);
+  const stat = fs.statSync(OUTPUT_FILE);
+  console.log(`保存しました: ${OUTPUT_FILE} (${stat.size} bytes, ${stat.mtime.toISOString()})`);
 }
 
 main().catch((err) => {
-  console.error("音声生成に失敗しました:", err);
+  console.error("音声生成に失敗しました。");
+  if (err && err.status) {
+    console.error(`HTTPステータス: ${err.status}`);
+  }
+  if (err && err.error) {
+    console.error("APIエラー詳細:", JSON.stringify(err.error, null, 2));
+  } else if (err && err.message) {
+    console.error("メッセージ:", err.message);
+  } else {
+    console.error(err);
+  }
   process.exit(1);
 });
