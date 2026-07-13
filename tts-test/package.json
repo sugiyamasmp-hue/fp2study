@@ -1,0 +1,15 @@
+{
+  "name": "tts-test",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OpenAI TTS (gpt-4o-mini-tts) の音声品質を試すスタンドアロンスクリプト",
+  "type": "commonjs",
+  "main": "generate.js",
+  "scripts": {
+    "start": "node generate.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "openai": "^4.68.0"
+  }
+}
