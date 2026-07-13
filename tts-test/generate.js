@@ -5,10 +5,9 @@ const OpenAI = require("openai");
 
 // 話し方の指示や声質はここで調整できる
 const MODEL = "gpt-4o-mini-tts";
-const VOICE = "alloy"; // "nova" などに変更可能
+const VOICES = ["nova", "alloy", "echo"]; // 聞き比べたい声のプリセット
 const INSTRUCTIONS =
   "FPの先生のように、落ち着いたトーンで、聞き取りやすく間を取りながら話してください。";
-const OUTPUT_FILE = path.join(__dirname, "output.mp3");
 
 const DEFAULT_TEXT =
   "こんにちは。今日はファイナンシャルプランナーの試験対策として、資産運用の基本について解説します。";
@@ -23,20 +22,31 @@ async function main() {
 
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-  console.log(`音声を生成中... (model: ${MODEL}, voice: ${VOICE})`);
   console.log(`テキスト: ${text}`);
 
-  const response = await client.audio.speech.create({
-    model: MODEL,
-    voice: VOICE,
-    input: text,
-    instructions: INSTRUCTIONS,
-  });
+  const results = [];
 
-  const buffer = Buffer.from(await response.arrayBuffer());
-  fs.writeFileSync(OUTPUT_FILE, buffer);
+  for (const voice of VOICES) {
+    const outputFile = path.join(__dirname, `output_${voice}.mp3`);
+    console.log(`音声を生成中... (model: ${MODEL}, voice: ${voice})`);
 
-  console.log(`保存しました: ${OUTPUT_FILE}`);
+    const response = await client.audio.speech.create({
+      model: MODEL,
+      voice,
+      input: text,
+      instructions: INSTRUCTIONS,
+    });
+
+    const buffer = Buffer.from(await response.arrayBuffer());
+    fs.writeFileSync(outputFile, buffer);
+
+    results.push({ voice, outputFile });
+  }
+
+  console.log("\n生成結果一覧:");
+  for (const { voice, outputFile } of results) {
+    console.log(`${voice} → ${path.basename(outputFile)} 生成完了`);
+  }
 }
 
 main().catch((err) => {
