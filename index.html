@@ -2010,7 +2010,7 @@ var mockTimerId = null, mockRemainingSec = 0;
 async function beginMockExam(){
   show('loading');
   try{
-    var r = await fetch('/api/mock-exam-questions');
+    var r = await fetch('/api/mock-exam');
     var d = await r.json();
     if(d.error || !d.questions || d.questions.length === 0) throw new Error(d.error || 'empty');
     mockQs = d.questions;
@@ -2092,7 +2092,7 @@ async function finishMockExam(auto){
   var durationSec = MOCK_EXAM_DURATION_SEC - Math.max(0, mockRemainingSec);
   show('loading');
   try{
-    var r = await fetch('/api/mock-exam-submit',{
+    var r = await fetch('/api/mock-exam',{
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({answers:payloadAnswers, durationSec:durationSec, autoSubmitted: !!auto}),
     });
@@ -2129,7 +2129,7 @@ function openMockExamHistory(){
   show('mock-exam-history');
   document.getElementById('mock-history-body').style.display = 'none';
   document.getElementById('mock-history-loading').style.display = 'block';
-  fetch('/api/mock-exam-history').then(function(r){return r.json();}).then(function(d){
+  fetch('/api/mock-exam?action=history').then(function(r){return r.json();}).then(function(d){
     document.getElementById('mock-history-loading').style.display = 'none';
     document.getElementById('mock-history-body').style.display = 'block';
     var attempts = d.attempts || [];
@@ -2193,7 +2193,7 @@ function openCaseSelect(){
 async function startCase(id){
   show('loading');
   try{
-    var r = await fetch('/api/case-detail?id='+encodeURIComponent(id));
+    var r = await fetch('/api/cases?id='+encodeURIComponent(id));
     var d = await r.json();
     if(!d.case) throw new Error(d.error || 'not found');
     currentCase = d.case;
@@ -2379,9 +2379,9 @@ async function createCampPlan(){
   if(!startDate || !examDate){ alert('学習開始日と試験日を入力してください。'); return; }
   show('loading');
   try{
-    var r = await fetch('/api/camp-create',{
+    var r = await fetch('/api/camp',{
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({startDate:startDate, examDate:examDate, dailyQuota: dailyQuota===''?null:Number(dailyQuota)}),
+      body: JSON.stringify({action:'create', startDate:startDate, examDate:examDate, dailyQuota: dailyQuota===''?null:Number(dailyQuota)}),
     });
     var d = await r.json();
     if(!d.ok) throw new Error(d.error||'create failed');
@@ -2403,7 +2403,7 @@ function openCampQuotaEdit(){
   var input = prompt('1日のノルマ（問題数）を入力してください。空欄にすると自動算出（'+suggestion+'問）に戻ります。', cur!=null?String(cur):'');
   if(input === null) return;
   var value = input.trim()==='' ? null : Number(input.trim());
-  fetch('/api/camp-quota',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dailyQuota:value})})
+  fetch('/api/camp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'quota', dailyQuota:value})})
     .then(function(r){return r.json();})
     .then(function(d){
       if(d.ok){ campState = d.camp; renderCampDashboard(); }
@@ -2468,7 +2468,7 @@ function renderCampDashboard(){
 async function startCampQuiz(genre){
   show('loading');
   try{
-    var r = await fetch('/api/camp-questions?genre='+encodeURIComponent(genre));
+    var r = await fetch('/api/camp?action=questions&genre='+encodeURIComponent(genre));
     var d = await r.json();
     if(d.error) throw new Error(d.error);
     campQuizQs = d.questions || [];
@@ -2512,9 +2512,9 @@ async function pickCampAnswer(idx){
   }
   recordAnswer(q, ok, 'camp');
   try{
-    var r = await fetch('/api/camp-answer',{
+    var r = await fetch('/api/camp',{
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({genre:campQuizGenre, questionId:q.id, isCorrect:ok}),
+      body: JSON.stringify({action:'answer', genre:campQuizGenre, questionId:q.id, isCorrect:ok}),
     });
     var d = await r.json();
     if(d.ok) campState = d.camp;
