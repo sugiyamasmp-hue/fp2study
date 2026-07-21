@@ -421,8 +421,7 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
     <button class="outline-btn" onclick="beginQuiz('normal')">通常クイズ</button>
     <button class="outline-btn" onclick="beginQuiz('handsfree')">ハンズフリーモード（○×）</button>
     <button class="outline-btn" onclick="beginJitsugi()">🧮 実技試験モード</button>
-    <button class="outline-btn" onclick="beginMockExam()">📝 学科模擬試験（本番60問・120分）</button>
-    <button class="outline-btn" onclick="openCaseSelect()">📋 実技モード（資産設計提案業務）</button>
+    <button class="outline-btn" onclick="show('honki-menu')" style="border-color:#d97706;color:#d97706">🔥 本気モード</button>
     <button class="outline-btn" onclick="openDashboard()">📊 学習進捗を見る</button>
   </div>
   <div class="history-card" id="hist-card" style="display:none">
@@ -623,6 +622,96 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 </div>
 </div>
 
+<!-- 本気モード：メニュー -->
+<div id="honki-menu" class="screen">
+<div class="light-screen">
+  <div class="light-header">
+    <button class="light-back" onclick="goHome()">←</button>
+    <div class="light-title">🔥 本気モード</div>
+  </div>
+  <div class="admin-summary-note">試験直前の追い込み用モードです。合宿プランで全ジャンルを周回するもよし、模擬試験や実技モードで本番形式に慣れるもよし。</div>
+  <button class="admin-menu-item" onclick="openCampHome()">🏕 合宿プラン（3周回学習）<div class="case-list-sub">全ジャンルを3周して弱点をつぶす学習プラン</div></button>
+  <button class="admin-menu-item" onclick="beginMockExam()">📝 学科模擬試験（本番60問・120分）<div class="case-list-sub">本番形式のタイマー付き模擬試験</div></button>
+  <button class="admin-menu-item" onclick="openCaseSelect()">📋 実技モード（資産設計提案業務）<div class="case-list-sub">事例問題で実技試験に備える</div></button>
+</div>
+</div>
+
+<!-- 合宿プラン：作成画面 -->
+<div id="camp-create" class="screen">
+<div class="light-screen">
+  <div class="light-header">
+    <button class="light-back" onclick="show('honki-menu')">←</button>
+    <div class="light-title">🏕 合宿プラン作成</div>
+  </div>
+  <div id="camp-create-loading" class="light-empty">読み込み中...</div>
+  <div id="camp-create-body" style="display:none">
+    <div class="light-card">
+      <div class="light-section-title" style="margin:0 0 10px">ジャンル別の現在の登録数</div>
+      <div id="camp-genre-counts"></div>
+    </div>
+    <div class="light-card">
+      <div class="light-section-title" style="margin:0 0 10px">学習開始日・試験日</div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px">学習開始日</div>
+        <input type="date" id="camp-start-date" class="case-answer-input" style="width:100%" onchange="updateCampQuotaSuggestion()">
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px">試験日</div>
+        <input type="date" id="camp-exam-date" class="case-answer-input" style="width:100%" onchange="updateCampQuotaSuggestion()">
+      </div>
+      <div id="camp-days-info" style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;line-height:1.6"></div>
+      <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px">1日あたりのノルマ（自動算出・手動調整可）</div>
+      <input type="number" id="camp-daily-quota" class="case-answer-input" style="width:100%" min="1">
+    </div>
+    <button class="analyze-btn" onclick="createCampPlan()">🏕 この内容で合宿プランを作成する</button>
+  </div>
+</div>
+</div>
+
+<!-- 合宿プラン：進捗・結果画面 -->
+<div id="camp-dashboard" class="screen">
+<div class="light-screen">
+  <div class="light-header">
+    <button class="light-back" onclick="show('honki-menu')">←</button>
+    <div class="light-title">🏕 合宿プラン</div>
+  </div>
+  <div id="camp-dash-loading" class="light-empty">読み込み中...</div>
+  <div id="camp-dash-body" style="display:none">
+    <div class="light-card" id="camp-today-card"></div>
+    <div class="light-section-title">周回ステータス</div>
+    <div id="camp-round-status"></div>
+    <div class="light-section-title">今の周のジャンル別進捗</div>
+    <div id="camp-genre-progress"></div>
+    <div class="light-section-title">ジャンル×周 正答率</div>
+    <div class="light-card" style="overflow-x:auto">
+      <table class="case-data-table" id="camp-round-table" style="width:100%"></table>
+    </div>
+    <button class="outline-btn" style="width:calc(100% - 32px);margin:8px 16px" onclick="openCampQuotaEdit()">⚙️ 1日のノルマを変更する</button>
+    <button class="outline-btn" style="width:calc(100% - 32px);margin:0 16px 20px;border-color:#dc2626;color:#dc2626" onclick="restartCampPlan()">🔄 合宿をやり直す（作り直す）</button>
+  </div>
+</div>
+</div>
+
+<!-- 合宿プラン：出題画面 -->
+<div id="camp-quiz" class="screen">
+<div class="container">
+  <div class="progress-bar"><div class="progress-fill" id="camp-prog"></div></div>
+  <div class="quiz-header">
+    <span class="cat-tag" id="camp-quiz-tag"></span>
+    <span class="q-count" id="camp-q-num"></span>
+  </div>
+  <div class="question-card">
+    <div class="question-text" id="camp-q-text"></div>
+  </div>
+  <div class="opts-wrap" id="camp-opts"></div>
+  <div class="ex-card" id="camp-exbox" style="display:none">
+    <div class="ex-label" id="camp-ex-title"></div>
+    <div class="ex-text" id="camp-ex-text"></div>
+    <button class="next-btn" id="camp-next-btn" onclick="nextCampQ()"></button>
+  </div>
+</div>
+</div>
+
 <!-- 実技試験モード -->
 <div id="jitsugi-quiz" class="screen">
 <div class="container">
@@ -689,7 +778,7 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 <div id="mock-exam-result" class="screen">
 <div class="light-screen">
   <div class="light-header">
-    <button class="light-back" onclick="goHome()">←</button>
+    <button class="light-back" onclick="show('honki-menu')">←</button>
     <div class="light-title">📝 模擬試験結果</div>
   </div>
   <div class="pass-banner" id="mock-pass-banner">
@@ -733,7 +822,7 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
   </div>
   <div id="case-list-loading" class="light-empty">読み込み中...</div>
   <div id="case-list"></div>
-  <button class="outline-btn" onclick="goHome()">← ホームに戻る</button>
+  <button class="outline-btn" onclick="show('honki-menu')">← 本気モードに戻る</button>
 </div>
 </div>
 
@@ -767,7 +856,7 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
   </div>
   <div class="review-wrap" id="case-review"></div>
   <button class="outline-btn" onclick="openCaseSelect()">他の事例に挑戦する</button>
-  <button class="start-btn" onclick="goHome()">ホームに戻る</button>
+  <button class="start-btn" onclick="show('honki-menu')">本気モードに戻る</button>
 </div>
 </div>
 
@@ -1928,7 +2017,7 @@ async function beginMockExam(){
     if(d.shortage) alert('一部のジャンルで問題数が不足しているため、出題数が本来（60問）より少なくなっています。');
   }catch(e){
     alert('模擬試験問題の読み込みに失敗しました。通信環境をご確認のうえ、もう一度お試しください。');
-    show('home');
+    show('honki-menu');
     return;
   }
   mockCur = 0; mockAnswers = [];
@@ -2013,7 +2102,7 @@ async function finishMockExam(auto){
     show('mock-exam-result');
   }catch(e){
     alert('採点結果の送信に失敗しました。通信環境をご確認のうえ、もう一度お試しください。');
-    show('home');
+    show('honki-menu');
   }
 }
 
@@ -2211,6 +2300,234 @@ function finishCase(){
     return '<div class="rev-row"><span>'+(a.ok?'○':'×')+'</span><span>小問'+(i+1)+'</span></div>';
   }).join('');
   show('case-result');
+}
+
+/* ===================================================
+   合宿プラン（3周回学習）
+   =================================================== */
+var campState = null; // GET /api/camp のレスポンス（computeCampViewの結果）をそのまま保持
+var campCreateGenres = [];
+var campQuizGenre = null, campQuizQs = [], campQuizCur = 0;
+var ROUND_STATUS_ICON = {'未着手':'⚪','進行中':'🔵','完了':'✅'};
+
+function todayDateInputValue(){
+  var parts = new Intl.DateTimeFormat('en-CA', {timeZone:'Asia/Tokyo', year:'numeric', month:'2-digit', day:'2-digit'}).formatToParts(new Date());
+  var get = function(t){ return parts.find(function(p){return p.type===t;}).value; };
+  return get('year')+'-'+get('month')+'-'+get('day');
+}
+
+async function openCampHome(){
+  show('loading');
+  var camp = null;
+  try{
+    var r = await fetch('/api/camp');
+    var d = await r.json();
+    camp = d.camp || null;
+  }catch(e){
+    camp = null;
+  }
+  if(!camp){
+    openCampCreate();
+  } else {
+    campState = camp;
+    renderCampDashboard();
+    show('camp-dashboard');
+  }
+}
+
+async function openCampCreate(){
+  show('camp-create');
+  document.getElementById('camp-create-body').style.display='none';
+  document.getElementById('camp-create-loading').style.display='block';
+  document.getElementById('camp-start-date').value = todayDateInputValue();
+  document.getElementById('camp-exam-date').value = '2026-10-31';
+  try{
+    var r = await fetch('/api/question-count-summary');
+    var d = await r.json();
+    campCreateGenres = d.genres || [];
+    document.getElementById('camp-genre-counts').innerHTML = campCreateGenres.map(function(g){
+      return '<div class="history-row"><span class="history-date">'+escapeHtml(g.domain)+'</span><span class="history-score">'+g.current+'問</span></div>';
+    }).join('');
+    document.getElementById('camp-create-loading').style.display='none';
+    document.getElementById('camp-create-body').style.display='block';
+    updateCampQuotaSuggestion();
+  }catch(e){
+    document.getElementById('camp-create-loading').textContent='読み込みに失敗しました。';
+  }
+}
+
+function updateCampQuotaSuggestion(){
+  var start = document.getElementById('camp-start-date').value;
+  var exam = document.getElementById('camp-exam-date').value;
+  var infoEl = document.getElementById('camp-days-info');
+  var quotaInput = document.getElementById('camp-daily-quota');
+  if(!start || !exam){ infoEl.textContent=''; return; }
+  var days = Math.max(1, Math.round((new Date(exam+'T00:00:00Z') - new Date(start+'T00:00:00Z')) / 86400000));
+  var round1Total = campCreateGenres.reduce(function(s,g){return s+g.current;},0);
+  // 2周目（1周目の不正解のみ）はまだ確定しないため、ここでは1周目＋3周目分でまず見積もる
+  var estimateTotal = round1Total * 2;
+  var suggested = Math.max(1, Math.ceil(estimateTotal / days));
+  infoEl.textContent = '試験まで残り '+days+' 日／見積り総問題数 約'+estimateTotal+'問（1・3周目分。2周目は1周目終了後に確定します）';
+  quotaInput.value = suggested;
+  quotaInput.placeholder = suggested;
+}
+
+async function createCampPlan(){
+  var startDate = document.getElementById('camp-start-date').value;
+  var examDate = document.getElementById('camp-exam-date').value;
+  var dailyQuota = document.getElementById('camp-daily-quota').value;
+  if(!startDate || !examDate){ alert('学習開始日と試験日を入力してください。'); return; }
+  show('loading');
+  try{
+    var r = await fetch('/api/camp-create',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({startDate:startDate, examDate:examDate, dailyQuota: dailyQuota===''?null:Number(dailyQuota)}),
+    });
+    var d = await r.json();
+    if(!d.ok) throw new Error(d.error||'create failed');
+    await openCampHome();
+  }catch(e){
+    alert('合宿プランの作成に失敗しました。通信環境をご確認のうえ、もう一度お試しください。');
+    show('honki-menu');
+  }
+}
+
+function restartCampPlan(){
+  if(!confirm('現在の合宿プランを削除して、新しく作り直しますか？進捗はリセットされます。')) return;
+  openCampCreate();
+}
+
+function openCampQuotaEdit(){
+  var cur = campState ? campState.dailyQuotaOverride : null;
+  var suggestion = campState ? campState.autoDailyQuota : 1;
+  var input = prompt('1日のノルマ（問題数）を入力してください。空欄にすると自動算出（'+suggestion+'問）に戻ります。', cur!=null?String(cur):'');
+  if(input === null) return;
+  var value = input.trim()==='' ? null : Number(input.trim());
+  fetch('/api/camp-quota',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dailyQuota:value})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.ok){ campState = d.camp; renderCampDashboard(); }
+      else alert('更新に失敗しました。');
+    })
+    .catch(function(){ alert('通信エラーが発生しました。'); });
+}
+
+function renderCampDashboard(){
+  var c = campState;
+  document.getElementById('camp-today-card').innerHTML =
+    '<div class="light-stats-row" style="margin-bottom:10px">'
+    + '<div class="light-stat"><div class="light-stat-num">'+c.today.answered+' / '+c.today.quota+'</div><div class="light-stat-label">今日のノルマ</div></div>'
+    + '<div class="light-stat"><div class="light-stat-num">'+c.daysRemaining+'日</div><div class="light-stat-label">試験まで</div></div>'
+    + '<div class="light-stat"><div class="light-stat-num">'+c.currentRound+'周目</div><div class="light-stat-label">現在の周</div></div>'
+    + '</div>'
+    + '<div style="font-size:14px;line-height:1.7;color:var(--text)">'+(c.today.achieved?'✅ ':'🐾 ')+escapeHtml(c.message)+'</div>';
+
+  document.getElementById('camp-round-status').innerHTML = c.rounds.map(function(rd){
+    var icon = ROUND_STATUS_ICON[rd.status] || '';
+    return '<div class="cat-card" style="align-items:center">'
+      + '<div class="cat-card-info"><div class="cat-card-name">'+icon+' '+rd.round+'周目</div>'
+      + '<div class="cat-card-sub">'+rd.status+'</div></div>'
+      + '</div>';
+  }).join('');
+
+  var current = c.rounds.filter(function(rd){ return rd.round === c.currentRound; })[0];
+  document.getElementById('camp-genre-progress').innerHTML = (current ? current.genres : []).map(function(g){
+    var pct = g.total>0 ? Math.round(g.answered/g.total*100) : 100;
+    var remain = g.total - g.answered;
+    var cls = pct>=100 ? 'good' : (pct>=50 ? 'mid':'bad');
+    return '<div class="cat-card">'
+      + '<div class="cat-card-info">'
+      + '<div class="cat-card-name">'+escapeHtml(g.domain)+'</div>'
+      + '<div class="cat-bar-track"><div class="cat-bar-fill '+cls+'" style="width:'+pct+'%"></div></div>'
+      + '<div class="cat-card-sub">'+g.answered+' / '+g.total+'問'+(remain>0?'（残り'+remain+'問）':'（完了）')+'</div>'
+      + '</div>'
+      + '<div class="cat-card-pct '+cls+'">'
+      + (remain>0 ? '<button class="next-btn" style="padding:8px 14px;font-size:12px;margin:0;white-space:nowrap" onclick="startCampQuiz(\''+g.domain+'\')">続ける</button>' : '✓')
+      + '</div>'
+      + '</div>';
+  }).join('');
+
+  var table = document.getElementById('camp-round-table');
+  var domains = current ? current.genres.map(function(g){return g.domain;}) : [];
+  var head = '<thead><tr><th>ジャンル</th><th>1周目</th><th>2周目</th><th>3周目</th></tr></thead>';
+  var body = '<tbody>' + domains.map(function(domain){
+    var cells = [1,2,3].map(function(rn){
+      var rd = c.rounds.filter(function(r){return r.round===rn;})[0];
+      var g = rd ? rd.genres.filter(function(x){return x.domain===domain;})[0] : null;
+      var label = (g && g.accuracy!==null) ? g.accuracy+'%' : '―';
+      return '<td>'+label+'</td>';
+    }).join('');
+    return '<tr><td>'+escapeHtml(domain)+'</td>'+cells+'</tr>';
+  }).join('') + '</tbody>';
+  table.innerHTML = head+body;
+
+  document.getElementById('camp-dash-loading').style.display='none';
+  document.getElementById('camp-dash-body').style.display='block';
+}
+
+async function startCampQuiz(genre){
+  show('loading');
+  try{
+    var r = await fetch('/api/camp-questions?genre='+encodeURIComponent(genre));
+    var d = await r.json();
+    if(d.error) throw new Error(d.error);
+    campQuizQs = d.questions || [];
+    if(campQuizQs.length === 0){
+      renderCampDashboard();
+      show('camp-dashboard');
+      return;
+    }
+  }catch(e){
+    alert('問題の読み込みに失敗しました。通信環境をご確認のうえ、もう一度お試しください。');
+    show('camp-dashboard');
+    return;
+  }
+  campQuizGenre = genre;
+  campQuizCur = 0;
+  show('camp-quiz');
+  renderCampQuizQ();
+}
+
+function renderCampQuizQ(){
+  var q = campQuizQs[campQuizCur];
+  document.getElementById('camp-prog').style.width = ((campQuizCur+1)/campQuizQs.length*100)+'%';
+  document.getElementById('camp-quiz-tag').textContent = campQuizGenre+'（'+campState.currentRound+'周目）';
+  document.getElementById('camp-q-num').textContent = (campQuizCur+1)+' / '+campQuizQs.length;
+  document.getElementById('camp-q-text').textContent = q.q;
+  document.getElementById('camp-exbox').style.display='none';
+  document.getElementById('camp-opts').innerHTML = q.opts.map(function(o,i){
+    return '<button class="opt-btn" id="cpo'+i+'" onclick="pickCampAnswer('+i+')"><span class="opt-num">'+(i+1)+'</span><span>'+escapeHtml(o)+'</span></button>';
+  }).join('');
+}
+
+async function pickCampAnswer(idx){
+  var q = campQuizQs[campQuizCur];
+  var ok = idx === q.ans;
+  var opts = document.getElementById('camp-opts').children;
+  for(var i=0;i<opts.length;i++){
+    opts[i].disabled = true;
+    if(i===q.ans) opts[i].classList.add('correct');
+    else if(i===idx) opts[i].classList.add('wrong');
+    else opts[i].classList.add('dim');
+  }
+  recordAnswer(q, ok, 'camp');
+  try{
+    var r = await fetch('/api/camp-answer',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({genre:campQuizGenre, questionId:q.id, isCorrect:ok}),
+    });
+    var d = await r.json();
+    if(d.ok) campState = d.camp;
+  }catch(e){}
+  document.getElementById('camp-ex-title').textContent = ok ? '正解！' : '不正解...';
+  document.getElementById('camp-ex-text').textContent = (ok?'':'正解：'+(q.opts[q.ans])+'\n\n') + (q.ex||'');
+  document.getElementById('camp-next-btn').textContent = campQuizCur+1<campQuizQs.length ? '次の問題へ →' : '進捗を見る';
+  document.getElementById('camp-exbox').style.display='block';
+}
+
+function nextCampQ(){
+  if(campQuizCur+1 < campQuizQs.length){ campQuizCur++; renderCampQuizQ(); window.scrollTo(0,0); }
+  else { renderCampDashboard(); show('camp-dashboard'); }
 }
 
 /* ===================================================
