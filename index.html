@@ -134,6 +134,7 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 .opts-wrap{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .opt-btn{display:flex;align-items:flex-start;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:16px;text-align:left;cursor:pointer;line-height:1.7;width:100%;transition:background 0.15s}
 .opt-btn:hover{background:rgba(37,99,235,0.1);border-color:rgba(37,99,235,0.3)}
+.opt-btn.selected{background:rgba(37,99,235,0.15);border-color:#2563eb}
 .opt-btn.correct{background:rgba(0,200,100,0.12);border-color:rgba(0,200,100,0.5)}
 .opt-btn.wrong{background:rgba(255,60,60,0.12);border-color:rgba(255,60,60,0.5)}
 .opt-btn.dim{opacity:0.35}
@@ -279,6 +280,51 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 .bp-corner-tr{top:24px;right:24px;border-left:none;border-bottom:none}
 .bp-corner-bl{bottom:24px;left:24px;border-right:none;border-top:none}
 .bp-corner-br{bottom:24px;right:24px;border-left:none;border-top:none}
+
+/* 学科模擬試験モード */
+.exam-timer-bar{position:sticky;top:0;z-index:10;background:var(--bg);display:flex;justify-content:space-between;align-items:center;padding:10px 0;margin-bottom:8px}
+.exam-timer{font-size:20px;font-weight:800;color:#2563eb;font-variant-numeric:tabular-nums}
+.exam-timer.warn{color:#dc2626}
+.exam-domain-tag{background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:#2563eb;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700}
+.pass-banner{border-radius:16px;padding:20px;text-align:center;margin-bottom:16px}
+.pass-banner.pass{background:rgba(0,200,100,0.12);border:1.5px solid rgba(0,200,100,0.4)}
+.pass-banner.fail{background:rgba(255,60,60,0.12);border:1.5px solid rgba(255,60,60,0.4)}
+.pass-banner-title{font-size:22px;font-weight:900;margin-bottom:6px}
+.pass-banner.pass .pass-banner-title{color:#16a34a}
+.pass-banner.fail .pass-banner-title{color:#dc2626}
+.pass-banner-score{font-size:32px;font-weight:900;color:var(--text)}
+.pass-banner-sub{font-size:13px;color:var(--text-secondary);margin-top:6px}
+.cat-card-shortage{font-size:11px;color:#dc2626;font-weight:800;margin-top:2px}
+.cat-card-ok{font-size:11px;color:#16a34a;font-weight:800;margin-top:2px}
+.chart-wrap{background:var(--bg);border-radius:14px;padding:16px;margin:0 16px 16px;box-shadow:0 2px 10px rgba(0,0,0,0.06);overflow-x:auto}
+.chart-svg{display:block;min-width:280px}
+.history-list-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.history-list-row:last-child{border-bottom:none}
+.pass-pill{font-size:11px;font-weight:800;padding:2px 10px;border-radius:20px}
+.pass-pill.pass{background:rgba(0,200,100,0.15);color:#16a34a}
+.pass-pill.fail{background:rgba(255,60,60,0.15);color:#dc2626}
+
+/* 実技モード（資産設計提案業務・事例問題） */
+.case-list-item{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;color:var(--text);cursor:pointer;font-size:15px;font-weight:700}
+.case-list-item:hover{background:rgba(37,99,235,0.08)}
+.case-list-sub{font-size:12px;color:var(--text-secondary);font-weight:400;margin-top:4px}
+.case-header-fixed{position:sticky;top:0;z-index:10;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:14px}
+.case-title{font-size:16px;font-weight:800;color:var(--text);margin-bottom:6px}
+.case-family-info{font-size:13px;color:var(--text-secondary);line-height:1.6;white-space:pre-wrap;margin-bottom:8px}
+.case-data-wrap{overflow-x:auto}
+.case-data-table{width:100%;border-collapse:collapse;font-size:12px}
+.case-data-table th,.case-data-table td{border:1px solid var(--border);padding:5px 7px;text-align:center;white-space:nowrap}
+.case-data-table th{background:var(--surface2);font-weight:700}
+.case-progress{font-size:12px;color:var(--text-secondary);font-weight:700;margin-bottom:8px}
+.case-answer-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.case-answer-input{flex:1;padding:11px 12px;border:1px solid var(--border);border-radius:10px;font-size:16px;background:var(--bg);color:var(--text)}
+.case-unit{font-size:13px;color:var(--text-secondary);font-weight:700}
+.case-overall{text-align:center;padding:20px;background:var(--surface);border-radius:16px;margin-bottom:16px}
+.case-overall-pct{font-size:36px;font-weight:900;color:#2563eb}
+
+/* 管理画面 */
+.admin-menu-item{width:calc(100% - 32px);margin:0 16px 12px;display:block;text-align:left;padding:16px;background:var(--bg);border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,0.06);border:none;color:var(--text);font-size:15px;font-weight:700;cursor:pointer}
+.admin-summary-note{font-size:12px;color:var(--text-tertiary);line-height:1.6;margin:0 16px 16px}
 </style>
 </head>
 <body>
@@ -375,13 +421,15 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
     <button class="outline-btn" onclick="beginQuiz('normal')">通常クイズ</button>
     <button class="outline-btn" onclick="beginQuiz('handsfree')">ハンズフリーモード（○×）</button>
     <button class="outline-btn" onclick="beginJitsugi()">🧮 実技試験モード</button>
+    <button class="outline-btn" onclick="beginMockExam()">📝 学科模擬試験（本番60問・120分）</button>
+    <button class="outline-btn" onclick="openCaseSelect()">📋 実技モード（資産設計提案業務）</button>
     <button class="outline-btn" onclick="openDashboard()">📊 学習進捗を見る</button>
   </div>
   <div class="history-card" id="hist-card" style="display:none">
     <div class="history-title">最近の記録</div>
     <div id="hist-list"></div>
   </div>
-  <div class="footer">AID式学習法 © amadopapa</div>
+  <div class="footer">AID式学習法 © amadopapa<br><a href="#" onclick="show('admin');return false;" style="color:var(--text-tertiary);font-size:11px">⚙️ 管理画面</a></div>
 </div>
 </div>
 
@@ -613,6 +661,138 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
       <button onclick="calcInput('1')">1</button><button onclick="calcInput('2')">2</button><button onclick="calcInput('3')">3</button><button onclick="calcInput('+')">+</button>
       <button onclick="calcInput('0')" class="calc-zero">0</button><button onclick="calcInput('.')">.</button><button onclick="calcInput('=')" class="calc-eq">=</button>
     </div>
+  </div>
+</div>
+</div>
+
+<!-- 学科模擬試験モード：出題画面 -->
+<div id="mock-exam-quiz" class="screen">
+<div class="container">
+  <div class="exam-timer-bar">
+    <span class="exam-domain-tag" id="mock-domain-tag"></span>
+    <span class="exam-timer" id="mock-timer">120:00</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="mock-prog"></div></div>
+  <div class="quiz-header">
+    <span class="cat-tag">学科模擬試験</span>
+    <span class="q-count" id="mock-q-num"></span>
+  </div>
+  <div class="question-card">
+    <div class="question-text" id="mock-q-text"></div>
+  </div>
+  <div class="opts-wrap" id="mock-opts"></div>
+  <button class="next-btn" id="mock-next-btn" onclick="nextMockQ()" style="display:none"></button>
+</div>
+</div>
+
+<!-- 学科模擬試験モード：結果レポート -->
+<div id="mock-exam-result" class="screen">
+<div class="light-screen">
+  <div class="light-header">
+    <button class="light-back" onclick="goHome()">←</button>
+    <div class="light-title">📝 模擬試験結果</div>
+  </div>
+  <div class="pass-banner" id="mock-pass-banner">
+    <div class="pass-banner-title" id="mock-pass-title"></div>
+    <div class="pass-banner-score" id="mock-pass-score"></div>
+    <div class="pass-banner-sub" id="mock-pass-sub"></div>
+  </div>
+  <div class="light-section-title">ジャンル別正答率</div>
+  <div id="mock-domain-list"></div>
+  <div class="light-section-title" id="mock-weak-title" style="display:none">苦手分野</div>
+  <div id="mock-weak-list"></div>
+  <button class="analyze-btn" style="width:calc(100% - 32px);margin:8px 16px;background:#fff;color:#2563eb;border:2px solid #2563eb" onclick="openMockExamHistory()">📈 受験履歴・スコア推移を見る</button>
+  <button class="analyze-btn" style="width:calc(100% - 32px);margin:8px 16px 20px" onclick="beginMockExam()">もう一度挑戦する</button>
+</div>
+</div>
+
+<!-- 学科模擬試験モード：受験履歴 -->
+<div id="mock-exam-history" class="screen">
+<div class="light-screen">
+  <div class="light-header">
+    <button class="light-back" onclick="show('mock-exam-result')">←</button>
+    <div class="light-title">📈 スコア推移</div>
+  </div>
+  <div id="mock-history-loading" class="light-empty">読み込み中...</div>
+  <div id="mock-history-body" style="display:none">
+    <div class="chart-wrap"><svg id="mock-history-chart" class="chart-svg" viewBox="0 0 320 160" preserveAspectRatio="none"></svg></div>
+    <div class="light-card" id="mock-history-list"></div>
+  </div>
+</div>
+</div>
+
+<!-- 実技モード（資産設計提案業務）：事例一覧 -->
+<div id="case-select" class="screen">
+<div class="container">
+  <div class="logo-wrap">
+    <div class="logo-icon">📋</div>
+    <div>
+      <div class="logo-title">実技モード</div>
+      <div class="logo-sub">資産設計提案業務（事例問題）</div>
+    </div>
+  </div>
+  <div id="case-list-loading" class="light-empty">読み込み中...</div>
+  <div id="case-list"></div>
+  <button class="outline-btn" onclick="goHome()">← ホームに戻る</button>
+</div>
+</div>
+
+<!-- 実技モード：事例出題画面 -->
+<div id="case-quiz" class="screen">
+<div class="container">
+  <div class="case-header-fixed">
+    <div class="case-title" id="case-title"></div>
+    <div class="case-family-info" id="case-family-info"></div>
+    <div class="case-data-wrap" id="case-data-wrap"></div>
+  </div>
+  <div class="case-progress" id="case-progress"></div>
+  <div class="question-card">
+    <div class="question-text" id="case-q-text"></div>
+  </div>
+  <div id="case-answer-area"></div>
+  <div class="ex-card" id="case-exbox" style="display:none">
+    <div class="ex-label" id="case-ex-title"></div>
+    <div class="ex-text" id="case-ex-text"></div>
+    <button class="next-btn" id="case-next-btn" onclick="nextCaseQ()"></button>
+  </div>
+</div>
+</div>
+
+<!-- 実技モード：事例結果 -->
+<div id="case-result" class="screen">
+<div class="container">
+  <div class="case-overall">
+    <div class="case-overall-pct" id="case-result-pct"></div>
+    <div id="case-result-sub" style="color:var(--text-secondary);font-size:13px;margin-top:6px"></div>
+  </div>
+  <div class="review-wrap" id="case-review"></div>
+  <button class="outline-btn" onclick="openCaseSelect()">他の事例に挑戦する</button>
+  <button class="start-btn" onclick="goHome()">ホームに戻る</button>
+</div>
+</div>
+
+<!-- 管理画面 -->
+<div id="admin" class="screen">
+<div class="light-screen">
+  <div class="light-header">
+    <button class="light-back" onclick="goHome()">←</button>
+    <div class="light-title">⚙️ 管理画面</div>
+  </div>
+  <button class="admin-menu-item" onclick="show('admin-question-summary');loadQuestionCountSummary();">📊 問題数サマリー<div class="case-list-sub">ジャンルごとの登録数と目安必要数を確認</div></button>
+</div>
+</div>
+
+<!-- 管理画面：問題数サマリー -->
+<div id="admin-question-summary" class="screen">
+<div class="light-screen">
+  <div class="light-header">
+    <button class="light-back" onclick="show('admin')">←</button>
+    <div class="light-title">📊 問題数サマリー</div>
+  </div>
+  <div id="admin-summary-loading" class="light-empty">読み込み中...</div>
+  <div id="admin-summary-body" style="display:none">
+    <div class="admin-summary-note">目安必要数＝合宿3周分＋模擬試験1回分（ジャンルごとの出題数）でカバーできる件数です。不足しているジャンルは赤字で表示されます。</div>
+    <div id="admin-summary-list"></div>
   </div>
 </div>
 </div>
@@ -1723,6 +1903,343 @@ function showAmado(isCorrect) {
 function closeAmado(){
   clearTimeout(amadoFadeTimer);
   document.getElementById('amado-overlay').style.display = 'none';
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+/* ===================================================
+   学科模擬試験モード（本番形式・60問・120分）
+   =================================================== */
+var MOCK_EXAM_DURATION_SEC = 120 * 60;
+var mockQs = [], mockCur = 0, mockAnswers = [];
+var mockTimerId = null, mockRemainingSec = 0;
+
+async function beginMockExam(){
+  show('loading');
+  try{
+    var r = await fetch('/api/mock-exam-questions');
+    var d = await r.json();
+    if(d.error || !d.questions || d.questions.length === 0) throw new Error(d.error || 'empty');
+    mockQs = d.questions;
+    if(d.shortage) alert('一部のジャンルで問題数が不足しているため、出題数が本来（60問）より少なくなっています。');
+  }catch(e){
+    alert('模擬試験問題の読み込みに失敗しました。通信環境をご確認のうえ、もう一度お試しください。');
+    show('home');
+    return;
+  }
+  mockCur = 0; mockAnswers = [];
+  mockRemainingSec = MOCK_EXAM_DURATION_SEC;
+  show('mock-exam-quiz');
+  startMockTimer();
+  renderMockQ();
+}
+
+function startMockTimer(){
+  clearInterval(mockTimerId);
+  updateMockTimerDisplay();
+  mockTimerId = setInterval(function(){
+    mockRemainingSec--;
+    updateMockTimerDisplay();
+    if(mockRemainingSec <= 0){
+      clearInterval(mockTimerId);
+      finishMockExam(true);
+    }
+  }, 1000);
+}
+
+function updateMockTimerDisplay(){
+  var sec = Math.max(0, mockRemainingSec);
+  var m = Math.floor(sec/60), s = sec%60;
+  var el = document.getElementById('mock-timer');
+  el.textContent = (m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+  el.classList.toggle('warn', mockRemainingSec <= 300);
+}
+
+function renderMockQ(){
+  var q = mockQs[mockCur];
+  document.getElementById('mock-prog').style.width = ((mockCur+1)/mockQs.length*100)+'%';
+  document.getElementById('mock-domain-tag').textContent = q.domain;
+  document.getElementById('mock-q-num').textContent = (mockCur+1)+' / '+mockQs.length;
+  document.getElementById('mock-q-text').textContent = q.q;
+  var prevSel = mockAnswers[mockCur] ? mockAnswers[mockCur].sel : null;
+  document.getElementById('mock-opts').innerHTML = q.opts.map(function(o,i){
+    var cls = 'opt-btn'+(prevSel===i?' selected':'');
+    return '<button class="'+cls+'" id="mo'+i+'" onclick="pickMockAnswer('+i+')"><span class="opt-num">'+(i+1)+'</span><span>'+escapeHtml(o)+'</span></button>';
+  }).join('');
+  var nextBtn = document.getElementById('mock-next-btn');
+  if(prevSel !== null){
+    nextBtn.textContent = mockCur+1<mockQs.length ? '次の問題へ →' : '解答を終了して採点する';
+    nextBtn.style.display = 'block';
+  } else {
+    nextBtn.style.display = 'none';
+  }
+}
+
+function pickMockAnswer(idx){
+  var q = mockQs[mockCur];
+  mockAnswers[mockCur] = {questionId:q.id, cat:q.cat, domain:q.domain, level:q.level, sel:idx, isCorrect: idx===q.ans};
+  var opts = document.getElementById('mock-opts').children;
+  for(var i=0;i<opts.length;i++) opts[i].classList.toggle('selected', i===idx);
+  var nextBtn = document.getElementById('mock-next-btn');
+  nextBtn.textContent = mockCur+1<mockQs.length ? '次の問題へ →' : '解答を終了して採点する';
+  nextBtn.style.display = 'block';
+}
+
+function nextMockQ(){
+  if(mockCur+1 < mockQs.length){ mockCur++; renderMockQ(); window.scrollTo(0,0); }
+  else finishMockExam(false);
+}
+
+async function finishMockExam(auto){
+  clearInterval(mockTimerId);
+  var payloadAnswers = mockQs.map(function(q,i){
+    var a = mockAnswers[i];
+    return {questionId:q.id, cat:q.cat, domain:q.domain, level:q.level, isCorrect: a ? a.isCorrect : false};
+  });
+  var durationSec = MOCK_EXAM_DURATION_SEC - Math.max(0, mockRemainingSec);
+  show('loading');
+  try{
+    var r = await fetch('/api/mock-exam-submit',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({answers:payloadAnswers, durationSec:durationSec, autoSubmitted: !!auto}),
+    });
+    var d = await r.json();
+    if(!d.ok) throw new Error(d.error || 'submit failed');
+    renderMockExamResult(d, auto);
+    show('mock-exam-result');
+  }catch(e){
+    alert('採点結果の送信に失敗しました。通信環境をご確認のうえ、もう一度お試しください。');
+    show('home');
+  }
+}
+
+function renderMockExamResult(d, auto){
+  var banner = document.getElementById('mock-pass-banner');
+  banner.className = 'pass-banner ' + (d.passed ? 'pass' : 'fail');
+  document.getElementById('mock-pass-title').textContent = d.passed ? '合格ライン突破！🎉' : '合格ラインまであと一歩';
+  document.getElementById('mock-pass-score').textContent = d.score+' / '+d.total;
+  document.getElementById('mock-pass-sub').textContent = '合格ライン：'+d.passScore+'問以上（60%）　正答率 '+d.pct+'%'
+    + (auto ? '（時間切れのため自動採点されました）' : '');
+  document.getElementById('mock-domain-list').innerHTML = (d.domainStats||[]).map(renderCatCard).join('');
+  var weak = (d.domainStats||[]).filter(function(c){ return c.accuracy !== null && c.accuracy < 60; });
+  if(weak.length){
+    document.getElementById('mock-weak-title').style.display = 'block';
+    document.getElementById('mock-weak-list').innerHTML = '<div class="light-card" style="font-size:13px;color:#dc2626;line-height:1.8">'
+      + weak.map(function(c){ return '・'+c.domain+'（正答率'+c.accuracy+'%）'; }).join('<br>') + '</div>';
+  } else {
+    document.getElementById('mock-weak-title').style.display = 'none';
+    document.getElementById('mock-weak-list').innerHTML = '';
+  }
+}
+
+function openMockExamHistory(){
+  show('mock-exam-history');
+  document.getElementById('mock-history-body').style.display = 'none';
+  document.getElementById('mock-history-loading').style.display = 'block';
+  fetch('/api/mock-exam-history').then(function(r){return r.json();}).then(function(d){
+    document.getElementById('mock-history-loading').style.display = 'none';
+    document.getElementById('mock-history-body').style.display = 'block';
+    var attempts = d.attempts || [];
+    renderMockHistoryChart(attempts);
+    document.getElementById('mock-history-list').innerHTML = attempts.length
+      ? attempts.slice().reverse().map(function(a){
+          var date = a.createdAt ? new Date(a.createdAt).toLocaleDateString('ja-JP') : '';
+          return '<div class="history-list-row"><span>'+date+'</span><span>'+a.score+' / '+a.total+'（'+a.pct+'%）</span>'
+            + '<span class="pass-pill '+(a.passed?'pass':'fail')+'">'+(a.passed?'合格':'不合格')+'</span></div>';
+        }).join('')
+      : '<div class="light-empty">まだ受験履歴がありません。</div>';
+  }).catch(function(){
+    document.getElementById('mock-history-loading').textContent = '読み込みに失敗しました。';
+  });
+}
+
+function renderMockHistoryChart(attempts){
+  var svg = document.getElementById('mock-history-chart');
+  if(!attempts.length){ svg.innerHTML = ''; return; }
+  var w=320, h=160, pad=24, n=attempts.length;
+  var points = attempts.map(function(a,i){
+    var x = n===1 ? w/2 : pad + (i*(w-2*pad)/(n-1));
+    var y = h-pad - (Math.max(0,Math.min(100,a.pct))/100)*(h-2*pad);
+    return {x:x, y:y, passed:a.passed};
+  });
+  var passLineY = h-pad - 0.6*(h-2*pad);
+  var parts = [];
+  parts.push('<line x1="'+pad+'" y1="'+passLineY+'" x2="'+(w-pad)+'" y2="'+passLineY+'" stroke="#dc2626" stroke-width="1" stroke-dasharray="4,3" />');
+  if(points.length > 1){
+    parts.push('<polyline points="'+points.map(function(p){return p.x+','+p.y;}).join(' ')+'" fill="none" stroke="#2563eb" stroke-width="2.5" />');
+  }
+  points.forEach(function(p){
+    parts.push('<circle cx="'+p.x+'" cy="'+p.y+'" r="4.5" fill="'+(p.passed?'#16a34a':'#dc2626')+'" />');
+  });
+  svg.innerHTML = parts.join('');
+}
+
+/* ===================================================
+   実技モード（日本FP協会 資産設計提案業務・事例問題）
+   =================================================== */
+var caseList = [], currentCase = null, caseCur = 0, caseAnswers = [];
+
+function openCaseSelect(){
+  show('case-select');
+  document.getElementById('case-list-loading').style.display = 'block';
+  document.getElementById('case-list').innerHTML = '';
+  fetch('/api/cases').then(function(r){return r.json();}).then(function(d){
+    document.getElementById('case-list-loading').style.display = 'none';
+    caseList = d.cases || [];
+    document.getElementById('case-list').innerHTML = caseList.length
+      ? caseList.map(function(c){
+          return '<button class="case-list-item" onclick="startCase(\''+c.id+'\')">'+escapeHtml(c.title)
+            + '<div class="case-list-sub">小問 '+c.questionCount+'問</div></button>';
+        }).join('')
+      : '<div class="light-empty">まだ事例問題が登録されていません。</div>';
+  }).catch(function(){
+    document.getElementById('case-list-loading').textContent = '読み込みに失敗しました。';
+  });
+}
+
+async function startCase(id){
+  show('loading');
+  try{
+    var r = await fetch('/api/case-detail?id='+encodeURIComponent(id));
+    var d = await r.json();
+    if(!d.case) throw new Error(d.error || 'not found');
+    currentCase = d.case;
+  }catch(e){
+    alert('事例の読み込みに失敗しました。通信環境をご確認のうえ、もう一度お試しください。');
+    show('case-select');
+    return;
+  }
+  caseCur = 0; caseAnswers = [];
+  renderCaseHeader();
+  show('case-quiz');
+  renderCaseQ();
+}
+
+function renderCaseHeader(){
+  document.getElementById('case-title').textContent = currentCase.title;
+  document.getElementById('case-family-info').textContent = currentCase.familyInfo || '';
+  document.getElementById('case-data-wrap').innerHTML = renderCaseDataTable(currentCase.data);
+}
+
+function renderCaseDataTable(data){
+  if(!data) return '';
+  if(Array.isArray(data) || typeof data !== 'object'){
+    return '<pre style="font-size:11px;white-space:pre-wrap;margin-top:6px">'+escapeHtml(JSON.stringify(data,null,2))+'</pre>';
+  }
+  return Object.keys(data).map(function(tableName){
+    var tableData = data[tableName];
+    var head = '<div style="font-size:12px;font-weight:700;margin:8px 0 4px">'+escapeHtml(tableName)+'</div>';
+    if(tableData && typeof tableData === 'object' && !Array.isArray(tableData)){
+      var cols = Object.keys(tableData);
+      return head + '<div class="case-data-wrap"><table class="case-data-table"><thead><tr>'
+        + cols.map(function(c){return '<th>'+escapeHtml(c)+'</th>';}).join('')
+        + '</tr></thead><tbody><tr>'
+        + cols.map(function(c){return '<td>'+escapeHtml(String(tableData[c]))+'</td>';}).join('')
+        + '</tr></tbody></table></div>';
+    }
+    return head + '<div style="font-size:12px">'+escapeHtml(String(tableData))+'</div>';
+  }).join('');
+}
+
+function renderCaseQ(){
+  var q = currentCase.questions[caseCur];
+  document.getElementById('case-progress').textContent = '小問 '+(caseCur+1)+' / '+currentCase.questions.length;
+  document.getElementById('case-q-text').textContent = q.text;
+  document.getElementById('case-exbox').style.display = 'none';
+  var area = document.getElementById('case-answer-area');
+  if(q.answerType === 'choice'){
+    area.innerHTML = '<div class="opts-wrap" id="case-choice-opts">'+(q.choices||[]).map(function(c,i){
+      return '<button class="opt-btn" id="cco'+i+'" onclick="submitCaseAnswer('+i+')"><span class="opt-num">'+(i+1)+'</span><span>'+escapeHtml(c)+'</span></button>';
+    }).join('')+'</div>';
+  } else {
+    area.innerHTML = '<div class="case-answer-row"><input type="number" inputmode="decimal" class="case-answer-input" id="case-num-input" placeholder="数値を入力"><span class="case-unit">'+escapeHtml(q.unit||'')+'</span></div>'
+      + '<button class="next-btn" onclick="submitCaseNumberAnswer()">解答する</button>';
+  }
+}
+
+function submitCaseNumberAnswer(){
+  var val = document.getElementById('case-num-input').value;
+  if(val === '') { alert('数値を入力してください。'); return; }
+  submitCaseAnswer(val);
+}
+
+function submitCaseAnswer(value){
+  var q = currentCase.questions[caseCur];
+  var ok, correctLabel;
+  if(q.answerType === 'choice'){
+    var idx = Number(value);
+    ok = idx === Number(q.correctAnswer);
+    correctLabel = (q.choices||[])[Number(q.correctAnswer)] || '';
+    var opts = document.querySelectorAll('#case-choice-opts .opt-btn');
+    opts.forEach(function(btn,i){
+      btn.disabled = true;
+      if(i === Number(q.correctAnswer)) btn.classList.add('correct');
+      else if(i === idx) btn.classList.add('wrong');
+      else btn.classList.add('dim');
+    });
+  } else {
+    var num = parseFloat(value);
+    var tolerance = typeof q.tolerance === 'number' ? q.tolerance : 0;
+    ok = !isNaN(num) && Math.abs(num - Number(q.correctAnswer)) <= tolerance;
+    correctLabel = q.correctAnswer + (q.unit ? q.unit : '');
+    document.getElementById('case-num-input').disabled = true;
+  }
+  caseAnswers.push({questionId:q.questionId, ok:ok});
+  recordAnswer({id:q.questionId, cat:'実技_事例', q:q.text, opts:q.choices||[], ans:q.correctAnswer, ex:q.ex||'', level:1}, ok, 'case');
+  document.getElementById('case-ex-title').textContent = ok ? '正解！' : '不正解...';
+  document.getElementById('case-ex-text').textContent = (ok ? '' : '正解：'+correctLabel+'\n\n') + (q.ex || '');
+  document.getElementById('case-next-btn').textContent = caseCur+1 < currentCase.questions.length ? '次の小問へ →' : '結果を見る';
+  document.getElementById('case-exbox').style.display = 'block';
+}
+
+function nextCaseQ(){
+  if(caseCur+1 < currentCase.questions.length){ caseCur++; renderCaseQ(); window.scrollTo(0,0); }
+  else finishCase();
+}
+
+function finishCase(){
+  var correct = caseAnswers.filter(function(a){return a.ok;}).length;
+  var total = caseAnswers.length;
+  var pct = total>0 ? Math.round(correct/total*100) : 0;
+  document.getElementById('case-result-pct').textContent = pct+'%';
+  document.getElementById('case-result-sub').textContent = correct+' / '+total+' 問正解（'+currentCase.title+'）';
+  document.getElementById('case-review').innerHTML = caseAnswers.map(function(a,i){
+    return '<div class="rev-row"><span>'+(a.ok?'○':'×')+'</span><span>小問'+(i+1)+'</span></div>';
+  }).join('');
+  show('case-result');
+}
+
+/* ===================================================
+   管理画面：問題数サマリー
+   =================================================== */
+function loadQuestionCountSummary(){
+  document.getElementById('admin-summary-body').style.display = 'none';
+  document.getElementById('admin-summary-loading').style.display = 'block';
+  fetch('/api/question-count-summary').then(function(r){return r.json();}).then(function(d){
+    document.getElementById('admin-summary-loading').style.display = 'none';
+    document.getElementById('admin-summary-body').style.display = 'block';
+    document.getElementById('admin-summary-list').innerHTML = (d.genres||[]).map(renderRequirementCard).join('');
+  }).catch(function(){
+    document.getElementById('admin-summary-loading').textContent = '読み込みに失敗しました。';
+  });
+}
+
+function renderRequirementCard(g){
+  var pct = g.required>0 ? Math.min(100, Math.round(g.current/g.required*100)) : 100;
+  var cls = g.ok ? 'good' : (pct>=50 ? 'mid' : 'bad');
+  return '<div class="cat-card">'
+    + '<div class="cat-card-info">'
+    + '<div class="cat-card-name">'+escapeHtml(g.domain)+'</div>'
+    + '<div class="cat-bar-track"><div class="cat-bar-fill '+cls+'" style="width:'+pct+'%"></div></div>'
+    + '<div class="cat-card-sub">現在 '+g.current+'問 ／ 目安 '+g.required+'問</div>'
+    + (g.ok ? '<div class="cat-card-ok">✓ 充足しています</div>' : '<div class="cat-card-shortage">あと '+g.shortage+'問 不足しています</div>')
+    + '</div>'
+    + '<div class="cat-card-pct '+cls+'">'+g.current+'/'+g.required+'</div>'
+    + '</div>';
 }
 
 updateHome();
