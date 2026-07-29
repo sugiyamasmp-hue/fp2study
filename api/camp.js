@@ -48,9 +48,28 @@ async function handleGetQuestions(req, res) {
     return res.status(200).json({ questions: [], round: camp.currentRound, genre, done: true });
   }
 
+  if (roundKey === '1' || roundKey === '2') {
+    // 1〜2周目：questions_ox から元問題ごとに1件ランダムに選び、○×形式で出題する
+    // （回答記録・周完了判定は元の4択問題IDベースのまま変えないため、idは元IDに戻す）
+    const oxSnaps = await Promise.all(
+      unansweredIds.map(id => db.collection('questions_ox').where('sourceId', '==', id).get())
+    );
+    const questions = unansweredIds
+      .map((id, i) => {
+        const oxDocs = oxSnaps[i].docs;
+        if (oxDocs.length === 0) return null;
+        const picked = oxDocs[Math.floor(Math.random() * oxDocs.length)];
+        return { ...picked.data(), id, format: 'ox' };
+      })
+      .filter(Boolean);
+
+    return res.status(200).json({ questions, round: camp.currentRound, genre });
+  }
+
+  // 3周目：現状通り4択で出題
   const refs = unansweredIds.map(id => db.collection('questions').doc(id));
   const docs = await db.getAll(...refs);
-  const questions = docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data() }));
+  const questions = docs.filter(d => d.exists).map(d => ({ id: d.id, ...d.data(), format: 'choice' }));
 
   return res.status(200).json({ questions, round: camp.currentRound, genre });
 }

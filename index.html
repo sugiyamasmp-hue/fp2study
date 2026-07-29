@@ -190,6 +190,12 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 .hf-maru{flex:1;padding:30px 0;background:linear-gradient(135deg,#00c864,#00a050);border:none;border-radius:18px;color:#fff;font-size:36px;cursor:pointer;box-shadow:0 4px 20px rgba(0,200,100,0.3)}
 .hf-batu{flex:1;padding:30px 0;background:linear-gradient(135deg,#ff4444,#cc2200);border:none;border-radius:18px;color:#fff;font-size:36px;cursor:pointer;box-shadow:0 4px 20px rgba(255,68,68,0.3)}
 .hf-maru:disabled,.hf-batu:disabled{opacity:0.3;cursor:not-allowed;box-shadow:none}
+.camp-ox-btns{display:flex;gap:14px;width:100%}
+.camp-ox-maru{flex:1;padding:30px 0;background:linear-gradient(135deg,#00c864,#00a050);border:none;border-radius:18px;color:#fff;font-size:36px;cursor:pointer;box-shadow:0 4px 20px rgba(0,200,100,0.3)}
+.camp-ox-batu{flex:1;padding:30px 0;background:linear-gradient(135deg,#ff4444,#cc2200);border:none;border-radius:18px;color:#fff;font-size:36px;cursor:pointer;box-shadow:0 4px 20px rgba(255,68,68,0.3)}
+.camp-ox-maru:disabled,.camp-ox-batu:disabled{cursor:not-allowed}
+.camp-ox-maru.camp-ox-dim,.camp-ox-batu.camp-ox-dim{opacity:0.3;box-shadow:none}
+.camp-ox-maru.camp-ox-correct,.camp-ox-batu.camp-ox-correct{box-shadow:0 0 0 4px rgba(255,255,255,0.6),0 4px 20px rgba(0,0,0,0.3)}
 .hf-result{background:var(--surface2);border-radius:14px;padding:18px;margin-bottom:14px;text-align:center;display:none}
 .hf-result-icon{font-size:52px;margin-bottom:8px}
 .hf-result-text{font-size:15px;color:var(--text-secondary);line-height:1.8;white-space:pre-wrap}
@@ -2505,9 +2511,17 @@ function renderCampQuizQ(){
   document.getElementById('camp-q-num').textContent = (campQuizCur+1)+' / '+campQuizQs.length;
   document.getElementById('camp-q-text').textContent = q.q;
   document.getElementById('camp-exbox').style.display='none';
-  document.getElementById('camp-opts').innerHTML = q.opts.map(function(o,i){
-    return '<button class="opt-btn" id="cpo'+i+'" onclick="pickCampAnswer('+i+')"><span class="opt-num">'+(i+1)+'</span><span>'+escapeHtml(o)+'</span></button>';
-  }).join('');
+  if(q.format === 'ox'){
+    document.getElementById('camp-opts').innerHTML =
+      '<div class="camp-ox-btns">'
+      + '<button class="camp-ox-maru" id="cpo-maru" onclick="pickCampOX(true)">○</button>'
+      + '<button class="camp-ox-batu" id="cpo-batu" onclick="pickCampOX(false)">×</button>'
+      + '</div>';
+  } else {
+    document.getElementById('camp-opts').innerHTML = q.opts.map(function(o,i){
+      return '<button class="opt-btn" id="cpo'+i+'" onclick="pickCampAnswer('+i+')"><span class="opt-num">'+(i+1)+'</span><span>'+escapeHtml(o)+'</span></button>';
+    }).join('');
+  }
   campChatHist=[];
   document.getElementById('camp-chat-head').textContent = t.name+'に質問する';
   document.getElementById('camp-chat-in').placeholder = t.placeholder;
@@ -2525,6 +2539,25 @@ async function pickCampAnswer(idx){
     else if(i===idx) opts[i].classList.add('wrong');
     else opts[i].classList.add('dim');
   }
+  await finishCampAnswer(q, ok);
+}
+
+async function pickCampOX(boolAnswer){
+  var q = campQuizQs[campQuizCur];
+  var idx = boolAnswer ? 0 : 1;
+  var ok = idx === q.ans;
+  var maruBtn = document.getElementById('cpo-maru');
+  var batuBtn = document.getElementById('cpo-batu');
+  maruBtn.disabled = true;
+  batuBtn.disabled = true;
+  var correctBtn = q.ans===0 ? maruBtn : batuBtn;
+  var otherBtn = q.ans===0 ? batuBtn : maruBtn;
+  correctBtn.classList.add('camp-ox-correct');
+  otherBtn.classList.add('camp-ox-dim');
+  await finishCampAnswer(q, ok);
+}
+
+async function finishCampAnswer(q, ok){
   recordAnswer(q, ok, 'camp');
   try{
     var r = await fetch('/api/camp',{
