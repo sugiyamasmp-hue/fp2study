@@ -1,69 +1,38 @@
-const { initializeApp, getApps, cert } = require('firebase-admin/app');
-const { getFirestore } = require('firebase-admin/firestore');
+const fs = require('fs');
+const path = require('path');
 
-if (!getApps().length) {
-  initializeApp({
-    credential: cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY
-        ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-        : undefined,
-    }),
-  });
-}
+const SOURCE_PATH = path.join(__dirname, 'questions_export.json');
+const OUTPUT_PATH = path.join(__dirname, 'questions_ox_generated.json');
 
-const db = getFirestore();
-const BATCH_LIMIT = 500;
-
-// 4択1問 → ○×4問。doc.idと選択肢indexから決定的なIDを作るので、再実行しても重複せず上書きされる
-function buildOxQuestions(doc) {
-  const q = doc.data();
+// 4択1問 → ○×4問。元のidと選択肢indexから決定的なIDを作るので、再実行しても重複せず上書きされる
+function buildOxQuestions(q) {
   const correctIdx = Number(q.ans);
 
   return q.opts.map((optText, i) => ({
-    id: `${doc.id}_${i}`,
+    id: `${q.id}_${i}`,
     cat: q.cat,
     q: optText,
     opts: ['○', '×'],
     ans: i === correctIdx ? 0 : 1,
     ex: q.ex || '',
-    sourceId: doc.id,
+    sourceId: q.id,
     sourceOptionIndex: i,
   }));
 }
 
-async function main() {
-  const snapshot = await db.collection('questions').get();
+function main() {
+  const questions = JSON.parse(fs.readFileSync(SOURCE_PATH, 'utf-8'));
 
   const oxQuestions = [];
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    if (!Array.isArray(data.opts) || data.ans === undefined) return;
-    oxQuestions.push(...buildOxQuestions(doc));
+  questions.forEach(q => {
+    if (!Array.isArray(q.opts) || q.ans === undefined) return;
+    oxQuestions.push(...buildOxQuestions(q));
   });
 
-  console.log(`元の4択問題: ${snapshot.size}件 → ○×問題: ${oxQuestions.length}件 に変換`);
+  console.log(`元の4択問題: ${questions.length}件 → ○×問題: ${oxQuestions.length}件 に変換`);
 
-  let written = 0;
-  for (let i = 0; i < oxQuestions.length; i += BATCH_LIMIT) {
-    const chunk = oxQuestions.slice(i, i + BATCH_LIMIT);
-    const batch = db.batch();
-
-    chunk.forEach(item => {
-      const { id, ...data } = item;
-      batch.set(db.collection('questions_ox').doc(id), data);
-    });
-
-    await batch.commit();
-    written += chunk.length;
-    console.log(`${written} / ${oxQuestions.length} 件処理済み`);
-  }
-
-  console.log(`完了: questions_ox コレクションへ ${written}件 保存しました`);
+  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(oxQuestions, null, 2));
+  console.log(`完了: ${OUTPUT_PATH} に保存しました（内容を確認後、import_ox.js で反映してください）`);
 }
 
-main().catch(error => {
-  console.error('エラー:', error);
-  process.exit(1);
-});
+main();
