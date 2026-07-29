@@ -16,21 +16,37 @@ if (!getApps().length) {
 const db = getFirestore();
 const BATCH_LIMIT = 500;
 
+// 「誤っているもの」「不適切なもの」等、正解の選択肢自体が誤った記述である設問（逆パターン）の判定
+const NEGATIVE_STEM_PATTERNS = [
+  /誤って/, /間違って/, /不適切/, /適切でない/, /適切ではない/,
+  /正しくない/, /ふさわしくない/, /あてはまらない/, /該当しない/,
+];
+function isNegativeStem(stem) {
+  return NEGATIVE_STEM_PATTERNS.some(re => re.test(stem || ''));
+}
+
 // 4択1問 → ○×4問。doc.idと選択肢indexから決定的なIDを作るので、再実行しても重複せず上書きされる
+// 通常の設問（正しいものを選べ）ではans番目の選択肢だけが正しい記述だが、
+// 「誤っているものを選べ」型の設問ではans番目の選択肢だけが誤った記述で、他の3つが正しい記述になる。
+// 設問文（q.q）のキーワードから型を判定し、選択肢ごとの○×を反転させる。
 function buildOxQuestions(doc) {
   const q = doc.data();
   const correctIdx = Number(q.ans);
+  const negative = isNegativeStem(q.q);
 
-  return q.opts.map((optText, i) => ({
-    id: `${doc.id}_${i}`,
-    cat: q.cat,
-    q: optText,
-    opts: ['○', '×'],
-    ans: i === correctIdx ? 0 : 1,
-    ex: q.ex || '',
-    sourceId: doc.id,
-    sourceOptionIndex: i,
-  }));
+  return q.opts.map((optText, i) => {
+    const isTrueStatement = negative ? (i !== correctIdx) : (i === correctIdx);
+    return {
+      id: `${doc.id}_${i}`,
+      cat: q.cat,
+      q: optText,
+      opts: ['○', '×'],
+      ans: isTrueStatement ? 0 : 1,
+      ex: q.ex || '',
+      sourceId: doc.id,
+      sourceOptionIndex: i,
+    };
+  });
 }
 
 async function main() {
