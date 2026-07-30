@@ -1,5 +1,6 @@
 const { initializeApp, getApps, cert } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
+const { sanitizeOxExplanation } = require('../lib/oxExplanation');
 
 if (!getApps().length) {
   initializeApp({
@@ -49,7 +50,10 @@ module.exports = async function handler(req, res) {
         .limit(limitNum)
         .get();
       const questions = [];
-      snapshot.forEach(doc => questions.push({ id: doc.id, ...doc.data() }));
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        questions.push({ id: doc.id, ...data, ex: sanitizeOxExplanation(data.ex, data.opts) });
+      });
       return res.status(200).json({ questions, reviewEmpty: questions.length === 0 });
     }
 
@@ -90,7 +94,8 @@ module.exports = async function handler(req, res) {
 
     // シャッフルして件数制限
     questions.sort(() => Math.random() - 0.5);
-    questions = questions.slice(0, limitNum);
+    questions = questions.slice(0, limitNum)
+      .map(q => ({ ...q, ex: sanitizeOxExplanation(q.ex, q.opts) }));
 
     return res.status(200).json({ questions, gapEmpty: gapOnly && questions.length === 0 });
 
