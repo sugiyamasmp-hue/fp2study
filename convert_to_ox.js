@@ -11,7 +11,7 @@ function buildOxQuestions(q) {
   return q.opts.map((optText, i) => ({
     id: `${q.id}_${i}`,
     cat: q.cat,
-    q: optText,
+    q: `${q.q}\n${optText}`,
     opts: ['○', '×'],
     ans: i === correctIdx ? 0 : 1,
     ex: q.ex || '',
