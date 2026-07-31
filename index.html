@@ -328,6 +328,31 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 .case-overall{text-align:center;padding:20px;background:var(--surface);border-radius:16px;margin-bottom:16px}
 .case-overall-pct{font-size:36px;font-weight:900;color:#2563eb}
 
+/* 学習メモ */
+.memo-toolbar{margin:0 16px 12px}
+.memo-search-input{width:100%;padding:13px 14px;border:1px solid var(--border);border-radius:12px;font-size:16px;background:var(--bg);color:var(--text);outline:none;-webkit-appearance:none}
+.memo-search-input:focus{border-color:#2563eb}
+.memo-genre-scroll{display:flex;gap:8px;overflow-x:auto;padding:10px 0 2px;-webkit-overflow-scrolling:touch}
+.memo-genre-scroll::-webkit-scrollbar{display:none}
+.memo-genre-tab{flex:0 0 auto;padding:9px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);color:var(--text-secondary);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.memo-genre-tab.selected{color:#fff}
+.memo-date-toggle{background:none;border:none;color:#2563eb;font-size:12px;font-weight:700;cursor:pointer;padding:8px 0}
+.memo-date-row{display:flex;align-items:center;gap:8px;margin-top:4px}
+.memo-date-row input{flex:1;min-width:0;padding:10px;border:1px solid var(--border);border-radius:10px;font-size:14px;background:var(--bg);color:var(--text)}
+.memo-count{font-size:12px;color:var(--text-tertiary);margin:0 16px 10px}
+.memo-card{display:block;width:calc(100% - 32px);margin:0 16px 10px;text-align:left;background:var(--bg);border:none;border-radius:14px;padding:14px 16px;box-shadow:0 2px 10px rgba(0,0,0,0.06);cursor:pointer;font-family:inherit}
+.memo-card:hover{background:#fafafa}
+.memo-card-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.memo-badge{font-size:11px;font-weight:800;color:#fff;border-radius:20px;padding:3px 10px;white-space:nowrap}
+.memo-card-date{font-size:11px;color:var(--text-tertiary);margin-left:auto;white-space:nowrap}
+.memo-card-body{font-size:14px;color:#333;line-height:1.7;word-break:break-word}
+.memo-fab{position:fixed;right:18px;bottom:24px;height:56px;padding:0 22px;border-radius:28px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;color:#fff;font-size:16px;font-weight:800;box-shadow:0 4px 16px rgba(37,99,235,0.4);cursor:pointer;z-index:50}
+.memo-field-label{font-size:12px;color:var(--text-secondary);font-weight:700;margin-bottom:6px}
+.memo-select{width:100%;padding:14px 12px;border:1px solid var(--border);border-radius:12px;font-size:16px;background:var(--bg);color:var(--text)}
+.memo-textarea{width:100%;min-height:220px;padding:14px;border:1px solid var(--border);border-radius:12px;font-size:16px;line-height:1.8;background:var(--bg);color:var(--text);resize:vertical;font-family:inherit;outline:none}
+.memo-textarea:focus{border-color:#2563eb}
+.memo-meta{font-size:11px;color:var(--text-tertiary);margin-top:10px;line-height:1.6}
+
 /* 管理画面 */
 .admin-menu-item{width:calc(100% - 32px);margin:0 16px 12px;display:block;text-align:left;padding:16px;background:var(--bg);border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,0.06);border:none;color:var(--text);font-size:15px;font-weight:700;cursor:pointer}
 .admin-summary-note{font-size:12px;color:var(--text-tertiary);line-height:1.6;margin:0 16px 16px}
@@ -429,6 +454,7 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
     <button class="outline-btn" onclick="beginJitsugi()">🧮 実技試験モード</button>
     <button class="outline-btn" onclick="show('honki-menu')" style="border-color:#d97706;color:#d97706">🔥 本気モード</button>
     <button class="outline-btn" onclick="openDashboard()">📊 学習進捗を見る</button>
+    <button class="outline-btn" onclick="openMemos()">📝 学習メモ</button>
   </div>
   <div class="history-card" id="hist-card" style="display:none">
     <div class="history-title">最近の記録</div>
@@ -871,6 +897,49 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
   <div class="review-wrap" id="case-review"></div>
   <button class="outline-btn" onclick="openCaseSelect()">他の事例に挑戦する</button>
   <button class="start-btn" onclick="show('honki-menu')">本気モードに戻る</button>
+</div>
+</div>
+
+<!-- 学習メモ：一覧 -->
+<div id="memos" class="screen">
+<div class="light-screen" style="padding-bottom:100px">
+  <div class="light-header">
+    <button class="light-back" onclick="goHome()">←</button>
+    <div class="light-title">📝 学習メモ</div>
+  </div>
+  <div class="memo-toolbar">
+    <input class="memo-search-input" id="memo-search" type="search" placeholder="🔍 キーワードで検索" oninput="renderMemoList()">
+    <div class="memo-genre-scroll" id="memo-genre-tabs"></div>
+    <button class="memo-date-toggle" id="memo-date-toggle" onclick="toggleMemoDateFilter()">📅 期間で絞り込む</button>
+    <div class="memo-date-row" id="memo-date-row" style="display:none">
+      <input type="date" id="memo-date-from" onchange="renderMemoList()">
+      <span style="font-size:13px;color:var(--text-secondary)">〜</span>
+      <input type="date" id="memo-date-to" onchange="renderMemoList()">
+    </div>
+  </div>
+  <div id="memo-list-loading" class="light-empty">読み込み中...</div>
+  <div class="memo-count" id="memo-count" style="display:none"></div>
+  <div id="memo-list"></div>
+</div>
+<button class="memo-fab" onclick="openMemoForm()" aria-label="メモを追加">＋ メモ</button>
+</div>
+
+<!-- 学習メモ：追加・編集 -->
+<div id="memo-form" class="screen">
+<div class="light-screen">
+  <div class="light-header">
+    <button class="light-back" onclick="openMemos()">←</button>
+    <div class="light-title" id="memo-form-title">📝 メモを追加</div>
+  </div>
+  <div class="light-card">
+    <div class="memo-field-label">ジャンル</div>
+    <select class="memo-select" id="memo-genre-select"></select>
+    <div class="memo-field-label" style="margin-top:18px">メモ本文</div>
+    <textarea class="memo-textarea" id="memo-content" placeholder="気づいたこと、わかりにくかった論点をメモしよう"></textarea>
+    <div class="memo-meta" id="memo-meta"></div>
+  </div>
+  <button class="analyze-btn" id="memo-save-btn" onclick="saveMemo()">💾 保存する</button>
+  <button class="outline-btn" id="memo-delete-btn" style="width:calc(100% - 32px);margin:0 16px 24px;border-color:#dc2626;color:#dc2626;display:none" onclick="deleteMemo()">🗑 このメモを削除する</button>
 </div>
 </div>
 
@@ -2643,6 +2712,227 @@ function renderRequirementCard(g){
     + '</div>'
     + '<div class="cat-card-pct '+cls+'">'+g.current+'/'+g.required+'</div>'
     + '</div>';
+}
+
+/* ===================================================
+   学習メモ（ジャンル別の自由記述メモ）
+   =================================================== */
+// lib/memoGenres.js と同じ内容。片方を変更したらもう片方も揃えること。
+var MEMO_GENRES = [
+  {code:'life_planning',   label:'ライフプランニング',   color:'#2563eb'},
+  {code:'risk',            label:'リスク管理',           color:'#e11d48'},
+  {code:'asset_management',label:'金融資産運用',         color:'#059669'},
+  {code:'tax',             label:'タックスプランニング', color:'#d97706'},
+  {code:'real_estate',     label:'不動産',               color:'#7c3aed'},
+  {code:'inheritance',     label:'相続・事業承継',       color:'#0891b2'},
+  {code:'other',           label:'その他・雑感',         color:'#6b7280'},
+];
+var MEMO_LAST_GENRE_KEY = 'aid_fp2_memo_last_genre';
+
+var memos = [];              // /api/memos の全件（createdAt降順）
+var memoFilterGenre = 'all';
+var editingMemoId = null;    // null なら新規追加
+
+function memoGenreInfo(code){
+  for(var i=0;i<MEMO_GENRES.length;i++){ if(MEMO_GENRES[i].code===code) return MEMO_GENRES[i]; }
+  return MEMO_GENRES[MEMO_GENRES.length-1]; // 未知のコードは「その他・雑感」扱い
+}
+
+// 検索用の表記ゆれ吸収。NFKC正規化（全角英数→半角・半角カナ→全角カナ）＋小文字化＋
+// カタカナ→ひらがな＋空白除去で、大文字小文字・かなカナ・スペースの違いを無視して部分一致させる。
+function normalizeMemoText(s){
+  return String(s||'')
+    .normalize('NFKC')
+    .toLowerCase()
+    .replace(/[ァ-ヶ]/g, function(c){ return String.fromCharCode(c.charCodeAt(0)-0x60); })
+    .replace(/\s+/g,'');
+}
+
+function formatMemoDate(iso){
+  if(!iso) return '';
+  var d = new Date(iso);
+  if(isNaN(d.getTime())) return '';
+  return new Intl.DateTimeFormat('ja-JP',{
+    timeZone:'Asia/Tokyo', year:'numeric', month:'2-digit', day:'2-digit',
+    hour:'2-digit', minute:'2-digit',
+  }).format(d);
+}
+
+// 日付範囲フィルタ用に、メモの作成日時をJST基準の "YYYY-MM-DD" に変換する
+// （<input type="date"> の値と直接比較できる形）。
+function memoDateJST(iso){
+  if(!iso) return '';
+  var d = new Date(iso);
+  if(isNaN(d.getTime())) return '';
+  var parts = new Intl.DateTimeFormat('en-CA',{
+    timeZone:'Asia/Tokyo', year:'numeric', month:'2-digit', day:'2-digit',
+  }).formatToParts(d);
+  var get = function(t){ return parts.find(function(p){return p.type===t;}).value; };
+  return get('year')+'-'+get('month')+'-'+get('day');
+}
+
+function openMemos(){
+  show('memos');
+  renderMemoGenreTabs();
+  loadMemos();
+}
+
+function loadMemos(){
+  document.getElementById('memo-list').innerHTML = '';
+  document.getElementById('memo-count').style.display = 'none';
+  document.getElementById('memo-list-loading').style.display = 'block';
+  document.getElementById('memo-list-loading').textContent = '読み込み中...';
+  return fetch('/api/memos').then(function(r){return r.json();}).then(function(d){
+    if(d.error) throw new Error(d.error);
+    memos = d.memos || [];
+    document.getElementById('memo-list-loading').style.display = 'none';
+    renderMemoList();
+  }).catch(function(){
+    document.getElementById('memo-list-loading').textContent = '読み込みに失敗しました。通信環境を確認して開き直してください。';
+  });
+}
+
+function renderMemoGenreTabs(){
+  var tabs = [{code:'all', label:'すべて', color:'#2563eb'}].concat(MEMO_GENRES);
+  document.getElementById('memo-genre-tabs').innerHTML = tabs.map(function(g){
+    var sel = g.code===memoFilterGenre;
+    var style = sel ? ' style="background:'+g.color+';border-color:'+g.color+'"' : '';
+    return '<button class="memo-genre-tab'+(sel?' selected':'')+'" data-genre="'+g.code+'"'
+      + ' onclick="selectMemoGenreFilter(\''+g.code+'\')"'+style+'>'+escapeHtml(g.label)+'</button>';
+  }).join('');
+}
+
+function selectMemoGenreFilter(code){
+  memoFilterGenre = code;
+  renderMemoGenreTabs();
+  renderMemoList();
+}
+
+function toggleMemoDateFilter(){
+  var row = document.getElementById('memo-date-row');
+  var on = row.style.display === 'none';
+  row.style.display = on ? 'flex' : 'none';
+  document.getElementById('memo-date-toggle').textContent = on ? '📅 期間の絞り込みを閉じる' : '📅 期間で絞り込む';
+  if(!on){
+    // 閉じるときは条件をクリアして、絞り込みが残ったままにならないようにする
+    document.getElementById('memo-date-from').value = '';
+    document.getElementById('memo-date-to').value = '';
+    renderMemoList();
+  }
+}
+
+// キーワード・ジャンル・日付範囲でクライアント側フィルタ（件数は数百件規模の想定）
+function filterMemos(){
+  var kw = normalizeMemoText(document.getElementById('memo-search').value);
+  var from = document.getElementById('memo-date-from').value;
+  var to = document.getElementById('memo-date-to').value;
+  return memos.filter(function(m){
+    if(memoFilterGenre !== 'all' && m.genre !== memoFilterGenre) return false;
+    if(kw && normalizeMemoText(m.content).indexOf(kw) === -1) return false;
+    if(from || to){
+      var day = memoDateJST(m.createdAt);
+      if(!day) return false;
+      if(from && day < from) return false;
+      if(to && day > to) return false;
+    }
+    return true;
+  });
+}
+
+function renderMemoList(){
+  var list = filterMemos();
+  var countEl = document.getElementById('memo-count');
+  countEl.style.display = 'block';
+  countEl.textContent = list.length + '件' + (list.length !== memos.length ? '（全'+memos.length+'件中）' : '');
+
+  if(list.length === 0){
+    document.getElementById('memo-list').innerHTML =
+      '<div class="light-empty">' + (memos.length === 0
+        ? 'まだメモがありません。右下の「＋ メモ」から追加しましょう。'
+        : '条件に合うメモが見つかりませんでした。') + '</div>';
+    return;
+  }
+  document.getElementById('memo-list').innerHTML = list.map(renderMemoCard).join('');
+}
+
+function renderMemoCard(m){
+  var g = memoGenreInfo(m.genre);
+  var excerpt = String(m.content||'').replace(/\s+/g,' ').trim();
+  if(excerpt.length > 100) excerpt = excerpt.slice(0,100) + '…';
+  return '<button class="memo-card" onclick="openMemoForm(\''+m.id+'\')">'
+    + '<div class="memo-card-head">'
+    + '<span class="memo-badge" style="background:'+g.color+'">'+escapeHtml(g.label)+'</span>'
+    + '<span class="memo-card-date">'+formatMemoDate(m.createdAt)+'</span>'
+    + '</div>'
+    + '<div class="memo-card-body">'+escapeHtml(excerpt)+'</div>'
+    + '</button>';
+}
+
+// id を渡すと編集、省略すると新規追加
+function openMemoForm(id){
+  editingMemoId = id || null;
+  var memo = editingMemoId ? memos.find(function(m){return m.id===editingMemoId;}) : null;
+
+  var sel = document.getElementById('memo-genre-select');
+  sel.innerHTML = MEMO_GENRES.map(function(g){
+    return '<option value="'+g.code+'">'+escapeHtml(g.label)+'</option>';
+  }).join('');
+  // 新規時は前回選んだジャンルを初期値にする（同じジャンルを続けて書くことが多いため）
+  var defaultGenre = memo ? memo.genre : (localStorage.getItem(MEMO_LAST_GENRE_KEY) || 'other');
+  sel.value = memoGenreInfo(defaultGenre).code;
+
+  document.getElementById('memo-content').value = memo ? memo.content : '';
+  document.getElementById('memo-form-title').textContent = memo ? '📝 メモを編集' : '📝 メモを追加';
+  document.getElementById('memo-delete-btn').style.display = memo ? 'block' : 'none';
+  document.getElementById('memo-meta').textContent = memo
+    ? '作成：'+formatMemoDate(memo.createdAt) + (memo.updatedAt && memo.updatedAt !== memo.createdAt ? '　／　更新：'+formatMemoDate(memo.updatedAt) : '')
+    : '';
+
+  show('memo-form');
+  document.getElementById('memo-content').focus();
+}
+
+function saveMemo(){
+  var content = document.getElementById('memo-content').value.trim();
+  if(!content){ alert('メモ本文を入力してください。'); return; }
+  var genre = document.getElementById('memo-genre-select').value;
+
+  var btn = document.getElementById('memo-save-btn');
+  btn.disabled = true;
+  btn.textContent = '保存中...';
+
+  var url = editingMemoId ? '/api/memos?id='+encodeURIComponent(editingMemoId) : '/api/memos';
+  fetch(url, {
+    method: editingMemoId ? 'PUT' : 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({genre: genre, content: content}),
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.error) throw new Error(d.error);
+    try{ localStorage.setItem(MEMO_LAST_GENRE_KEY, genre); }catch(e){}
+    openMemos();
+  }).catch(function(e){
+    alert('保存に失敗しました：'+e.message);
+  }).finally(function(){
+    btn.disabled = false;
+    btn.textContent = '💾 保存する';
+  });
+}
+
+function deleteMemo(){
+  if(!editingMemoId) return;
+  if(!confirm('このメモを削除します。よろしいですか？')) return;
+
+  var btn = document.getElementById('memo-delete-btn');
+  btn.disabled = true;
+  fetch('/api/memos?id='+encodeURIComponent(editingMemoId), {method:'DELETE'})
+    .then(function(r){return r.json();}).then(function(d){
+      if(d.error) throw new Error(d.error);
+      openMemos();
+    }).catch(function(e){
+      alert('削除に失敗しました：'+e.message);
+    }).finally(function(){
+      btn.disabled = false;
+    });
 }
 
 updateHome();
