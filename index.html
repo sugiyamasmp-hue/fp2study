@@ -157,6 +157,7 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 .quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .cat-tag{background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:#2563eb;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700}
 .q-count{font-size:13px;color:var(--text-secondary);font-weight:700}
+.quiz-interrupt-btn{background:none;border:1px solid #d1d5db;color:#6b7280;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;cursor:pointer;white-space:nowrap}
 .question-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 16px;margin-bottom:14px}
 .question-text{font-size:17px;line-height:1.8;color:var(--text);white-space:pre-wrap}
 .ex-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:8px}
@@ -755,7 +756,10 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
   <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
   <div class="quiz-header">
     <span class="cat-tag" id="q-cat"></span>
-    <span class="q-count" id="q-num"></span>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="q-count" id="q-num"></span>
+      <button class="quiz-interrupt-btn" onclick="interruptNormalQuiz()">中断する</button>
+    </div>
   </div>
   <div class="question-card"><div class="question-text" id="q-text"></div></div>
   <div class="opts-wrap" id="opts"></div>
@@ -880,7 +884,10 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
   <div class="progress-bar"><div class="progress-fill" id="camp-prog"></div></div>
   <div class="quiz-header">
     <span class="cat-tag" id="camp-quiz-tag"></span>
-    <span class="q-count" id="camp-q-num"></span>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="q-count" id="camp-q-num"></span>
+      <button class="quiz-interrupt-btn" onclick="interruptCampQuiz()">中断する</button>
+    </div>
   </div>
   <div class="question-card">
     <div class="question-text" id="camp-q-text"></div>
@@ -1129,6 +1136,20 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
     <div class="r-msg" id="r-msg"></div>
     <div class="review-wrap" id="review"></div>
     <button class="start-btn" onclick="goHome()">もう一回挑戦！</button>
+  </div>
+  <div class="footer">AID式学習法 © amadopapa</div>
+</div>
+</div>
+
+<!-- 中断結果画面 -->
+<div id="interrupted-result" class="screen">
+<div class="container">
+  <div class="result-card">
+    <div class="r-emoji">⏸</div>
+    <div class="r-score" id="ir-score"></div>
+    <div class="r-pct" id="ir-pct"></div>
+    <div class="r-msg">ここまでの結果を記録しました。また続きから頑張ろう！</div>
+    <button class="start-btn" onclick="goHome()">ホームに戻る</button>
   </div>
   <div class="footer">AID式学習法 © amadopapa</div>
 </div>
@@ -2240,6 +2261,46 @@ function finish(){
   show('result');
 }
 
+/* ===================================================
+   中断機能（通常クイズ・合宿プラン共通）
+   =================================================== */
+async function saveStudySession(answeredCount, correctCount, mode, source, cat){
+  try{
+    var r = await fetch('/api/study-sessions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({status:'interrupted', answeredCount:answeredCount, correctCount:correctCount, mode:mode, source:source, cat:cat}),
+    });
+    var d = await r.json();
+    if(typeof d.accuracy === 'number') return d.accuracy;
+  }catch(e){}
+  // 通信エラー時もローカルでゼロ除算対策済みの値を出す
+  return answeredCount>0 ? Math.round(correctCount/answeredCount*100) : 0;
+}
+
+function showInterruptedResult(answeredCount, correctCount, accuracy){
+  document.getElementById('ir-score').textContent = correctCount+' / '+answeredCount;
+  document.getElementById('ir-pct').textContent = accuracy+'%';
+  show('interrupted-result');
+}
+
+async function interruptNormalQuiz(){
+  if(!confirm('ここで中断しますか？ここまでの結果を記録して終了します。')) return;
+  synth&&synth.cancel();
+  var answeredCount = answers.length;
+  var correctCount = score;
+  var accuracy = await saveStudySession(answeredCount, correctCount, mode, 'normal', selectedCategory);
+  showInterruptedResult(answeredCount, correctCount, accuracy);
+}
+
+async function interruptCampQuiz(){
+  if(!confirm('ここで中断しますか？ここまでの結果を記録して終了します。')) return;
+  var answeredCount = campQuizAnswered;
+  var correctCount = campQuizCorrect;
+  var accuracy = await saveStudySession(answeredCount, correctCount, 'camp', 'camp', campQuizGenre);
+  showInterruptedResult(answeredCount, correctCount, accuracy);
+}
+
 function goHome(){synth&&synth.cancel();
 updateHome();
 updateContinueBtn();show('home');}
@@ -2741,6 +2802,7 @@ function finishCase(){
 var campState = null; // GET /api/camp のレスポンス（computeCampViewの結果）をそのまま保持
 var campCreateGenres = [];
 var campQuizGenre = null, campQuizQs = [], campQuizCur = 0;
+var campQuizAnswered = 0, campQuizCorrect = 0; // 中断時の結果表示用（このセッション内での解答数・正解数）
 var ROUND_STATUS_ICON = {'未着手':'⚪','進行中':'🔵','完了':'✅'};
 
 function todayDateInputValue(){
@@ -2917,6 +2979,8 @@ async function startCampQuiz(genre){
   }
   campQuizGenre = genre;
   campQuizCur = 0;
+  campQuizAnswered = 0;
+  campQuizCorrect = 0;
   show('camp-quiz');
   renderCampQuizQ();
 }
@@ -2976,6 +3040,8 @@ async function pickCampOX(boolAnswer){
 }
 
 async function finishCampAnswer(q, ok){
+  campQuizAnswered++;
+  if(ok) campQuizCorrect++;
   recordAnswer(q, ok, 'camp');
   try{
     var r = await fetch('/api/camp',{
