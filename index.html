@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AID式学習法 FP2級</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yomogi&family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#ffffff;--surface:#f5f5f5;--surface2:#eeeeee;--border:rgba(0,0,0,0.1);--text:#1a1a1a;--text-secondary:#555555;--text-tertiary:#888888;--accent:#2563eb;--accent2:#1d4ed8}
@@ -356,6 +359,81 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 /* 管理画面 */
 .admin-menu-item{width:calc(100% - 32px);margin:0 16px 12px;display:block;text-align:left;padding:16px;background:var(--bg);border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,0.06);border:none;color:var(--text);font-size:15px;font-weight:700;cursor:pointer}
 .admin-summary-note{font-size:12px;color:var(--text-tertiary);line-height:1.6;margin:0 16px 16px}
+
+/* ===================================================
+   受験勉強モード：① キャラクター選択 ／ ② 学習の流れ（黒板）
+   =================================================== */
+.study-flow{
+  --paper:#f3efe4;   /* キャラ選択画面の背景 */
+  --ink:#3a3226;     /* 基本文字色 */
+  --board:#26362c;   /* 黒板の背景 */
+  --wood:#7a4f2b;    /* 黒板の木枠 */
+  --chalk:#f4f1e6;   /* チョークの白 */
+  --hanko:#f0c869;   /* 見極めハンコ（黄色チョーク） */
+  --karimen:#e893b0; /* 仮免許（ピンクチョーク） */
+  background:var(--paper);
+  color:var(--ink);
+  min-height:100vh;
+  font-family:'Zen Maru Gothic','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;
+}
+.study-flow .sf-inner{max-width:480px;margin:0 auto;padding:20px 16px 40px}
+
+/* ステップタブ（① 先生を選ぶ ／ ② 学習の流れ） */
+.sf-steps{display:flex;gap:8px;margin-bottom:20px}
+.sf-step{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 4px;border-radius:12px;border:2px solid rgba(58,50,38,0.15);background:rgba(255,255,255,0.55);color:rgba(58,50,38,0.5);font-family:inherit;font-size:13px;font-weight:700;cursor:default}
+.sf-step.tappable{cursor:pointer}
+.sf-step.on{border-color:var(--ink);background:#fff;color:var(--ink)}
+.sf-step-no{font-family:'Yomogi',cursive;font-size:15px}
+
+/* --- ① キャラクター選択 --- */
+.cs-title{font-family:'Yomogi',cursive;font-size:26px;font-weight:400;color:var(--ink);margin-bottom:6px}
+.cs-sub{font-size:13px;color:rgba(58,50,38,0.65);line-height:1.6;margin-bottom:18px}
+.cs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-bottom:150px}
+.cs-card{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:16px 10px 12px;background:#fff;border:2.5px solid rgba(58,50,38,0.12);border-radius:18px;box-shadow:0 2px 10px rgba(58,50,38,0.08);cursor:pointer;font-family:inherit;color:inherit;transition:border-color 0.15s,transform 0.15s,box-shadow 0.15s}
+.cs-card:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(58,50,38,0.12)}
+.cs-card.selected{border-color:var(--c);box-shadow:0 6px 18px rgba(58,50,38,0.2);box-shadow:0 6px 18px color-mix(in srgb,var(--c) 35%,transparent)}
+.cs-avatar{position:relative;width:66px;height:66px;border-radius:50%;background:var(--c);overflow:hidden;flex-shrink:0}
+.cs-avatar img,.oxg-teacher-avatar img{position:relative;z-index:1;width:100%;height:100%;object-fit:cover}
+/* イラスト未配置／読み込み失敗時のフォールバック（キャラ名の頭文字を表示） */
+.cs-avatar-letter{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Yomogi',cursive;font-size:26px;color:#fff}
+.cs-name{font-family:'Yomogi',cursive;font-size:17px;color:var(--ink);line-height:1.2}
+.cs-tag{font-size:10px;color:rgba(58,50,38,0.5);line-height:1.4}
+.cs-bubble{position:relative;margin-top:4px;padding:9px 10px;border:1.5px dashed var(--c);border-radius:12px;background:#fffdf8;background:color-mix(in srgb,var(--c) 8%,#fff);font-size:11px;line-height:1.6;color:var(--ink);text-align:left;word-break:break-word}
+.cs-check{position:absolute;top:-9px;right:-9px;width:26px;height:26px;border-radius:50%;background:var(--c);color:#fff;font-size:14px;font-weight:900;display:none;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.2)}
+.cs-card.selected .cs-check{display:flex}
+
+.cs-footer{position:fixed;left:0;right:0;bottom:0;z-index:60;background:linear-gradient(to top,var(--paper) 72%,rgba(243,239,228,0));padding:16px 16px 20px}
+.cs-footer-inner{max-width:480px;margin:0 auto}
+.cs-start-btn{width:100%;padding:16px 0;border:none;border-radius:16px;font-family:inherit;font-size:16px;font-weight:800;color:#fff;background:var(--ink);cursor:pointer;box-shadow:0 4px 16px rgba(58,50,38,0.28)}
+.cs-start-btn:disabled{background:#c9c2b4;color:#fff;box-shadow:none;cursor:default}
+.cs-back-btn{display:block;width:100%;margin-top:10px;padding:10px 0;background:none;border:none;font-family:inherit;font-size:13px;font-weight:700;color:rgba(58,50,38,0.5);cursor:pointer}
+
+/* --- ② 学習の流れ（黒板） --- */
+.bd-frame{background:var(--wood);border-radius:14px;padding:12px;box-shadow:0 8px 24px rgba(58,50,38,0.28),inset 0 0 0 2px rgba(255,255,255,0.12)}
+.bd-board{background:var(--board);border-radius:6px;padding:20px 16px;color:var(--chalk);font-family:'Yomogi',cursive;box-shadow:inset 0 0 40px rgba(0,0,0,0.45)}
+.bd-teacher{font-size:15px;line-height:1.7;color:var(--tc,var(--chalk));border-bottom:1.5px dashed rgba(244,241,230,0.3);padding-bottom:14px;margin-bottom:16px;word-break:break-word}
+.bd-title{font-size:22px;text-align:center;letter-spacing:0.08em;margin-bottom:16px}
+.bd-step{display:flex;gap:10px;align-items:flex-start;border:2px dashed rgba(244,241,230,0.45);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.6}
+.bd-step-no{flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(244,241,230,0.6);display:flex;align-items:center;justify-content:center;font-size:13px}
+.bd-arrow{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;color:rgba(244,241,230,0.55)}
+.bd-arrow i{width:2px;height:5px;background:currentColor;border-radius:1px;display:block;font-style:normal}
+.bd-arrow span{font-size:11px;line-height:1;margin-top:1px}
+.bd-mile{margin:10px 0;padding:10px 12px;border:2px dashed var(--mc);border-radius:999px;text-align:center;font-size:13px;line-height:1.5;color:var(--mc)}
+.bd-start-btn{width:100%;margin-top:20px;padding:16px 0;border:none;border-radius:16px;font-family:inherit;font-size:16px;font-weight:800;color:#fff;background:var(--tc,var(--ink));cursor:pointer;box-shadow:0 4px 16px rgba(58,50,38,0.25)}
+.bd-back-btn{display:block;width:100%;margin-top:10px;padding:12px 0;background:none;border:none;font-family:inherit;font-size:13px;font-weight:700;color:rgba(58,50,38,0.5);cursor:pointer}
+
+/* --- ○×問題：ジャンル選択 --- */
+.oxg-teacher{display:flex;align-items:flex-start;gap:10px;margin-bottom:18px}
+.oxg-teacher-avatar{position:relative;width:44px;height:44px;border-radius:50%;background:var(--tc,#ccc);flex-shrink:0;overflow:hidden}
+.oxg-teacher-avatar .cs-avatar-letter{font-size:18px}
+.oxg-teacher-bubble{flex:1;padding:10px 12px;border:1.5px dashed var(--tc,#ccc);border-radius:12px;background:#fff;font-size:13px;line-height:1.6}
+.oxg-list{display:flex;flex-direction:column;gap:10px}
+.oxg-item{display:flex;align-items:center;gap:12px;width:100%;padding:16px;background:#fff;border:2px solid rgba(58,50,38,0.12);border-radius:16px;font-family:inherit;color:inherit;text-align:left;cursor:pointer;box-shadow:0 2px 10px rgba(58,50,38,0.07)}
+.oxg-item:hover:not(:disabled){border-color:var(--ink)}
+.oxg-item:disabled{opacity:0.45;cursor:default}
+.oxg-item-name{flex:1;font-size:14px;font-weight:700;line-height:1.4}
+.oxg-item-count{font-size:11px;font-weight:700;color:rgba(58,50,38,0.5);white-space:nowrap}
+.oxg-note{font-size:11px;color:rgba(58,50,38,0.5);line-height:1.7;margin-top:16px}
 </style>
 </head>
 <body>
@@ -447,6 +525,7 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
         <button class="count-btn" data-n="20" onclick="selectCount(20)">20問</button>
       </div>
     </div>
+    <button class="start-btn" onclick="goStudyMode()" style="background:linear-gradient(135deg,#e8935c,#d97706);box-shadow:0 4px 20px rgba(232,147,92,0.4)">📚 受験勉強モード</button>
     <button class="start-btn" onclick="goTeacherSelect('random')">先生を選んでスタート！（ランダム）</button>
     <button class="outline-btn" onclick="goTeacherSelect('continue')" id="continue-btn" style="margin-bottom:10px;display:none">続きから再開する（<span id="continue-info"></span>）</button>
     <button class="outline-btn" onclick="beginQuiz('normal')">通常クイズ</button>
@@ -570,6 +649,77 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
         </div>
       </div>
     </div>
+  </div>
+</div>
+</div>
+
+<!-- 受験勉強モード ①：キャラクター選択 -->
+<div id="screen-select" class="screen">
+<div class="study-flow">
+  <div class="sf-inner">
+    <div class="sf-steps">
+      <div class="sf-step on"><span class="sf-step-no">①</span>先生を選ぶ</div>
+      <div class="sf-step"><span class="sf-step-no">②</span>学習の流れ</div>
+    </div>
+    <h2 class="cs-title">先生を選んでな</h2>
+    <p class="cs-sub">タップすると、その先生のしゃべり方がわかるで〜</p>
+    <div class="cs-grid" id="cs-grid"></div>
+  </div>
+  <div class="cs-footer">
+    <div class="cs-footer-inner">
+      <button class="cs-start-btn" id="cs-start-btn" disabled onclick="goStudyBoard()">先生を選んでね</button>
+      <button class="cs-back-btn" onclick="goHome()">← ホームに戻る</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 受験勉強モード ②：学習の流れ（黒板） -->
+<div id="screen-board" class="screen">
+<div class="study-flow">
+  <div class="sf-inner" id="bd-inner">
+    <div class="sf-steps">
+      <button class="sf-step tappable" onclick="show('screen-select')"><span class="sf-step-no">①</span>先生を選ぶ</button>
+      <div class="sf-step on"><span class="sf-step-no">②</span>学習の流れ</div>
+    </div>
+    <div class="bd-frame">
+      <div class="bd-board">
+        <div class="bd-teacher" id="bd-teacher"></div>
+        <div class="bd-title">学習の流れ</div>
+
+        <div class="bd-step"><span class="bd-step-no">1</span><span>ジャンル別に ○✕問題 を解く</span></div>
+        <div class="bd-arrow"><i></i><i></i><i></i><span>▼</span></div>
+
+        <div class="bd-step"><span class="bd-step-no">2</span><span>結果チェック → 間違えた問題を解説で覚える</span></div>
+        <div class="bd-arrow"><i></i><i></i><i></i><span>▼</span></div>
+
+        <div class="bd-step"><span class="bd-step-no">3</span><span>間違えた問題だけ再挑戦</span></div>
+        <div class="bd-mile" style="--mc:var(--hanko)">🖐️ 9割以上 → 見極めハンコ！</div>
+        <div class="bd-arrow"><i></i><i></i><i></i><span>▼</span></div>
+
+        <div class="bd-step"><span class="bd-step-no">4</span><span>4択問題も同じ流れで挑戦</span></div>
+        <div class="bd-mile" style="--mc:var(--karimen)">🚗 8割以上 → 仮免許ゲット！</div>
+        <div class="bd-arrow"><i></i><i></i><i></i><span>▼</span></div>
+
+        <div class="bd-step"><span class="bd-step-no">5</span><span>模擬試験 or 実技試験にチャレンジ！</span></div>
+      </div>
+    </div>
+    <button class="bd-start-btn" onclick="goOxGenre()">この流れではじめる！</button>
+    <button class="bd-back-btn" onclick="show('screen-select')">← 先生選びに戻る</button>
+  </div>
+</div>
+</div>
+
+<!-- 受験勉強モード：○×問題のジャンル選択 -->
+<div id="ox-genre" class="screen">
+<div class="study-flow">
+  <div class="sf-inner" id="oxg-inner">
+    <h2 class="cs-title">ジャンルを選んでな</h2>
+    <p class="cs-sub">まずは ○✕問題 から。得意ジャンルでも苦手ジャンルでもOK！</p>
+    <div class="oxg-teacher" id="oxg-teacher"></div>
+    <div class="oxg-list" id="oxg-list"></div>
+    <div class="oxg-note">※ ○✕問題は内容を確認済みのセットのみを出題しています。準備中のジャンルは順次追加予定です。</div>
+    <button class="bd-back-btn" onclick="show('screen-board')">← 学習の流れに戻る</button>
   </div>
 </div>
 </div>
@@ -1038,6 +1188,41 @@ var TEACHERS = {
   }
 };
 
+/* ===== 受験勉強モードのキャラクターデータ =====
+   TEACHERS（口調プロンプト用）とは別に、キャラ選択画面／黒板画面の見せ方だけを持つ。
+   id は仕様書準拠。ギャル先生だけ既存コードのキーが 'gal' なので teacherKey で対応付ける。 */
+var STUDY_CHARACTERS = [
+  {
+    id:'yassan', teacherKey:'yassan', name:'Yassan先生', color:'#e8935c',
+    icon:'/images/characters/yassan.png', letter:'や',
+    toneTag:'大阪弁・熱血',
+    sample:'ヒロユキ！ここ間違えたらもったいないでぇ〜もう一回いくで！',
+    board:'ほな、ヒロユキ！流れ説明するでー！しっかりついてきてな🔥',
+  },
+  {
+    id:'bon', teacherKey:'bon', name:'Bon先生', color:'#8bab6f',
+    icon:'/images/characters/bon.png', letter:'ボ',
+    toneTag:'口癖：反対の賛成なのだ',
+    sample:'反対の賛成なのだ！つまり、この選択肢は正しいのだ〜',
+    board:'流れを説明するのだ！反対はなしなのだ〜、まずは①からいくのだ！',
+  },
+  {
+    id:'gyal', teacherKey:'gal', name:'Gyal先生', color:'#e893b0',
+    icon:'/images/characters/gyal.png', letter:'ギ',
+    toneTag:'ギャル語・テンション高め',
+    sample:'Suu-san、それマジ神問題じゃん！余裕でいけるっしょ✨',
+    board:'Suu-san、流れ教えちゃうね〜✨ これマジ余裕だから安心して！',
+  },
+  {
+    id:'sebas', teacherKey:'sebas', name:'Sebas先生', color:'#5c7a9e',
+    icon:'/images/characters/sebas.png', letter:'セ',
+    toneTag:'執事・落ち着き系',
+    sample:'Hiro-sama、こちらの問題、落ち着いて参りましょう。',
+    board:'Hiro-sama、学習の流れをご説明いたします。落ち着いてまいりましょう。',
+  },
+];
+var BOARD_FALLBACK_GREETING = '先生を選んでから見てな😊';
+
 /* ===== 問題データ（通常/チャットは /api/questions から動的取得。ロード前は空） ===== */
 var Qs = [];
 var QsOX = [];
@@ -1311,6 +1496,170 @@ function makeOrder(m){
     }
   }
   return order;
+}
+
+/* ===================================================
+   受験勉強モード ①キャラクター選択 → ②学習の流れ（黒板） → ○×問題
+   =================================================== */
+var STUDY_CHARACTER_KEY = 'aid_fp2_character';
+var BOARD_SEEN_KEY = 'aid_fp2_board_seen';
+
+// 黒板画面を「毎回表示」するか「初回のみ表示」するかは仕様未確定（要確認事項）。
+// 'always' … キャラ選択のたびに表示 ／ 'once' … 初回だけ表示して以降はスキップ
+var BOARD_SHOW_MODE = 'always';
+
+var selectedCharacterId = null;
+
+function findCharacter(id){
+  for(var i=0;i<STUDY_CHARACTERS.length;i++){
+    if(STUDY_CHARACTERS[i].id === id) return STUDY_CHARACTERS[i];
+  }
+  return null;
+}
+
+function loadSavedCharacter(){
+  try{
+    var saved = localStorage.getItem(STUDY_CHARACTER_KEY);
+    // 'gal' は既存コード側のギャル先生のキー。過去に保存された値も拾えるようにしておく
+    if(saved === 'gal') saved = 'gyal';
+    if(findCharacter(saved)) return saved;
+  }catch(e){}
+  return null;
+}
+
+function saveSelectedCharacter(id){
+  try{ localStorage.setItem(STUDY_CHARACTER_KEY, id); }catch(e){}
+}
+
+/* 起動時：前回選んだ先生を復元して口調にも反映する */
+function restoreStudyCharacter(){
+  selectedCharacterId = loadSavedCharacter();
+  var c = findCharacter(selectedCharacterId);
+  if(c && TEACHERS[c.teacherKey]) selectedTeacher = c.teacherKey;
+}
+
+/* ホームの「受験勉強モード」から入る入口 */
+function goStudyMode(){
+  selectedCharacterId = loadSavedCharacter();
+  renderCharacterSelect();
+  show('screen-select');
+}
+
+function renderCharacterSelect(){
+  document.getElementById('cs-grid').innerHTML = STUDY_CHARACTERS.map(function(c){
+    var cls = 'cs-card' + (c.id === selectedCharacterId ? ' selected' : '');
+    return '<button type="button" class="'+cls+'" id="cs-card-'+c.id+'" style="--c:'+c.color+'" '+
+             'onclick="pickCharacter(\''+c.id+'\')" aria-pressed="'+(c.id===selectedCharacterId)+'">'+
+             '<span class="cs-check">✓</span>'+
+             '<span class="cs-avatar">'+characterAvatarHtml(c)+'</span>'+
+             '<span class="cs-name">'+escapeHtml(c.name)+'</span>'+
+             '<span class="cs-tag">'+escapeHtml(c.toneTag)+'</span>'+
+             '<span class="cs-bubble">「'+escapeHtml(c.sample)+'」</span>'+
+           '</button>';
+  }).join('');
+  updateCharacterStartBtn();
+}
+
+// アバターはイラスト画像。頭文字を常に下に敷いておき、画像が無い／読めない場合はそれが見える
+function characterAvatarHtml(c){
+  var letter = '<span class="cs-avatar-letter">'+escapeHtml(c.letter||'?')+'</span>';
+  if(!c.icon) return letter;
+  return letter + '<img src="'+c.icon+'" alt="'+escapeHtml(c.name)+'" onerror="this.remove()">';
+}
+
+function updateCharacterStartBtn(){
+  var btn = document.getElementById('cs-start-btn');
+  var c = findCharacter(selectedCharacterId);
+  btn.disabled = !c;
+  btn.textContent = c ? 'この先生で勉強スタート！' : '先生を選んでね';
+  btn.style.background = c ? c.color : '';
+}
+
+/* カードタップで選択をトグル（同時に選べるのは1人だけ） */
+function pickCharacter(id){
+  selectedCharacterId = (selectedCharacterId === id) ? null : id;
+
+  document.querySelectorAll('.cs-card').forEach(function(el){ el.classList.remove('selected'); el.setAttribute('aria-pressed','false'); });
+  if(selectedCharacterId){
+    var card = document.getElementById('cs-card-'+selectedCharacterId);
+    if(card){ card.classList.add('selected'); card.setAttribute('aria-pressed','true'); }
+    saveSelectedCharacter(selectedCharacterId);
+    // チャット・解説の口調も選んだ先生に合わせる
+    var c = findCharacter(selectedCharacterId);
+    if(c && TEACHERS[c.teacherKey]) selectedTeacher = c.teacherKey;
+  }
+  updateCharacterStartBtn();
+}
+
+/* ② 学習の流れ（黒板）へ。選んだ先生の挨拶セリフを渡す */
+function goStudyBoard(){
+  var c = findCharacter(selectedCharacterId);
+  if(!c) return;
+
+  var boardSeen = false;
+  try{ boardSeen = localStorage.getItem(BOARD_SEEN_KEY) === '1'; }catch(e){}
+  if(BOARD_SHOW_MODE === 'once' && boardSeen){
+    goOxGenre();
+    return;
+  }
+
+  renderStudyBoard();
+  show('screen-board');
+}
+
+function renderStudyBoard(){
+  var c = findCharacter(selectedCharacterId);
+  var el = document.getElementById('bd-teacher');
+  el.textContent = c ? c.board : BOARD_FALLBACK_GREETING;
+  // 挨拶文・スタートボタンをキャラカラーで強調
+  document.getElementById('bd-inner').style.setProperty('--tc', c ? c.color : 'var(--chalk)');
+}
+
+/* ○×問題のジャンル選択へ */
+function goOxGenre(){
+  try{ localStorage.setItem(BOARD_SEEN_KEY, '1'); }catch(e){}
+  renderOxGenre();
+  show('ox-genre');
+}
+
+// ○×問題は内容を手で確認済みの QsOX_FALLBACK のみを出題対象にしている
+// （questions_ox コレクションは「最も不適切なものはどれか」型で正誤が反転する既知の不具合があるため）。
+function oxQuestionsFor(cat){
+  if(cat === 'all') return QsOX_FALLBACK.slice();
+  return QsOX_FALLBACK.filter(function(q){ return q.cat === cat; });
+}
+
+function renderOxGenre(){
+  var c = findCharacter(selectedCharacterId);
+  var tw = document.getElementById('oxg-inner');
+  tw.style.setProperty('--tc', c ? c.color : '#c9c2b4');
+
+  document.getElementById('oxg-teacher').innerHTML = c
+    ? '<div class="oxg-teacher-avatar">'+characterAvatarHtml(c)+'</div>'+
+      '<div class="oxg-teacher-bubble">'+escapeHtml(c.sample)+'</div>'
+    : '';
+
+  var genres = CATEGORIES.filter(function(cat){ return cat.key !== '模擬試験'; });
+  document.getElementById('oxg-list').innerHTML = genres.map(function(cat){
+    var n = oxQuestionsFor(cat.all ? 'all' : cat.key).length;
+    var label = cat.all ? '全ジャンルおまかせ' : cat.label;
+    return '<button type="button" class="oxg-item" '+(n ? '' : 'disabled ')+
+             'onclick="startOxQuiz(\''+(cat.all ? 'all' : cat.key.replace(/'/g,"\\'"))+'\')">'+
+             '<span class="oxg-item-name">'+escapeHtml(label)+'</span>'+
+             '<span class="oxg-item-count">'+(n ? n+'問' : '準備中')+'</span>'+
+           '</button>';
+  }).join('');
+}
+
+function startOxQuiz(cat){
+  var set = oxQuestionsFor(cat);
+  if(!set.length){
+    alert('このジャンルの○×問題はまだ準備中です。');
+    return;
+  }
+  cur = 0; score = 0; answers = [];
+  QsOX = set;
+  startQuiz('handsfree');
 }
 
 /* ===== 画面 ===== */
@@ -2940,6 +3289,7 @@ updateContinueBtn();
 renderDailyQuote();
 renderCategoryBtns();
 renderGapBtns();
+restoreStudyCharacter();
 </script>
 
 <!-- アマドポップアップ -->
