@@ -88,6 +88,9 @@ module.exports = async function handler(req, res) {
       }
     }
 
+    // ○×化に失敗した設問（棚卸しで判定不能となったもの）は出題対象から除外
+    questions = questions.filter(q => !q.exclude);
+
     if (gapOnly) {
       questions = questions.filter(q => q.level_type === 'gap');
     }

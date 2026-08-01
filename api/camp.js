@@ -57,7 +57,7 @@ async function handleGetQuestions(req, res) {
     );
     const questions = unansweredIds
       .map((id, i) => {
-        const oxDocs = oxSnaps[i].docs;
+        const oxDocs = oxSnaps[i].docs.filter(d => !d.data().exclude);
         if (oxDocs.length === 0) return null;
         const picked = oxDocs[Math.floor(Math.random() * oxDocs.length)];
         const data = picked.data();
