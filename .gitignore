@@ -1,6 +1,7 @@
 .vercel
 .env
 node_modules/
+monndai/serviceAccountKey.json
 questions_export.json
 questions_generated.json
 questions_generated_reviewed.json
