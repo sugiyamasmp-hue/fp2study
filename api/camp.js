@@ -1,7 +1,7 @@
 const { db, FieldValue, todayJST } = require('../lib/db');
 const { DOMAINS, mapCategoryToDomain } = require('../lib/categoryDomains');
 const { DEFAULT_EXAM_DATE, buildGenresFromIds, roundIsComplete, computeCampView } = require('../lib/camp');
-const { sanitizeOxExplanation } = require('../lib/oxExplanation');
+const { sanitizeOxExplanation, sanitizeOxQuestion } = require('../lib/oxExplanation');
 
 // 合宿プラン（3周回学習）関連のエンドポイントを1関数に集約。
 // Vercel Hobbyプランのサーバーレス関数数上限（12個）を超えないよう、
@@ -61,7 +61,13 @@ async function handleGetQuestions(req, res) {
         if (oxDocs.length === 0) return null;
         const picked = oxDocs[Math.floor(Math.random() * oxDocs.length)];
         const data = picked.data();
-        return { ...data, ex: sanitizeOxExplanation(data.ex, data.opts), id, format: 'ox' };
+        return {
+          ...data,
+          q: sanitizeOxQuestion(data.q, data.opts),
+          ex: sanitizeOxExplanation(data.ex, data.opts),
+          id,
+          format: 'ox',
+        };
       })
       .filter(Boolean);
 

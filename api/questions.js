@@ -9,7 +9,7 @@
  *   source=genre&counts=1 … ジャンル選択画面に出す在庫数
  */
 const { db } = require('../lib/db');
-const { sanitizeOxExplanation } = require('../lib/oxExplanation');
+const { sanitizeOxExplanation, sanitizeOxQuestion } = require('../lib/oxExplanation');
 const { DOMAINS, mapCategoryToDomain } = require('../lib/categoryDomains');
 
 const SUKIMA_DEFAULT_LIMIT = 20;
@@ -45,7 +45,7 @@ async function loadQuestionPool(collectionName) {
       id: doc.id,
       cat: d.cat || '',
       domain: mapCategoryToDomain(d.cat),
-      q: d.q,
+      q: sanitizeOxQuestion(d.q, d.opts),
       opts: d.opts,
       ans: d.ans,
       ex: sanitizeOxExplanation(d.ex || '', d.opts),
@@ -167,7 +167,12 @@ module.exports = async function handler(req, res) {
       const questions = [];
       snapshot.forEach(doc => {
         const data = doc.data();
-        questions.push({ id: doc.id, ...data, ex: sanitizeOxExplanation(data.ex, data.opts) });
+        questions.push({
+          id: doc.id,
+          ...data,
+          q: sanitizeOxQuestion(data.q, data.opts),
+          ex: sanitizeOxExplanation(data.ex, data.opts),
+        });
       });
       return res.status(200).json({ questions, reviewEmpty: questions.length === 0 });
     }
@@ -213,7 +218,7 @@ module.exports = async function handler(req, res) {
     // シャッフルして件数制限
     questions.sort(() => Math.random() - 0.5);
     questions = questions.slice(0, limitNum)
-      .map(q => ({ ...q, ex: sanitizeOxExplanation(q.ex, q.opts) }));
+      .map(q => ({ ...q, q: sanitizeOxQuestion(q.q, q.opts), ex: sanitizeOxExplanation(q.ex, q.opts) }));
 
     return res.status(200).json({ questions, gapEmpty: gapOnly && questions.length === 0 });
 
