@@ -70,6 +70,8 @@ async function main() {
   const updates = [];
 
   for (const ox of oxDocs) {
+    // standalone: true は4択の展開ではないため、原本の設問タイプからは正誤を検算できない
+    if (ox.standalone === true) continue;
     const source = ox.sourceId ? sourceById.get(ox.sourceId) : null;
     if (!source || !Array.isArray(source.opts)) continue;
 

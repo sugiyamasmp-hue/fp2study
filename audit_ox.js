@@ -138,7 +138,7 @@ async function main() {
   const results = [];
   const stats = {
     positive: 0, negative: 0, unknown: 0,
-    noSource: 0, badShape: 0,
+    noSource: 0, badShape: 0, standalone: 0, needsReview: 0,
     mismatch: 0, mismatchNegative: 0, mismatchPositive: 0,
     qTextStale: 0,
   };
@@ -148,6 +148,16 @@ async function main() {
     const shapeOk = Array.isArray(ox.opts) && ox.opts.length === 2 &&
                     (ox.ans === 0 || ox.ans === 1);
     if (!shapeOk) stats.badShape++;
+    if (ox.needs_review === true) stats.needsReview++;
+
+    // standalone: true は4択からの機械展開ではなく、最初から単体で成立する記述文として
+    // 書かれた○×（import_gakka_202505_ox.js で投入したもの）。questions に原本が無いのは
+    // 正常な状態なので、「原本が引けない」ではなく別枠で数える。
+    if (ox.standalone === true) {
+      stats.standalone++;
+      results.push({ id: ox.id, cat: ox.cat, status: 'standalone', ans: ox.ans, q: ox.q });
+      continue;
+    }
 
     const source = ox.sourceId ? sourceById.get(ox.sourceId) : null;
     if (!source || !Array.isArray(source.opts)) {
@@ -206,6 +216,7 @@ async function main() {
   console.log(`    適切型（「適切なものはどれか」等）   : ${stats.positive} 件`);
   console.log(`    不適切型（「不適切なものはどれか」等）: ${stats.negative} 件  ← 反転が起きうる対象`);
   console.log(`    判定不能（どちらの語も無い設問）      : ${stats.unknown} 件  ← 目視確認が必要`);
+  console.log(`    単体作成の○×（4択原本なし）          : ${stats.standalone} 件  ← 検算対象外（正常）`);
   console.log(`    原本が引けない（sourceId欠落など）    : ${stats.noSource} 件  ← 自動判定不可`);
   console.log('');
   console.log('  判定結果:');
@@ -276,6 +287,20 @@ async function main() {
       console.log(`  [${i + 1}] ${r.id}  （${r.cat}）`);
       console.log(`      元の設問  : ${truncate(r.stem, 70)}`);
       console.log(`      正解      : ${r.ans === 0 ? '○' : '×'}`);
+      console.log('');
+    });
+  }
+
+  /* --- 目視確認フラグ（needs_review）が立っているもの --- */
+  if (stats.needsReview) {
+    const flagged = oxDocs.filter(d => d.needs_review === true);
+    const show = flagged.slice(0, opts.showAll ? flagged.length : opts.samples);
+    console.log(line('─'));
+    console.log(`needs_review が立っているもの（${show.length} / ${flagged.length} 件）— 比較表現が残っていないか目視確認`);
+    console.log(line('─'));
+    show.forEach((d, i) => {
+      console.log(`  [${i + 1}] ${d.id}  （${d.cat}）  正解: ${d.ans === 0 ? '○' : '×'}`);
+      console.log(`      ${truncate(d.q, 70)}`);
       console.log('');
     });
   }

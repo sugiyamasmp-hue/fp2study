@@ -64,6 +64,7 @@ async function main() {
   const targets = [];
   for (const ox of oxDocs) {
     if (ox.exclude === true) continue; // 既に除外済み
+    if (ox.standalone === true) continue; // 単体で書かれた○×。原本からの判定対象外
     const source = ox.sourceId ? sourceById.get(ox.sourceId) : null;
     if (!source || !Array.isArray(source.opts)) continue;
     const optText = source.opts[ox.sourceOptionIndex];

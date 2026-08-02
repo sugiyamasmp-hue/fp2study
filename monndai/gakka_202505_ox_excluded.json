@@ -1,0 +1,34 @@
+[
+  {
+    "source_question_id": "gakka_202505_10",
+    "genre": "ライフプランニング・社会保険",
+    "statement": "Ｘ社の自己資本比率は、80％である。",
+    "ans": true,
+    "explanation": "自己資本比率＝純資産合計16,000／資産合計20,000＝80%であるため適切である。",
+    "comparative": false
+  },
+  {
+    "source_question_id": "gakka_202505_10",
+    "genre": "ライフプランニング・社会保険",
+    "statement": "Ｘ社の流動比率は、800％である。",
+    "ans": true,
+    "explanation": "流動比率＝流動資産12,000／流動負債1,500＝800%であるため適切である。",
+    "comparative": false
+  },
+  {
+    "source_question_id": "gakka_202505_10",
+    "genre": "ライフプランニング・社会保険",
+    "statement": "Ｘ社の固定長期適合率は、50％である。",
+    "ans": false,
+    "explanation": "固定長期適合率＝固定資産8,000／（固定負債2,500＋純資産16,000）＝約43.2%であり、50%ではないため不適切である。",
+    "comparative": false
+  },
+  {
+    "source_question_id": "gakka_202505_10",
+    "genre": "ライフプランニング・社会保険",
+    "statement": "Ｘ社の自己資本当期純利益率は、５％である。",
+    "ans": true,
+    "explanation": "自己資本当期純利益率＝当期純利益800／純資産16,000＝5%であるため適切である。",
+    "comparative": false
+  }
+]
