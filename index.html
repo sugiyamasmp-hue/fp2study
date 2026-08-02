@@ -556,7 +556,11 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
       </div>
     </div>
     <button class="start-btn" onclick="goStudyMode()" style="background:linear-gradient(135deg,#e8935c,#d97706);box-shadow:0 4px 20px rgba(232,147,92,0.4)">📚 受験勉強モード</button>
+    <!-- スキマ時間モードは問題の読み込みに失敗して入れないため、原因が解決するまで入口を隠す。
+         画面・ロジック（openSukima 以下）と /api/questions?source=sukima は残してあるので、
+         復活させるときはこの1行のコメントを外すだけでよい。
     <button class="start-btn sk-start-btn" onclick="openSukima()">☕ スキマ時間モード</button>
+    -->
     <button class="start-btn" onclick="goTeacherSelect('random')">先生を選んでスタート！（ランダム）</button>
     <button class="outline-btn" onclick="goTeacherSelect('continue')" id="continue-btn" style="margin-bottom:10px;display:none">続きから再開する（<span id="continue-info"></span>）</button>
     <button class="outline-btn" onclick="beginQuiz('normal')">通常クイズ</button>
