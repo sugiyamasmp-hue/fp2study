@@ -5,24 +5,34 @@
  *   source 未指定 … 通常演習（分野・レベル・復習・差分優先）
  *   source=sukima … スキマ時間モード（全ジャンル均等ランダム）
  *   source=jitsugi … 実技モード（questions_jitsugi 全件）
+ *   source=genre … 受験勉強モードのジャンル別○×（在庫から最大50問ランダム）
+ *   source=genre&counts=1 … ジャンル選択画面に出す在庫数
  */
 const { db } = require('../lib/db');
 const { sanitizeOxExplanation } = require('../lib/oxExplanation');
+const { DOMAINS, mapCategoryToDomain } = require('../lib/categoryDomains');
 
 const SUKIMA_DEFAULT_LIMIT = 20;
-const SUKIMA_MAX_LIMIT = 50;
+// 受験勉強モードの○×学習フローは「1ジャンル＝50問セット」。スキマ時間モードの
+// 先読みバッチもこの上限を共有する。在庫が50問に満たないジャンルは在庫の全問を返す
+// （水増しはしない）。
+const OX_SET_SIZE = 50;
 // コレクション全体を読んでからシャッフルするので、同じインスタンスへの連続アクセスでは読み直さない
-const SUKIMA_CACHE_TTL_MS = 5 * 60 * 1000;
-const sukimaPools = {}; // { [コレクション名]: { at, questions } }
+const POOL_CACHE_TTL_MS = 5 * 60 * 1000;
+const questionPools = {}; // { [コレクション名]: { at, questions } }
 
 /*
- * スキマ時間モードは「全ジャンルから均等ランダム」で出題する。
+ * スキマ時間モード（全ジャンル均等ランダム）とジャンル別○×（受験勉強モード）で共有する母集団。
  * Firestoreのlimit()はドキュメントIDの並び順で先頭から取るため母集団が偏る（通常演習と同じ制約）。
  * 母集団が数百〜千件規模なのでコレクションを丸ごと1回読み、インスタンス内にキャッシュしてから抽選する。
+ *
+ * cat はFirestore上「年金」「タックス」など細かい表記揺れがあるため、ジャンル絞り込み用に
+ * lib/categoryDomains.js の6分野へ丸めた domain を併せて持たせる（cat の完全一致で
+ * where を掛けると表記揺れぶんの在庫を取りこぼす）。
  */
-async function loadSukimaPool(collectionName) {
-  const cached = sukimaPools[collectionName];
-  if (cached && Date.now() - cached.at < SUKIMA_CACHE_TTL_MS) return cached.questions;
+async function loadQuestionPool(collectionName) {
+  const cached = questionPools[collectionName];
+  if (cached && Date.now() - cached.at < POOL_CACHE_TTL_MS) return cached.questions;
 
   const snapshot = await db.collection(collectionName).get();
   const questions = [];
@@ -34,6 +44,7 @@ async function loadSukimaPool(collectionName) {
     questions.push({
       id: doc.id,
       cat: d.cat || '',
+      domain: mapCategoryToDomain(d.cat),
       q: d.q,
       opts: d.opts,
       ans: d.ans,
@@ -41,7 +52,7 @@ async function loadSukimaPool(collectionName) {
     });
   });
 
-  sukimaPools[collectionName] = { at: Date.now(), questions };
+  questionPools[collectionName] = { at: Date.now(), questions };
   return questions;
 }
 
@@ -62,10 +73,50 @@ function pickRandom(pool, n) {
 async function handleSukima(req, res) {
   const { format, limit } = req.query;
   const collectionName = format === 'ox' ? 'questions_ox' : 'questions';
-  const limitNum = Math.min(Math.max(Number(limit) || SUKIMA_DEFAULT_LIMIT, 1), SUKIMA_MAX_LIMIT);
+  const limitNum = Math.min(Math.max(Number(limit) || SUKIMA_DEFAULT_LIMIT, 1), OX_SET_SIZE);
 
-  const pool = await loadSukimaPool(collectionName);
+  const pool = await loadQuestionPool(collectionName);
   return res.status(200).json({ questions: pickRandom(pool, limitNum) });
+}
+
+// ジャンル選択画面に出す在庫数。実際の出題数は min(在庫, OX_SET_SIZE) になる
+async function handleGenreCounts(req, res) {
+  const collectionName = req.query.format === 'choice' ? 'questions' : 'questions_ox';
+  const pool = await loadQuestionPool(collectionName);
+
+  const counts = {};
+  DOMAINS.forEach(d => { counts[d] = 0; });
+  pool.forEach(q => {
+    if (counts[q.domain] !== undefined) counts[q.domain] += 1;
+  });
+
+  // 「全ジャンルおまかせ」は6分野の合計（模擬試験・実技のcatは含めない）
+  const all = DOMAINS.reduce((sum, d) => sum + counts[d], 0);
+  return res.status(200).json({ counts, all, setSize: OX_SET_SIZE });
+}
+
+/*
+ * 受験勉強モードのジャンル別○×出題。
+ * ジャンルの在庫全体からランダムに最大 OX_SET_SIZE 問を抽出する。
+ * 在庫が OX_SET_SIZE に満たない場合は在庫の全問を返す（水増ししない）。
+ */
+async function handleGenre(req, res) {
+  if (req.query.counts !== undefined) return await handleGenreCounts(req, res);
+
+  const { cat, limit, format } = req.query;
+  const collectionName = format === 'choice' ? 'questions' : 'questions_ox';
+  const limitNum = Math.min(Math.max(Number(limit) || OX_SET_SIZE, 1), OX_SET_SIZE);
+
+  const pool = await loadQuestionPool(collectionName);
+  const scoped = (!cat || cat === 'all')
+    ? pool.filter(q => DOMAINS.includes(q.domain))
+    : pool.filter(q => q.domain === cat);
+
+  return res.status(200).json({
+    questions: pickRandom(scoped, limitNum),
+    available: scoped.length, // 在庫数（フロントの「◯問中◯問」表示用）
+    setSize: OX_SET_SIZE,
+  });
 }
 
 async function handleJitsugi(req, res) {
@@ -99,6 +150,7 @@ module.exports = async function handler(req, res) {
     const { source } = req.query;
     if (source === 'sukima') return await handleSukima(req, res);
     if (source === 'jitsugi') return await handleJitsugi(req, res);
+    if (source === 'genre') return await handleGenre(req, res);
 
     const { category, limit = 10, mode, set, levelType } = req.query;
     const limitNum = Number(limit);

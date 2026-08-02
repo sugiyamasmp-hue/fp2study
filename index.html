@@ -749,7 +749,7 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
     <p class="cs-sub">まずは ○✕問題 から。得意ジャンルでも苦手ジャンルでもOK！</p>
     <div class="oxg-teacher" id="oxg-teacher"></div>
     <div class="oxg-list" id="oxg-list"></div>
-    <div class="oxg-note">※ ○✕問題は内容を確認済みのセットのみを出題しています。準備中のジャンルは順次追加予定です。</div>
+    <div class="oxg-note">※ 1ジャンルにつき在庫からランダムに最大50問を出題します。在庫が50問に満たないジャンルは在庫の全問を出題します。</div>
     <button class="bd-back-btn" onclick="show('screen-board')">← 学習の流れに戻る</button>
   </div>
 </div>
@@ -1347,10 +1347,9 @@ var QsOX = [];
 var QsJitsugi = [];
 var oxQuizCat = 'all'; // ○×クイズで出題中のジャンル（中断時の記録用）
 
-// ハンズフリー（○×）用の固定セット。
-// Firestoreのquestions_oxコレクションはconvert_to_ox.jsの正誤判定に既知の不具合があり
-// （「最も不適切なものはどれか」型の設問で正誤が反転する）修正するまではAPI接続を見送り、
-// 内容を手で確認済みのこの固定セットを使う。
+// ハンズフリー（○×）用の固定セット。通常は questions_ox から
+// /api/questions?source=genre で取得するため使わない。API通信に失敗したときだけ
+// 出題が完全に止まらないよう退避先として使う（内容は手で確認済み）。
 var QsOX_FALLBACK = [
   {cat:"ライフプランニング・社会保険", stmt:"協会けんぽの短時間労働者の被保険者除外条件のうち、所定内賃金が月額8万8千円未満の場合は被保険者とならない。", ans:true, ex:"正解！\n月額8万8千円（年収106万円の壁）未満は対象外！"},
   {cat:"ライフプランニング・社会保険", stmt:"労災保険率は、適用事業に従事する労働者数に応じて定められている。", ans:false, ex:"不正解！\n労災保険率は「業種」で決まる！"},
@@ -1739,13 +1738,32 @@ function goOxGenre(){
   try{ localStorage.setItem(BOARD_SEEN_KEY, '1'); }catch(e){}
   renderOxGenre();
   show('ox-genre');
+  loadOxGenreCounts();
 }
 
-// ○×問題は内容を手で確認済みの QsOX_FALLBACK のみを出題対象にしている
-// （questions_ox コレクションは「最も不適切なものはどれか」型で正誤が反転する既知の不具合があるため）。
-function oxQuestionsFor(cat){
-  if(cat === 'all') return QsOX_FALLBACK.slice();
-  return QsOX_FALLBACK.filter(function(q){ return q.cat === cat; });
+/* ○×問題は questions_ox（Firestore）から出題する。
+   かつては「最も不適切なものはどれか」型で正誤が反転する不具合があったため QsOX_FALLBACK
+   （手で確認済みの5問）だけを使っていたが、fix_ox_ans.js による ans 反転修正と
+   flag_exclude_ox.js による判定不能問題の除外（exclude:true）が済んだのでAPIへ接続した。
+   QsOX_FALLBACK は通信失敗時の最終手段としてのみ残している。 */
+var OX_SET_SIZE = 50;      // 1ジャンルあたりの出題上限（在庫がこれ未満なら在庫の全問）
+var oxGenreCounts = null;  // { counts:{ジャンル:在庫数}, all:合計 }。取得できるまでは null
+
+// API の ○× 問題（{q, opts, ans:0|1, ex}）をハンズフリー画面の形式（{stmt, ans:boolean}）へ変換
+function toHandsfreeQuestion(q){
+  return {
+    id: q.id,
+    cat: q.cat || '',
+    stmt: q.q,
+    ans: q.ans === 0,      // 0 = ○ / 1 = ×
+    ex: q.ex || '',
+    opts: q.opts || ['○','×'],
+    level: q.level,
+  };
+}
+
+function oxGenreList(){
+  return CATEGORIES.filter(function(cat){ return cat.key !== '模擬試験'; });
 }
 
 function renderOxGenre(){
@@ -1758,22 +1776,57 @@ function renderOxGenre(){
       '<div class="oxg-teacher-bubble">'+escapeHtml(c.sample)+'</div>'
     : '';
 
-  var genres = CATEGORIES.filter(function(cat){ return cat.key !== '模擬試験'; });
-  document.getElementById('oxg-list').innerHTML = genres.map(function(cat){
-    var n = oxQuestionsFor(cat.all ? 'all' : cat.key).length;
+  document.getElementById('oxg-list').innerHTML = oxGenreList().map(function(cat){
+    var key = cat.all ? 'all' : cat.key;
     var label = cat.all ? '全ジャンルおまかせ' : cat.label;
-    return '<button type="button" class="oxg-item" '+(n ? '' : 'disabled ')+
-             'onclick="startOxQuiz(\''+(cat.all ? 'all' : cat.key.replace(/'/g,"\\'"))+'\')">'+
+    // 在庫数を取得済みで0問と分かっているジャンルだけ押せなくする（取得前は押せるままにする）
+    var empty = oxGenreCounts && !(key === 'all' ? oxGenreCounts.all : oxGenreCounts.counts[key]);
+    return '<button type="button" class="oxg-item" '+(empty ? 'disabled ' : '')+
+             'onclick="startOxQuiz(\''+key.replace(/'/g,"\\'")+'\')">'+
              '<span class="oxg-item-name">'+escapeHtml(label)+'</span>'+
-             '<span class="oxg-item-count">'+(n ? n+'問' : '準備中')+'</span>'+
+             '<span class="oxg-item-count">'+oxGenreCountLabel(key)+'</span>'+
            '</button>';
   }).join('');
 }
 
-function startOxQuiz(cat){
-  var set = oxQuestionsFor(cat);
+// 在庫数から「今回何問出るか」を出す。在庫が50問以上なら50問、未満なら在庫の全問
+function oxGenreCountLabel(key){
+  if(!oxGenreCounts) return '…';
+  var stock = key === 'all' ? oxGenreCounts.all : (oxGenreCounts.counts[key] || 0);
+  if(!stock) return '準備中';
+  var n = Math.min(stock, OX_SET_SIZE);
+  return n+'問' + (stock > n ? '（在庫'+stock+'問）' : '');
+}
+
+/* ジャンル選択画面を開くたびに在庫数を取り直す（問題を追加した直後でも実数が出るように） */
+function loadOxGenreCounts(){
+  fetch('/api/questions?source=genre&counts=1')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.error || !d.counts) return;
+      oxGenreCounts = { counts: d.counts, all: d.all || 0 };
+      if(d.setSize) OX_SET_SIZE = d.setSize;
+      if(document.getElementById('ox-genre').classList.contains('on')) renderOxGenre();
+    })
+    .catch(function(){});
+}
+
+async function startOxQuiz(cat){
+  show('loading');
+  var set = [];
+  try{
+    var r = await fetch('/api/questions?source=genre&cat='+encodeURIComponent(cat)+'&limit='+OX_SET_SIZE);
+    var d = await r.json();
+    if(d.error) throw new Error(d.error);
+    set = (d.questions || []).map(toHandsfreeQuestion);
+  }catch(e){
+    // 通信失敗時のみ、手で確認済みの固定セットへ退避する
+    set = (cat === 'all' ? QsOX_FALLBACK.slice() : QsOX_FALLBACK.filter(function(q){ return q.cat === cat; }));
+  }
+
   if(!set.length){
     alert('このジャンルの○×問題はまだ準備中です。');
+    show('ox-genre');
     return;
   }
   cur = 0; score = 0; answers = [];
@@ -2022,8 +2075,8 @@ async function beginQuiz(m, resumed){
   if(!resumed){
     cur=0; score=0; answers=[];
     if(m==='handsfree'){
-      QsOX = QsOX_FALLBACK.slice();
-      oxQuizCat = 'all';
+      // ジャンル選択と同じ経路（questions_ox から最大50問）で出題する
+      return await startOxQuiz('all');
     } else {
       show('loading');
       try{
