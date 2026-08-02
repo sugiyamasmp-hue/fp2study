@@ -524,6 +524,7 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
     <button class="outline-btn" onclick="show('honki-menu')" style="border-color:#d97706;color:#d97706">🔥 本気モード</button>
     <button class="outline-btn" onclick="openDashboard()">📊 学習進捗を見る</button>
     <button class="outline-btn" onclick="openMemos()">📝 学習メモ</button>
+    <button class="outline-btn" onclick="openQuestionSummary()">🗂 問題数サマリー</button>
   </div>
   <div class="history-card" id="hist-card" style="display:none">
     <div class="history-title">最近の記録</div>
@@ -999,7 +1000,7 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
     <button class="light-back" onclick="goHome()">←</button>
     <div class="light-title">⚙️ 管理画面</div>
   </div>
-  <button class="admin-menu-item" onclick="show('admin-question-summary');loadQuestionCountSummary();">📊 問題数サマリー<div class="case-list-sub">ジャンルごとの登録数と目安必要数を確認</div></button>
+  <button class="admin-menu-item" onclick="openQuestionSummary()">📊 問題数サマリー<div class="case-list-sub">ジャンルごとの登録数と目安必要数を確認</div></button>
 </div>
 </div>
 
@@ -1007,7 +1008,7 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 <div id="admin-question-summary" class="screen">
 <div class="light-screen">
   <div class="light-header">
-    <button class="light-back" onclick="show('admin')">←</button>
+    <button class="light-back" onclick="backFromQuestionSummary()">←</button>
     <div class="light-title">📊 問題数サマリー</div>
   </div>
   <div id="admin-summary-loading" class="light-empty">読み込み中...</div>
@@ -2688,8 +2689,22 @@ function finishCase(){
 }
 
 /* ===================================================
-   管理画面：問題数サマリー
+   問題数サマリー
+   ホームからも管理画面からも開けるので、戻り先は開いた画面を覚えておく
    =================================================== */
+var questionSummaryFrom = 'home';
+
+function openQuestionSummary(){
+  questionSummaryFrom = document.getElementById('admin').classList.contains('on') ? 'admin' : 'home';
+  show('admin-question-summary');
+  loadQuestionCountSummary();
+}
+
+function backFromQuestionSummary(){
+  if(questionSummaryFrom === 'admin') show('admin');
+  else goHome();
+}
+
 function loadQuestionCountSummary(){
   document.getElementById('admin-summary-body').style.display = 'none';
   document.getElementById('admin-summary-loading').style.display = 'block';
