@@ -1847,7 +1847,7 @@ function pickSukimaTeacher(id){
 function fetchSukimaBatch(){
   if(sukimaFetch) return sukimaFetch;
   var format = sukimaFormat;
-  sukimaFetch = fetch('/api/sukima-questions?format='+format+'&limit='+SUKIMA_BATCH)
+  sukimaFetch = fetch('/api/questions?source=sukima&format='+format+'&limit='+SUKIMA_BATCH)
     .then(function(r){ return r.json(); })
     .then(function(d){
       if(d.error || !d.questions || !d.questions.length) throw new Error(d.error || 'empty');
@@ -2455,7 +2455,7 @@ function shuffleArray(arr){
 }
 
 async function loadJitsugiQuestions(){
-  var r = await fetch('/api/jitsugi-questions');
+  var r = await fetch('/api/questions?source=jitsugi');
   var d = await r.json();
   if (d.error || !d.questions || d.questions.length === 0) throw new Error(d.error || 'empty');
   return d.questions;

@@ -1,20 +1,79 @@
-const { initializeApp, getApps, cert } = require('firebase-admin/app');
-const { getFirestore } = require('firebase-admin/firestore');
+/*
+ * 問題取得の入口。source クエリで出題ロジックを切り替える（Vercel Hobbyプランの
+ * Serverless Function 12個制限に収めるため、旧 /api/sukima-questions と
+ * /api/jitsugi-questions をここへ統合している）。
+ *   source 未指定 … 通常演習（分野・レベル・復習・差分優先）
+ *   source=sukima … スキマ時間モード（全ジャンル均等ランダム）
+ *   source=jitsugi … 実技モード（questions_jitsugi 全件）
+ */
+const { db } = require('../lib/db');
 const { sanitizeOxExplanation } = require('../lib/oxExplanation');
 
-if (!getApps().length) {
-  initializeApp({
-    credential: cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY
-        ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-        : undefined,
-    }),
+const SUKIMA_DEFAULT_LIMIT = 20;
+const SUKIMA_MAX_LIMIT = 50;
+// コレクション全体を読んでからシャッフルするので、同じインスタンスへの連続アクセスでは読み直さない
+const SUKIMA_CACHE_TTL_MS = 5 * 60 * 1000;
+const sukimaPools = {}; // { [コレクション名]: { at, questions } }
+
+/*
+ * スキマ時間モードは「全ジャンルから均等ランダム」で出題する。
+ * Firestoreのlimit()はドキュメントIDの並び順で先頭から取るため母集団が偏る（通常演習と同じ制約）。
+ * 母集団が数百〜千件規模なのでコレクションを丸ごと1回読み、インスタンス内にキャッシュしてから抽選する。
+ */
+async function loadSukimaPool(collectionName) {
+  const cached = sukimaPools[collectionName];
+  if (cached && Date.now() - cached.at < SUKIMA_CACHE_TTL_MS) return cached.questions;
+
+  const snapshot = await db.collection(collectionName).get();
+  const questions = [];
+  snapshot.forEach(doc => {
+    const d = doc.data();
+    // ○×化に失敗した設問（flag_exclude_ox.js が exclude を立てたもの）は出題しない
+    if (d.exclude) return;
+    if (!d.q || !Array.isArray(d.opts) || typeof d.ans !== 'number') return;
+    questions.push({
+      id: doc.id,
+      cat: d.cat || '',
+      q: d.q,
+      opts: d.opts,
+      ans: d.ans,
+      ex: sanitizeOxExplanation(d.ex || '', d.opts),
+    });
   });
+
+  sukimaPools[collectionName] = { at: Date.now(), questions };
+  return questions;
 }
 
-const db = getFirestore();
+// 重複なしでn件抽選（Fisher-Yatesを全件に掛けるより軽い）
+function pickRandom(pool, n) {
+  const count = Math.min(n, pool.length);
+  const used = new Set();
+  const picked = [];
+  while (picked.length < count) {
+    const i = Math.floor(Math.random() * pool.length);
+    if (used.has(i)) continue;
+    used.add(i);
+    picked.push(pool[i]);
+  }
+  return picked;
+}
+
+async function handleSukima(req, res) {
+  const { format, limit } = req.query;
+  const collectionName = format === 'ox' ? 'questions_ox' : 'questions';
+  const limitNum = Math.min(Math.max(Number(limit) || SUKIMA_DEFAULT_LIMIT, 1), SUKIMA_MAX_LIMIT);
+
+  const pool = await loadSukimaPool(collectionName);
+  return res.status(200).json({ questions: pickRandom(pool, limitNum) });
+}
+
+async function handleJitsugi(req, res) {
+  const snapshot = await db.collection('questions_jitsugi').get();
+  const questions = [];
+  snapshot.forEach(doc => questions.push({ id: doc.id, ...doc.data() }));
+  return res.status(200).json({ questions });
+}
 
 async function getCategoryLevel(cat) {
   const snap = await db.collection('categoryStats').doc(cat).get();
@@ -37,6 +96,10 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
+    const { source } = req.query;
+    if (source === 'sukima') return await handleSukima(req, res);
+    if (source === 'jitsugi') return await handleJitsugi(req, res);
+
     const { category, limit = 10, mode, set, levelType } = req.query;
     const limitNum = Number(limit);
     const collectionName = set === 'ox' ? 'questions_ox' : 'questions';
