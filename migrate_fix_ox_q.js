@@ -36,6 +36,9 @@ async function main() {
 
   oxSnap.forEach(doc => {
     const data = doc.data();
+    // standalone: true は4択の展開ではなく単体で書かれた○×。原本から q を作り直すと
+    // 記述文が壊れるため対象外にする（import_gakka_202505_ox.js で投入したもの）
+    if (data.standalone === true) return;
     const source = sourceById.get(data.sourceId);
     if (!source || !Array.isArray(source.opts)) {
       missingSource++;
