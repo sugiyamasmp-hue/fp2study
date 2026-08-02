@@ -158,6 +158,8 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 .cat-tag{background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:#2563eb;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700}
 .q-count{font-size:13px;color:var(--text-secondary);font-weight:700}
 .quiz-interrupt-btn{background:none;border:1px solid #d1d5db;color:#6b7280;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;cursor:pointer;white-space:nowrap}
+.quiz-mute-btn{background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.35);color:#2563eb;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;cursor:pointer;white-space:nowrap}
+.quiz-mute-btn.muted{background:#f3f4f6;border-color:#d1d5db;color:#6b7280}
 .question-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 16px;margin-bottom:14px}
 .question-text{font-size:17px;line-height:1.8;color:var(--text);white-space:pre-wrap}
 .ex-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:8px}
@@ -785,7 +787,11 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
   <div class="progress-bar"><div class="progress-fill" id="prog-hf"></div></div>
   <div class="quiz-header">
     <span class="cat-tag" id="q-cat-hf"></span>
-    <span class="q-count" id="q-num-hf"></span>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span class="q-count" id="q-num-hf"></span>
+      <button class="quiz-mute-btn" id="hf-mute-btn" onclick="toggleMute()" aria-pressed="false">🔊 音声ON</button>
+      <button class="quiz-interrupt-btn" onclick="interruptHfQuiz()">中断する</button>
+    </div>
   </div>
   <div class="hf-box">
     <div class="mode-badge" id="hf-badge">音声モード</div>
@@ -1248,6 +1254,7 @@ var BOARD_FALLBACK_GREETING = '先生を選んでから見てな😊';
 var Qs = [];
 var QsOX = [];
 var QsJitsugi = [];
+var oxQuizCat = 'all'; // ○×クイズで出題中のジャンル（中断時の記録用）
 
 // ハンズフリー（○×）用の固定セット。
 // Firestoreのquestions_oxコレクションはconvert_to_ox.jsの正誤判定に既知の不具合があり
@@ -1437,7 +1444,7 @@ function toggleSpeakTopic(idx){
       renderGapSpeakButtons();
       return;
     }
-    speak(texts[i++], next);
+    speak(texts[i++], next, true);
   }
   next();
 }
@@ -1680,6 +1687,7 @@ function startOxQuiz(cat){
   }
   cur = 0; score = 0; answers = [];
   QsOX = set;
+  oxQuizCat = cat;
   startQuiz('handsfree');
 }
 
@@ -1730,6 +1738,7 @@ async function beginQuiz(m, resumed){
     cur=0; score=0; answers=[];
     if(m==='handsfree'){
       QsOX = QsOX_FALLBACK.slice();
+      oxQuizCat = 'all';
     } else {
       show('loading');
       try{
@@ -1761,6 +1770,7 @@ function startQuiz(m){
     startChatMode();
   } else if(m==='handsfree'){
     document.getElementById('hf-badge').textContent=voiceOK?'音声モード':'タップモード';
+    updateMuteBtn();
     initRec();
     show('quiz-hf');
     renderHfQ();
@@ -2021,12 +2031,44 @@ var hfWaitingNext=false;
 var recognition=null;var voiceOK=!!SR;
 var synth=window.speechSynthesis;
 
-function speak(text,onEnd){
-  if(!synth){if(onEnd)onEnd();return;}
+/* ===== 消音（読み上げOFF）設定：端末に記憶する ===== */
+var TTS_MUTED_KEY='aid_fp2_muted';
+var ttsMuted=false;
+try{ ttsMuted = localStorage.getItem(TTS_MUTED_KEY)==='1'; }catch(e){}
+
+function updateMuteBtn(){
+  var btn=document.getElementById('hf-mute-btn');
+  if(!btn) return;
+  if(!synth){btn.style.display='none';return;}
+  btn.style.display='';
+  btn.textContent = ttsMuted ? '🔇 音声OFF' : '🔊 音声ON';
+  btn.classList.toggle('muted', ttsMuted);
+  btn.setAttribute('aria-pressed', ttsMuted ? 'true' : 'false');
+}
+
+function toggleMute(){
+  ttsMuted=!ttsMuted;
+  try{ localStorage.setItem(TTS_MUTED_KEY, ttsMuted?'1':'0'); }catch(e){}
+  updateMuteBtn();
+  // 消音にした瞬間、読み上げ中の音声を止める
+  // （中断されたutteranceのonendが走り、次の操作へ進む流れはそのまま維持される）
+  if(ttsMuted && synth) synth.cancel();
+}
+
+// force=true は「読み上げる」ボタンなど、明示的に音声を求められた場合（消音設定を無視する）
+function speak(text,onEnd,force){
+  var done=false;
+  function fin(){ if(done)return; done=true; if(onEnd)onEnd(); }
+  if(!synth || (ttsMuted && !force)){
+    if(synth) synth.cancel();
+    // 読み上げ完了と同じ非同期のタイミングで次へ進める
+    setTimeout(fin,0);
+    return;
+  }
   synth.cancel();
   var u=new SpeechSynthesisUtterance(text);
   u.lang='ja-JP';u.rate=0.9;
-  u.onend=function(){if(onEnd)onEnd();};u.onerror=function(){if(onEnd)onEnd();};
+  u.onend=fin;u.onerror=fin;
   synth.speak(u);
 }
 function initRec(){
@@ -2078,7 +2120,8 @@ function renderHfQ(){
   document.getElementById('hf-result').style.display='none';
   document.getElementById('next-btn-hf').style.display='none';
   disableHfBtns();document.getElementById('voice-wave').style.display='none';
-  setHfStatus('読み上げています...','speaking');
+  updateMuteBtn();
+  setHfStatus(ttsMuted?'問題を読んでや！':'読み上げています...',ttsMuted?'':'speaking');
   speak('問題。'+q.stmt+'。まるですか、ばつですか？',function(){
     enableHfBtns();
     if(voiceOK){setTimeout(startListen,500);}
@@ -2293,6 +2336,17 @@ async function interruptNormalQuiz(){
   showInterruptedResult(answeredCount, correctCount, accuracy);
 }
 
+async function interruptHfQuiz(){
+  if(!confirm('ここで中断しますか？ここまでの結果を記録して終了します。')) return;
+  hfWaitingNext=false;
+  stopListen();
+  synth&&synth.cancel();
+  var answeredCount = answers.length;
+  var correctCount = score;
+  var accuracy = await saveStudySession(answeredCount, correctCount, 'handsfree', 'ox', oxQuizCat);
+  showInterruptedResult(answeredCount, correctCount, accuracy);
+}
+
 async function interruptCampQuiz(){
   if(!confirm('ここで中断しますか？ここまでの結果を記録して終了します。')) return;
   var answeredCount = campQuizAnswered;
@@ -2302,6 +2356,7 @@ async function interruptCampQuiz(){
 }
 
 function goHome(){synth&&synth.cancel();
+hfWaitingNext=false;stopListen();
 updateHome();
 updateContinueBtn();show('home');}
 
