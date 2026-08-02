@@ -104,36 +104,7 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 .gap-q-answer{font-size:12px;font-weight:700;color:#2563eb;margin-bottom:4px}
 .gap-q-explain{font-size:12px;color:#666;line-height:1.6}
 
-/* 先生選択 */
-.teacher-title{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px}
-.teacher-sub{font-size:14px;color:var(--text-secondary);margin-bottom:20px}
-.teacher-grid{display:flex;flex-direction:column;gap:12px;margin-bottom:8px}
-.teacher-card{display:flex;align-items:center;gap:14px;background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;transition:all 0.2s}
-.teacher-card:hover{background:rgba(37,99,235,0.08);border-color:rgba(37,99,235,0.4)}
-.teacher-card.selected{background:rgba(37,99,235,0.12);border-color:#2563eb}
-.teacher-icon{width:72px;height:72px;border-radius:14px;flex-shrink:0;overflow:hidden;background:var(--surface2)}
-.teacher-icon img{width:100%;height:100%;object-fit:cover}
-.teacher-info{flex:1}
-.teacher-name{font-size:16px;font-weight:800;color:var(--text);margin-bottom:4px}
-.teacher-desc{font-size:13px;color:var(--text-secondary);line-height:1.5}
-.teacher-sample{font-size:13px;color:#2563eb;margin-top:4px;font-style:italic}
-
-/* チャット */
-.chat-header-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-top:8px}
-.chat-avatar{width:42px;height:42px;border-radius:12px;border:2px solid #2563eb;flex-shrink:0;overflow:hidden;background:var(--surface2)}
-.chat-avatar img{width:100%;height:100%;object-fit:cover}
-.chat-name{font-size:15px;font-weight:800;color:var(--text)}
-.chat-status{font-size:11px;color:#2563eb}
-.q-progress{font-size:12px;color:var(--text-secondary);margin-left:auto;font-weight:700}
-.chat-feed{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;min-height:200px}
-.bubble-wrap-bot{display:flex;align-items:flex-start;gap:8px}
-.bubble-wrap-user{display:flex;justify-content:flex-end}
-.bubble-avatar{width:32px;height:32px;border-radius:10px;border:1px solid rgba(37,99,235,0.3);flex-shrink:0;margin-top:2px;overflow:hidden;background:var(--surface2)}
-.bubble-avatar img{width:100%;height:100%;object-fit:cover}
-.bubble-bot{background:var(--surface);border:1px solid var(--border);border-radius:4px 16px 16px 16px;padding:12px 14px;font-size:16px;line-height:1.8;color:var(--text);max-width:88%;white-space:pre-wrap}
-.bubble-user{background:linear-gradient(135deg,#2563eb,#1d4ed8);border-radius:16px 4px 16px 16px;padding:12px 14px;font-size:16px;line-height:1.8;color:#fff;max-width:88%}
-.typing-cursor{display:inline-block;width:2px;height:1em;background:#2563eb;margin-left:2px;animation:blink 0.7s step-end infinite;vertical-align:text-bottom}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+/* 選択肢（4択・○×共通） */
 .opts-wrap{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .opt-btn{display:flex;align-items:flex-start;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-size:16px;text-align:left;cursor:pointer;line-height:1.7;width:100%;transition:background 0.15s}
 .opt-btn:hover{background:rgba(37,99,235,0.1);border-color:rgba(37,99,235,0.3)}
@@ -143,13 +114,6 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 .opt-btn.dim{opacity:0.35}
 .opt-btn:disabled{cursor:default}
 .opt-num{min-width:26px;height:26px;border-radius:7px;background:rgba(37,99,235,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#2563eb;flex-shrink:0;margin-top:1px}
-.action-area{margin-bottom:12px}
-.action-btn{width:100%;padding:13px 0;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:800;cursor:pointer}
-.chat-input-area{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 12px;display:flex;gap:8px;align-items:center}
-.chat-input{flex:1;background:transparent;border:none;font-size:15px;color:var(--text);outline:none;padding:4px 0}
-.chat-input::placeholder{color:var(--text-tertiary)}
-.chat-send{padding:8px 16px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;border-radius:9px;color:#fff;font-size:13px;font-weight:800;cursor:pointer}
-.chat-send:disabled{opacity:0.4;cursor:not-allowed}
 
 /* 通常クイズ */
 .progress-bar{height:4px;background:var(--border);border-radius:4px;margin-bottom:16px;overflow:hidden}
@@ -196,12 +160,12 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 .hf-maru{flex:1;padding:30px 0;background:linear-gradient(135deg,#00c864,#00a050);border:none;border-radius:18px;color:#fff;font-size:36px;cursor:pointer;box-shadow:0 4px 20px rgba(0,200,100,0.3)}
 .hf-batu{flex:1;padding:30px 0;background:linear-gradient(135deg,#ff4444,#cc2200);border:none;border-radius:18px;color:#fff;font-size:36px;cursor:pointer;box-shadow:0 4px 20px rgba(255,68,68,0.3)}
 .hf-maru:disabled,.hf-batu:disabled{opacity:0.3;cursor:not-allowed;box-shadow:none}
-.camp-ox-btns{display:flex;gap:14px;width:100%}
-.camp-ox-maru{flex:1;padding:30px 0;background:linear-gradient(135deg,#00c864,#00a050);border:none;border-radius:18px;color:#fff;font-size:36px;cursor:pointer;box-shadow:0 4px 20px rgba(0,200,100,0.3)}
-.camp-ox-batu{flex:1;padding:30px 0;background:linear-gradient(135deg,#ff4444,#cc2200);border:none;border-radius:18px;color:#fff;font-size:36px;cursor:pointer;box-shadow:0 4px 20px rgba(255,68,68,0.3)}
-.camp-ox-maru:disabled,.camp-ox-batu:disabled{cursor:not-allowed}
-.camp-ox-maru.camp-ox-dim,.camp-ox-batu.camp-ox-dim{opacity:0.3;box-shadow:none}
-.camp-ox-maru.camp-ox-correct,.camp-ox-batu.camp-ox-correct{box-shadow:0 0 0 4px rgba(255,255,255,0.6),0 4px 20px rgba(0,0,0,0.3)}
+.ox-btns{display:flex;gap:14px;width:100%}
+.ox-maru{flex:1;padding:30px 0;background:linear-gradient(135deg,#00c864,#00a050);border:none;border-radius:18px;color:#fff;font-size:36px;cursor:pointer;box-shadow:0 4px 20px rgba(0,200,100,0.3)}
+.ox-batu{flex:1;padding:30px 0;background:linear-gradient(135deg,#ff4444,#cc2200);border:none;border-radius:18px;color:#fff;font-size:36px;cursor:pointer;box-shadow:0 4px 20px rgba(255,68,68,0.3)}
+.ox-maru:disabled,.ox-batu:disabled{cursor:not-allowed}
+.ox-maru.ox-dim,.ox-batu.ox-dim{opacity:0.3;box-shadow:none}
+.ox-maru.ox-correct,.ox-batu.ox-correct{box-shadow:0 0 0 4px rgba(255,255,255,0.6),0 4px 20px rgba(0,0,0,0.3)}
 .hf-result{background:var(--surface2);border-radius:14px;padding:18px;margin-bottom:14px;text-align:center;display:none}
 .hf-result-icon{font-size:52px;margin-bottom:8px}
 .hf-result-text{font-size:15px;color:var(--text-secondary);line-height:1.8;white-space:pre-wrap}
@@ -230,7 +194,6 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 .amado-sub{font-size:12px;color:var(--text-secondary);margin-bottom:16px;transition:opacity 0.6s ease}
 .amado-popup.text-fade .amado-badge,.amado-popup.text-fade .amado-msg,.amado-popup.text-fade .amado-sub{opacity:0}
 .amado-close{padding:10px 28px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:800;cursor:pointer}
-.streak-badge{display:inline-block;background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.4);color:#2563eb;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700;margin-left:8px}
 
 /* 今日の格言 */
 .quote-card{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid rgba(37,99,235,0.25);border-radius:18px;padding:16px;margin-bottom:16px}
@@ -557,10 +520,6 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
     </div>
     <button class="start-btn" onclick="goStudyMode()" style="background:linear-gradient(135deg,#e8935c,#d97706);box-shadow:0 4px 20px rgba(232,147,92,0.4)">📚 受験勉強モード</button>
     <button class="start-btn sk-start-btn" onclick="openSukima()">☕ スキマ時間モード</button>
-    <button class="start-btn" onclick="goTeacherSelect('random')">先生を選んでスタート！（ランダム）</button>
-    <button class="outline-btn" onclick="goTeacherSelect('continue')" id="continue-btn" style="margin-bottom:10px;display:none">続きから再開する（<span id="continue-info"></span>）</button>
-    <button class="outline-btn" onclick="beginQuiz('normal')">通常クイズ</button>
-    <button class="outline-btn" onclick="beginQuiz('handsfree')">ハンズフリーモード（○×）</button>
     <button class="outline-btn" onclick="beginJitsugi()">🧮 実技試験モード</button>
     <button class="outline-btn" onclick="show('honki-menu')" style="border-color:#d97706;color:#d97706">🔥 本気モード</button>
     <button class="outline-btn" onclick="openDashboard()">📊 学習進捗を見る</button>
@@ -630,57 +589,6 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
   </div>
   <div id="gap-summary-loading" class="light-empty">読み込み中...</div>
   <div id="gap-summary-body"></div>
-</div>
-</div>
-
-<!-- 先生選択 -->
-<div id="teacher-select" class="screen">
-<div class="container">
-  <div class="logo-wrap">
-    <div class="logo-icon">A</div>
-    <div>
-      <div class="logo-title">先生を選んでね！</div>
-      <div class="logo-sub">AI Interactive Dialogue</div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="teacher-title">どの先生と学ぶ？</div>
-    <div class="teacher-sub">先生によって解説のスタイルが違うで！</div>
-    <div class="teacher-grid">
-      <div class="teacher-card" id="tc-yassan" onclick="selectTeacher('yassan')">
-        <div class="teacher-icon"><img src="/images/characters/yassan.png" alt="やっさん先生"></div>
-        <div class="teacher-info">
-          <div class="teacher-name">やっさん先生</div>
-          <div class="teacher-desc">熱血！関西弁でズバッと教えてくれる頼れる兄貴</div>
-          <div class="teacher-sample">「ちゃうちゃう！それはこういうことやで！」</div>
-        </div>
-      </div>
-      <div class="teacher-card" id="tc-bon" onclick="selectTeacher('bon')">
-        <div class="teacher-icon"><img src="/images/characters/bon.png" alt="ボン先生"></div>
-        <div class="teacher-info">
-          <div class="teacher-name">ボン先生</div>
-          <div class="teacher-desc">バカボンのパパ風！のほほんと「なのだ」で教えてくれる</div>
-          <div class="teacher-sample">「これでいいのだ！正解なのだ！」</div>
-        </div>
-      </div>
-      <div class="teacher-card" id="tc-gal" onclick="selectTeacher('gal')">
-        <div class="teacher-icon"><img src="/images/characters/gyal.png" alt="ギャル先生"></div>
-        <div class="teacher-info">
-          <div class="teacher-name">ギャル先生</div>
-          <div class="teacher-desc">超元気！ギャル語でテンション上げて教えてくれる</div>
-          <div class="teacher-sample">「やばっ！！正解じゃん！マジ天才！」</div>
-        </div>
-      </div>
-      <div class="teacher-card" id="tc-sebas" onclick="selectTeacher('sebas')">
-        <div class="teacher-icon"><img src="/images/characters/sebas.png" alt="セバス先生"></div>
-        <div class="teacher-info">
-          <div class="teacher-name">セバス先生</div>
-          <div class="teacher-desc">英国紳士の執事！丁寧で上品な解説が光る</div>
-          <div class="teacher-sample">「左様でございます。大変よろしゅうございました」</div>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 </div>
 
@@ -818,31 +726,6 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 </div>
 </div>
 
-<!-- チャットモード -->
-<div id="chat-mode" class="screen">
-<div class="container">
-  <div class="chat-header-bar">
-    <div class="chat-avatar" id="chat-avatar"></div>
-    <div>
-      <div class="chat-name" id="chat-teacher-name"></div>
-      <div class="chat-status">FP2級 先生</div>
-    </div>
-    <div class="q-progress" id="chat-q-progress">1 / 5</div>
-  </div>
-  <div class="chat-feed" id="chat-feed"></div>
-  <div id="opts-area" style="display:none">
-    <div class="opts-wrap" id="chat-opts"></div>
-  </div>
-  <div class="action-area" id="action-area" style="display:none">
-    <button class="action-btn" id="action-btn" onclick="onActionBtn()"></button>
-  </div>
-  <div class="chat-input-area" id="chat-input-area" style="display:none">
-    <input class="chat-input" id="chat-in" placeholder="質問してや！" onkeydown="if(event.key==='Enter')sendChatMsg()">
-    <button class="chat-send" id="chat-send-btn" onclick="sendChatMsg()">送信</button>
-  </div>
-</div>
-</div>
-
 <!-- 通常クイズ -->
 <div id="quiz" class="screen">
 <div class="container">
@@ -912,97 +795,9 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
     <button class="light-back" onclick="goHome()">←</button>
     <div class="light-title">🔥 本気モード</div>
   </div>
-  <div class="admin-summary-note">試験直前の追い込み用モードです。合宿プランで全ジャンルを周回するもよし、模擬試験や実技モードで本番形式に慣れるもよし。</div>
-  <button class="admin-menu-item" onclick="openCampHome()">🏕 合宿プラン（3周回学習）<div class="case-list-sub">全ジャンルを3周して弱点をつぶす学習プラン</div></button>
+  <div class="admin-summary-note">試験直前の追い込み用モードです。模擬試験や実技モードで本番形式に慣れましょう。</div>
   <button class="admin-menu-item" onclick="beginMockExam()">📝 学科模擬試験（本番60問・120分）<div class="case-list-sub">本番形式のタイマー付き模擬試験</div></button>
   <button class="admin-menu-item" onclick="openCaseSelect()">📋 実技モード（資産設計提案業務）<div class="case-list-sub">事例問題で実技試験に備える</div></button>
-</div>
-</div>
-
-<!-- 合宿プラン：作成画面 -->
-<div id="camp-create" class="screen">
-<div class="light-screen">
-  <div class="light-header">
-    <button class="light-back" onclick="show('honki-menu')">←</button>
-    <div class="light-title">🏕 合宿プラン作成</div>
-  </div>
-  <div id="camp-create-loading" class="light-empty">読み込み中...</div>
-  <div id="camp-create-body" style="display:none">
-    <div class="light-card">
-      <div class="light-section-title" style="margin:0 0 10px">ジャンル別の現在の登録数</div>
-      <div id="camp-genre-counts"></div>
-    </div>
-    <div class="light-card">
-      <div class="light-section-title" style="margin:0 0 10px">学習開始日・試験日</div>
-      <div style="margin-bottom:10px">
-        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px">学習開始日</div>
-        <input type="date" id="camp-start-date" class="case-answer-input" style="width:100%" onchange="updateCampQuotaSuggestion()">
-      </div>
-      <div style="margin-bottom:10px">
-        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px">試験日</div>
-        <input type="date" id="camp-exam-date" class="case-answer-input" style="width:100%" onchange="updateCampQuotaSuggestion()">
-      </div>
-      <div id="camp-days-info" style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;line-height:1.6"></div>
-      <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px">1日あたりのノルマ（自動算出・手動調整可）</div>
-      <input type="number" id="camp-daily-quota" class="case-answer-input" style="width:100%" min="1">
-    </div>
-    <button class="analyze-btn" onclick="createCampPlan()">🏕 この内容で合宿プランを作成する</button>
-  </div>
-</div>
-</div>
-
-<!-- 合宿プラン：進捗・結果画面 -->
-<div id="camp-dashboard" class="screen">
-<div class="light-screen">
-  <div class="light-header">
-    <button class="light-back" onclick="show('honki-menu')">←</button>
-    <div class="light-title">🏕 合宿プラン</div>
-  </div>
-  <div id="camp-dash-loading" class="light-empty">読み込み中...</div>
-  <div id="camp-dash-body" style="display:none">
-    <div class="light-card" id="camp-today-card"></div>
-    <div class="light-section-title">周回ステータス</div>
-    <div id="camp-round-status"></div>
-    <div class="light-section-title">今の周のジャンル別進捗</div>
-    <div id="camp-genre-progress"></div>
-    <div class="light-section-title">ジャンル×周 正答率</div>
-    <div class="light-card" style="overflow-x:auto">
-      <table class="case-data-table" id="camp-round-table" style="width:100%"></table>
-    </div>
-    <button class="outline-btn" style="width:calc(100% - 32px);margin:8px 16px" onclick="openCampQuotaEdit()">⚙️ 1日のノルマを変更する</button>
-    <button class="outline-btn" style="width:calc(100% - 32px);margin:0 16px 20px;border-color:#dc2626;color:#dc2626" onclick="restartCampPlan()">🔄 合宿をやり直す（作り直す）</button>
-  </div>
-</div>
-</div>
-
-<!-- 合宿プラン：出題画面 -->
-<div id="camp-quiz" class="screen">
-<div class="container">
-  <div class="progress-bar"><div class="progress-fill" id="camp-prog"></div></div>
-  <div class="quiz-header">
-    <span class="cat-tag" id="camp-quiz-tag"></span>
-    <div style="display:flex;align-items:center;gap:10px">
-      <span class="q-count" id="camp-q-num"></span>
-      <button class="quiz-interrupt-btn" onclick="interruptCampQuiz()">中断する</button>
-    </div>
-  </div>
-  <div class="question-card">
-    <div class="question-text" id="camp-q-text"></div>
-  </div>
-  <div class="opts-wrap" id="camp-opts"></div>
-  <div class="ex-card" id="camp-exbox" style="display:none">
-    <div class="ex-label" id="camp-ex-title"></div>
-    <div class="ex-text" id="camp-ex-text"></div>
-    <div class="norm-chat-area">
-      <div class="norm-chat-head" id="camp-chat-head">先生に質問する</div>
-      <div class="norm-chat-msgs" id="camp-chat-msgs"></div>
-      <div class="norm-input-row">
-        <input class="norm-input" id="camp-chat-in" placeholder="質問してや！" onkeydown="if(event.key==='Enter')sendCampChat()">
-        <button class="norm-send" onclick="sendCampChat()">送信</button>
-      </div>
-    </div>
-    <button class="next-btn" id="camp-next-btn" onclick="nextCampQ()"></button>
-  </div>
 </div>
 </div>
 
@@ -1360,7 +1155,7 @@ var QsOX_FALLBACK = [
 ];
 
 /* ===== 状態 ===== */
-var cur=0, score=0, answers=[], mode='chat';
+var cur=0, score=0, answers=[], mode='normal';
 var selectedCount = 10;
 
 function selectCount(n){
@@ -1553,69 +1348,9 @@ function escapeHtml(s){
   });
 }
 var selectedTeacher = 'yassan';
-var chatApiHist=[];
-var questionOrder=[];
 var normChatHist=[];
-var campChatHist=[];
 var hist=[];
 try{hist=JSON.parse(localStorage.getItem('aid_fp2_hist')||'[]');}catch(e){hist=[];}
-
-/* ===== 先生選択 ===== */
-var startMode = 'random';
-
-function goTeacherSelect(m){
-  startMode = m;
-  show('teacher-select');
-}
-
-function updateContinueBtn(){
-  try {
-    var prog = JSON.parse(localStorage.getItem('aid_fp2_progress') || 'null');
-    var btn = document.getElementById('continue-btn');
-    var info = document.getElementById('continue-info');
-    if(prog && prog.cur > 0){
-      btn.style.display = 'block';
-      info.textContent = (prog.cur+1) + '問目から・' + (prog.teacher ? TEACHERS[prog.teacher].name : '');
-    } else {
-      btn.style.display = 'none';
-    }
-  } catch(e) {}
-}
-
-function selectTeacher(key){
-  selectedTeacher = key;
-  document.querySelectorAll('.teacher-card').forEach(function(c){c.classList.remove('selected')});
-  document.getElementById('tc-'+key).classList.add('selected');
-  setTimeout(function(){
-    var resumed = false;
-    if(startMode === 'continue'){
-      try {
-        var prog = JSON.parse(localStorage.getItem('aid_fp2_progress') || 'null');
-        if(prog && prog.cur > 0 && prog.questions && prog.questions.length){
-          cur = prog.cur;
-          score = prog.score || 0;
-          answers = prog.answers || [];
-          questionOrder = prog.order || makeOrder('continue');
-          Qs = prog.questions;
-          resumed = true;
-        }
-      } catch(e) {}
-    }
-    beginQuiz('chat', resumed);
-  }, 200);
-}
-
-function makeOrder(m){
-  var order = Qs.map(function(_,i){return i;});
-  if(m === 'random'){
-    // Fisher-Yatesシャッフル
-    for(var i=order.length-1;i>0;i--){
-      var j=Math.floor(Math.random()*(i+1));
-      var tmp=order[i];order[i]=order[j];order[j]=tmp;
-    }
-  }
-  return order;
-}
 
 /* ===================================================
    受験勉強モード ①キャラクター選択 → ②学習の流れ（黒板） → ○×問題
@@ -1890,9 +1625,9 @@ function renderSukimaQ(){
 
   if(sukimaFormat === 'ox'){
     document.getElementById('sk-opts').innerHTML =
-      '<div class="camp-ox-btns">'
-      + '<button class="camp-ox-maru" id="sk-maru" onclick="pickSukimaOX(true)">○</button>'
-      + '<button class="camp-ox-batu" id="sk-batu" onclick="pickSukimaOX(false)">×</button>'
+      '<div class="ox-btns">'
+      + '<button class="ox-maru" id="sk-maru" onclick="pickSukimaOX(true)">○</button>'
+      + '<button class="ox-batu" id="sk-batu" onclick="pickSukimaOX(false)">×</button>'
       + '</div>';
   } else {
     document.getElementById('sk-opts').innerHTML = q.opts.map(function(o,i){
@@ -1924,8 +1659,8 @@ function pickSukimaOX(boolAnswer){
   var q = sukimaQ;
   var maru = document.getElementById('sk-maru'), batu = document.getElementById('sk-batu');
   maru.disabled = true; batu.disabled = true;
-  (q.ans===0 ? maru : batu).classList.add('camp-ox-correct');
-  (q.ans===0 ? batu : maru).classList.add('camp-ox-dim');
+  (q.ans===0 ? maru : batu).classList.add('ox-correct');
+  (q.ans===0 ? batu : maru).classList.add('ox-dim');
   showSukimaResult((boolAnswer ? 0 : 1) === q.ans);
 }
 
@@ -2037,7 +1772,6 @@ async function beginQuiz(m, resumed){
         show('home');
         return;
       }
-      if(m==='chat') questionOrder = makeOrder('random');
     }
   }
   startQuiz(m);
@@ -2045,15 +1779,7 @@ async function beginQuiz(m, resumed){
 
 function startQuiz(m){
   mode=m;
-  if(m==='chat'){
-    var t=TEACHERS[selectedTeacher];
-    document.getElementById('chat-avatar').innerHTML='<img src="'+t.icon+'" alt="'+t.name+'">';
-    document.getElementById('chat-teacher-name').textContent=t.name;
-    document.getElementById('chat-in').placeholder=t.placeholder;
-    chatApiHist=[];
-    show('chat-mode');
-    startChatMode();
-  } else if(m==='handsfree'){
+  if(m==='handsfree'){
     document.getElementById('hf-badge').textContent=voiceOK?'音声モード':'タップモード';
     updateMuteBtn();
     initRec();
@@ -2069,173 +1795,7 @@ function startQuiz(m){
 }
 
 /* ===================================================
-   チャットモード
-   =================================================== */
-function chatFeed(){return document.getElementById('chat-feed');}
-
-function addBotBubble(text, onDone){
-  var t=TEACHERS[selectedTeacher];
-  var feed=chatFeed();
-  var wrap=document.createElement('div');wrap.className='bubble-wrap-bot';
-  var av=document.createElement('div');av.className='bubble-avatar';av.innerHTML='<img src="'+t.icon+'" alt="'+t.name+'">';
-  var bub=document.createElement('div');bub.className='bubble-bot';
-  wrap.appendChild(av);wrap.appendChild(bub);
-  feed.appendChild(wrap);
-  scrollFeed();
-  typeText(bub,text,onDone);
-}
-
-function addUserBubble(text){
-  var feed=chatFeed();
-  var wrap=document.createElement('div');wrap.className='bubble-wrap-user';
-  var bub=document.createElement('div');bub.className='bubble-user';bub.textContent=text;
-  wrap.appendChild(bub);feed.appendChild(wrap);scrollFeed();
-}
-
-function scrollFeed(){setTimeout(function(){window.scrollTo(0,document.body.scrollHeight);},50);}
-
-function typeText(el,text,onDone){
-  el.textContent='';
-  var cursor=document.createElement('span');cursor.className='typing-cursor';
-  el.appendChild(cursor);
-  // Array.from()でUnicodeコードポイント単位に分割する。
-  // text[i]や生のインデックスで1文字ずつ切り出すと、絵文字（サロゲートペア）が
-  // 上位/下位サロゲートに分断され、それぞれが不正な文字として□□のように文字化けする。
-  var chars=Array.from(text);
-  var i=0;var speed=56;
-  function next(){
-    if(i<chars.length){
-      el.insertBefore(document.createTextNode(chars[i]),cursor);
-      i++;scrollFeed();
-      setTimeout(next,speed);
-    } else {
-      cursor.remove();if(onDone)onDone();
-    }
-  }
-  next();
-}
-
-function setActionBtn(label,on){
-  var area=document.getElementById('action-area');
-  var btn=document.getElementById('action-btn');
-  if(on){btn.textContent=label;area.style.display='block';}
-  else{area.style.display='none';}
-}
-
-function showChatInput(on){
-  document.getElementById('chat-input-area').style.display=on?'flex':'none';
-  if(on) setTimeout(function(){document.getElementById('chat-in').focus();},100);
-}
-
-function showOpts(on){document.getElementById('opts-area').style.display=on?'block':'none';}
-
-var actionState='';
-
-function startChatMode(){
-  document.getElementById('chat-feed').innerHTML='';
-  showOpts(false);showChatInput(false);setActionBtn('',false);
-  document.getElementById('chat-q-progress').textContent=(cur+1)+' / '+Qs.length;
-  var t=TEACHERS[selectedTeacher];
-  var q=Qs[questionOrder[cur]];
-  var intro = cur===0
-    ? t.intro+'\n\nまず1問目！カテゴリは「'+q.cat+'」！'
-    : t.next+'\n問題'+(cur+1)+'問目！カテゴリは「'+q.cat+'」！';
-  // 問題表示と同時にチャット入力を開放
-  showChatInput(true);
-  addBotBubble(intro, function(){
-    setTimeout(function(){
-      addBotBubble(t.question+'\n\n'+q.q, function(){
-        actionState='show-opts';
-        setActionBtn('選択肢を見る →', true);
-      });
-    },400);
-  });
-}
-
-function onActionBtn(){
-  if(actionState==='show-opts') showChoices();
-  else if(actionState==='next-q') nextChatQ();
-  else if(actionState==='result') finish();
-}
-
-function showChoices(){
-  setActionBtn('',false);
-  var q=Qs[questionOrder[cur]];
-  document.getElementById('chat-opts').innerHTML=q.opts.map(function(o,i){
-    return '<button class="opt-btn" id="co'+i+'" onclick="chatPick('+i+')"><span class="opt-num">'+(i+1)+'</span><span>'+o+'</span></button>';
-  }).join('');
-  showOpts(true);scrollFeed();
-}
-
-function chatPick(idx){
-  showOpts(false);
-  var q=Qs[questionOrder[cur]];var t=TEACHERS[selectedTeacher];
-  var ok=idx===q.ans;
-  if(ok)score++;
-  answers.push({q:cur,sel:idx,ok:ok});
-  recordAnswer(q,ok,'chat');
-  showAmado(ok);
-  addUserBubble((idx+1)+'番！');
-  setTimeout(function(){
-    var msg = ok
-      ? t.correct+'\n\n'+q.ex
-      : t.wrong+'\n\n正解は'+(q.ans+1)+'番「'+q.opts[q.ans]+'」！\n\n'+q.ex;
-    addBotBubble(msg, function(){
-      showChatInput(true);
-      if(cur+1<Qs.length){actionState='next-q';setActionBtn('次の問題へ →',true);}
-      else{actionState='result';setActionBtn('結果を見る',true);}
-      addBotBubble(t.hint);
-    });
-  },300);
-}
-
-function saveProgress(){
-  try {
-    localStorage.setItem('aid_fp2_progress', JSON.stringify({
-      cur: cur, score: score, answers: answers,
-      order: questionOrder, teacher: selectedTeacher, questions: Qs
-    }));
-  } catch(e) {}
-}
-
-function nextChatQ(){
-  setActionBtn('',false);showChatInput(false);
-  cur++;chatApiHist=[];
-  saveProgress();
-  startChatMode();
-}
-
-async function sendChatMsg(){
-  var inp=document.getElementById('chat-in');
-  var txt=inp.value.trim();if(!txt)return;
-  inp.value='';
-  document.getElementById('chat-send-btn').disabled=true;
-  addUserBubble(txt);
-  chatApiHist.push({role:'user',content:txt});
-  var q=Qs[questionOrder[cur]];var t=TEACHERS[selectedTeacher];
-  var ctx='今の問題：\nカテゴリ：'+q.cat+'\n問題：'+q.q+'\n正解：'+q.opts[q.ans]+'\n解説：'+q.ex;
-  var feed=chatFeed();
-  var loadWrap=document.createElement('div');loadWrap.className='bubble-wrap-bot';loadWrap.id='chat-loading';
-  var av=document.createElement('div');av.className='bubble-avatar';av.innerHTML='<img src="'+t.icon+'" alt="'+t.name+'">';
-  var bub=document.createElement('div');bub.className='bubble-bot';bub.textContent='考え中...';
-  loadWrap.appendChild(av);loadWrap.appendChild(bub);
-  feed.appendChild(loadWrap);scrollFeed();
-  try{
-    var r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:chatApiHist,character:selectedTeacher,system:ctx})});
-    var d=await r.json();
-    var rep=d.reply||t.error;
-    chatApiHist.push({role:'assistant',content:rep});
-    var l=document.getElementById('chat-loading');if(l)l.remove();
-    addBotBubble(rep);
-  }catch(e){
-    var l=document.getElementById('chat-loading');if(l)l.remove();
-    addBotBubble(t.error);
-  }
-  document.getElementById('chat-send-btn').disabled=false;
-}
-
-/* ===================================================
-   通常クイズ
+   4択問題（受験勉強モードの4択フェーズで使用）
    =================================================== */
 function renderQ(){
   var q=Qs[cur];var t=TEACHERS[selectedTeacher];
@@ -2571,7 +2131,6 @@ function calcInput(key){
    共通
    =================================================== */
 function finish(){
-  try{localStorage.removeItem('aid_fp2_progress');}catch(e){}
   synth&&synth.cancel();
   var total=mode==='handsfree'?QsOX.length:mode==='jitsugi'?QsJitsugi.length:Qs.length;
   var rec={date:new Date().toLocaleDateString('ja-JP'),score:score,total:total,mode:mode};
@@ -2632,18 +2191,10 @@ async function interruptHfQuiz(){
   showInterruptedResult(answeredCount, correctCount, accuracy);
 }
 
-async function interruptCampQuiz(){
-  if(!confirm('ここで中断しますか？ここまでの結果を記録して終了します。')) return;
-  var answeredCount = campQuizAnswered;
-  var correctCount = campQuizCorrect;
-  var accuracy = await saveStudySession(answeredCount, correctCount, 'camp', 'camp', campQuizGenre);
-  showInterruptedResult(answeredCount, correctCount, accuracy);
-}
-
 function goHome(){synth&&synth.cancel();
 hfWaitingNext=false;stopListen();
 updateHome();
-updateContinueBtn();show('home');}
+show('home');}
 
 /* ===================================================
    解答記録（学習進捗ダッシュボード用）
@@ -3137,310 +2688,6 @@ function finishCase(){
 }
 
 /* ===================================================
-   合宿プラン（3周回学習）
-   =================================================== */
-var campState = null; // GET /api/camp のレスポンス（computeCampViewの結果）をそのまま保持
-var campCreateGenres = [];
-var campQuizGenre = null, campQuizQs = [], campQuizCur = 0;
-var campQuizAnswered = 0, campQuizCorrect = 0; // 中断時の結果表示用（このセッション内での解答数・正解数）
-var ROUND_STATUS_ICON = {'未着手':'⚪','進行中':'🔵','完了':'✅'};
-
-function todayDateInputValue(){
-  var parts = new Intl.DateTimeFormat('en-CA', {timeZone:'Asia/Tokyo', year:'numeric', month:'2-digit', day:'2-digit'}).formatToParts(new Date());
-  var get = function(t){ return parts.find(function(p){return p.type===t;}).value; };
-  return get('year')+'-'+get('month')+'-'+get('day');
-}
-
-async function openCampHome(){
-  show('loading');
-  var camp = null;
-  try{
-    var r = await fetch('/api/camp');
-    var d = await r.json();
-    camp = d.camp || null;
-  }catch(e){
-    camp = null;
-  }
-  if(!camp){
-    openCampCreate();
-  } else {
-    campState = camp;
-    renderCampDashboard();
-    show('camp-dashboard');
-  }
-}
-
-async function openCampCreate(){
-  show('camp-create');
-  document.getElementById('camp-create-body').style.display='none';
-  document.getElementById('camp-create-loading').style.display='block';
-  document.getElementById('camp-start-date').value = todayDateInputValue();
-  document.getElementById('camp-exam-date').value = '2026-10-31';
-  try{
-    var r = await fetch('/api/question-count-summary');
-    var d = await r.json();
-    campCreateGenres = d.genres || [];
-    document.getElementById('camp-genre-counts').innerHTML = campCreateGenres.map(function(g){
-      return '<div class="history-row"><span class="history-date">'+escapeHtml(g.domain)+'</span><span class="history-score">'+g.current+'問</span></div>';
-    }).join('');
-    document.getElementById('camp-create-loading').style.display='none';
-    document.getElementById('camp-create-body').style.display='block';
-    updateCampQuotaSuggestion();
-  }catch(e){
-    document.getElementById('camp-create-loading').textContent='読み込みに失敗しました。';
-  }
-}
-
-function updateCampQuotaSuggestion(){
-  var start = document.getElementById('camp-start-date').value;
-  var exam = document.getElementById('camp-exam-date').value;
-  var infoEl = document.getElementById('camp-days-info');
-  var quotaInput = document.getElementById('camp-daily-quota');
-  if(!start || !exam){ infoEl.textContent=''; return; }
-  var days = Math.max(1, Math.round((new Date(exam+'T00:00:00Z') - new Date(start+'T00:00:00Z')) / 86400000));
-  var round1Total = campCreateGenres.reduce(function(s,g){return s+g.current;},0);
-  // 2周目（1周目の不正解のみ）はまだ確定しないため、ここでは1周目＋3周目分でまず見積もる
-  var estimateTotal = round1Total * 2;
-  var suggested = Math.max(1, Math.ceil(estimateTotal / days));
-  infoEl.textContent = '試験まで残り '+days+' 日／見積り総問題数 約'+estimateTotal+'問（1・3周目分。2周目は1周目終了後に確定します）';
-  quotaInput.value = suggested;
-  quotaInput.placeholder = suggested;
-}
-
-async function createCampPlan(){
-  var startDate = document.getElementById('camp-start-date').value;
-  var examDate = document.getElementById('camp-exam-date').value;
-  var dailyQuota = document.getElementById('camp-daily-quota').value;
-  if(!startDate || !examDate){ alert('学習開始日と試験日を入力してください。'); return; }
-  show('loading');
-  try{
-    var r = await fetch('/api/camp',{
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({action:'create', startDate:startDate, examDate:examDate, dailyQuota: dailyQuota===''?null:Number(dailyQuota)}),
-    });
-    var d = await r.json();
-    if(!d.ok) throw new Error(d.error||'create failed');
-    await openCampHome();
-  }catch(e){
-    alert('合宿プランの作成に失敗しました。通信環境をご確認のうえ、もう一度お試しください。');
-    show('honki-menu');
-  }
-}
-
-function restartCampPlan(){
-  if(!confirm('現在の合宿プランを削除して、新しく作り直しますか？進捗はリセットされます。')) return;
-  openCampCreate();
-}
-
-function openCampQuotaEdit(){
-  var cur = campState ? campState.dailyQuotaOverride : null;
-  var suggestion = campState ? campState.autoDailyQuota : 1;
-  var input = prompt('1日のノルマ（問題数）を入力してください。空欄にすると自動算出（'+suggestion+'問）に戻ります。', cur!=null?String(cur):'');
-  if(input === null) return;
-  var value = input.trim()==='' ? null : Number(input.trim());
-  fetch('/api/camp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'quota', dailyQuota:value})})
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.ok){ campState = d.camp; renderCampDashboard(); }
-      else alert('更新に失敗しました。');
-    })
-    .catch(function(){ alert('通信エラーが発生しました。'); });
-}
-
-function renderCampDashboard(){
-  var c = campState;
-  document.getElementById('camp-today-card').innerHTML =
-    '<div class="light-stats-row" style="margin-bottom:10px">'
-    + '<div class="light-stat"><div class="light-stat-num">'+c.today.answered+' / '+c.today.quota+'</div><div class="light-stat-label">今日のノルマ</div></div>'
-    + '<div class="light-stat"><div class="light-stat-num">'+c.daysRemaining+'日</div><div class="light-stat-label">試験まで</div></div>'
-    + '<div class="light-stat"><div class="light-stat-num">'+c.currentRound+'周目</div><div class="light-stat-label">現在の周</div></div>'
-    + '</div>'
-    + '<div style="font-size:14px;line-height:1.7;color:var(--text)">'+(c.today.achieved?'✅ ':'🐾 ')+escapeHtml(c.message)+'</div>';
-
-  document.getElementById('camp-round-status').innerHTML = c.rounds.map(function(rd){
-    var icon = ROUND_STATUS_ICON[rd.status] || '';
-    return '<div class="cat-card" style="align-items:center">'
-      + '<div class="cat-card-info"><div class="cat-card-name">'+icon+' '+rd.round+'周目</div>'
-      + '<div class="cat-card-sub">'+rd.status+'</div></div>'
-      + '</div>';
-  }).join('');
-
-  var current = c.rounds.filter(function(rd){ return rd.round === c.currentRound; })[0];
-  document.getElementById('camp-genre-progress').innerHTML = (current ? current.genres : []).map(function(g){
-    var pct = g.total>0 ? Math.round(g.answered/g.total*100) : 100;
-    var remain = g.total - g.answered;
-    var cls = pct>=100 ? 'good' : (pct>=50 ? 'mid':'bad');
-    return '<div class="cat-card">'
-      + '<div class="cat-card-info">'
-      + '<div class="cat-card-name">'+escapeHtml(g.domain)+'</div>'
-      + '<div class="cat-bar-track"><div class="cat-bar-fill '+cls+'" style="width:'+pct+'%"></div></div>'
-      + '<div class="cat-card-sub">'+g.answered+' / '+g.total+'問'+(remain>0?'（残り'+remain+'問）':'（完了）')+'</div>'
-      + '</div>'
-      + '<div class="cat-card-pct '+cls+'">'
-      + (remain>0 ? '<button class="next-btn" style="padding:8px 14px;font-size:12px;margin:0;white-space:nowrap" onclick="startCampQuiz(\''+g.domain+'\')">続ける</button>' : '✓')
-      + '</div>'
-      + '</div>';
-  }).join('');
-
-  var table = document.getElementById('camp-round-table');
-  var domains = current ? current.genres.map(function(g){return g.domain;}) : [];
-  var head = '<thead><tr><th>ジャンル</th><th>1周目</th><th>2周目</th><th>3周目</th></tr></thead>';
-  var body = '<tbody>' + domains.map(function(domain){
-    var cells = [1,2,3].map(function(rn){
-      var rd = c.rounds.filter(function(r){return r.round===rn;})[0];
-      var g = rd ? rd.genres.filter(function(x){return x.domain===domain;})[0] : null;
-      var label = (g && g.accuracy!==null) ? g.accuracy+'%' : '―';
-      return '<td>'+label+'</td>';
-    }).join('');
-    return '<tr><td>'+escapeHtml(domain)+'</td>'+cells+'</tr>';
-  }).join('') + '</tbody>';
-  table.innerHTML = head+body;
-
-  document.getElementById('camp-dash-loading').style.display='none';
-  document.getElementById('camp-dash-body').style.display='block';
-}
-
-async function startCampQuiz(genre){
-  show('loading');
-  try{
-    var r = await fetch('/api/camp?action=questions&genre='+encodeURIComponent(genre));
-    var d = await r.json();
-    if(d.error) throw new Error(d.error);
-    campQuizQs = d.questions || [];
-    if(campQuizQs.length === 0){
-      renderCampDashboard();
-      show('camp-dashboard');
-      return;
-    }
-  }catch(e){
-    alert('問題の読み込みに失敗しました。通信環境をご確認のうえ、もう一度お試しください。');
-    show('camp-dashboard');
-    return;
-  }
-  campQuizGenre = genre;
-  campQuizCur = 0;
-  campQuizAnswered = 0;
-  campQuizCorrect = 0;
-  show('camp-quiz');
-  renderCampQuizQ();
-}
-
-function renderCampQuizQ(){
-  var q = campQuizQs[campQuizCur];
-  var t = TEACHERS[selectedTeacher];
-  document.getElementById('camp-prog').style.width = ((campQuizCur+1)/campQuizQs.length*100)+'%';
-  document.getElementById('camp-quiz-tag').textContent = campQuizGenre+'（'+campState.currentRound+'周目）';
-  document.getElementById('camp-q-num').textContent = (campQuizCur+1)+' / '+campQuizQs.length;
-  document.getElementById('camp-q-text').textContent = q.q;
-  document.getElementById('camp-exbox').style.display='none';
-  if(q.format === 'ox'){
-    document.getElementById('camp-opts').innerHTML =
-      '<div class="camp-ox-btns">'
-      + '<button class="camp-ox-maru" id="cpo-maru" onclick="pickCampOX(true)">○</button>'
-      + '<button class="camp-ox-batu" id="cpo-batu" onclick="pickCampOX(false)">×</button>'
-      + '</div>';
-  } else {
-    document.getElementById('camp-opts').innerHTML = q.opts.map(function(o,i){
-      return '<button class="opt-btn" id="cpo'+i+'" onclick="pickCampAnswer('+i+')"><span class="opt-num">'+(i+1)+'</span><span>'+escapeHtml(o)+'</span></button>';
-    }).join('');
-  }
-  campChatHist=[];
-  document.getElementById('camp-chat-head').textContent = t.name+'に質問する';
-  document.getElementById('camp-chat-in').placeholder = t.placeholder;
-  document.getElementById('camp-chat-msgs').innerHTML='';
-  addCampBot(t.hint);
-}
-
-async function pickCampAnswer(idx){
-  var q = campQuizQs[campQuizCur];
-  var ok = idx === q.ans;
-  var opts = document.getElementById('camp-opts').children;
-  for(var i=0;i<opts.length;i++){
-    opts[i].disabled = true;
-    if(i===q.ans) opts[i].classList.add('correct');
-    else if(i===idx) opts[i].classList.add('wrong');
-    else opts[i].classList.add('dim');
-  }
-  await finishCampAnswer(q, ok);
-}
-
-async function pickCampOX(boolAnswer){
-  var q = campQuizQs[campQuizCur];
-  var idx = boolAnswer ? 0 : 1;
-  var ok = idx === q.ans;
-  var maruBtn = document.getElementById('cpo-maru');
-  var batuBtn = document.getElementById('cpo-batu');
-  maruBtn.disabled = true;
-  batuBtn.disabled = true;
-  var correctBtn = q.ans===0 ? maruBtn : batuBtn;
-  var otherBtn = q.ans===0 ? batuBtn : maruBtn;
-  correctBtn.classList.add('camp-ox-correct');
-  otherBtn.classList.add('camp-ox-dim');
-  await finishCampAnswer(q, ok);
-}
-
-async function finishCampAnswer(q, ok){
-  campQuizAnswered++;
-  if(ok) campQuizCorrect++;
-  recordAnswer(q, ok, 'camp');
-  try{
-    var r = await fetch('/api/camp',{
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({action:'answer', genre:campQuizGenre, questionId:q.id, isCorrect:ok}),
-    });
-    var d = await r.json();
-    if(d.ok) campState = d.camp;
-  }catch(e){}
-  document.getElementById('camp-ex-title').textContent = ok ? '正解！' : '不正解...';
-  document.getElementById('camp-ex-text').textContent = (ok?'':'正解：'+(q.opts[q.ans])+'\n\n') + (q.ex||'');
-  document.getElementById('camp-next-btn').textContent = campQuizCur+1<campQuizQs.length ? '次の問題へ →' : '進捗を見る';
-  document.getElementById('camp-exbox').style.display='block';
-}
-
-function nextCampQ(){
-  if(campQuizCur+1 < campQuizQs.length){ campQuizCur++; renderCampQuizQ(); window.scrollTo(0,0); }
-  else { renderCampDashboard(); show('camp-dashboard'); }
-}
-
-function addCampBot(txt){
-  var m=document.getElementById('camp-chat-msgs');
-  var d=document.createElement('div');d.className='norm-bot-wrap';
-  d.innerHTML='<div style="font-size:16px">♥</div><div class="norm-bot-bubble">'+txt+'</div>';
-  m.appendChild(d);m.scrollTop=m.scrollHeight;
-}
-function addCampUser(txt){
-  var m=document.getElementById('camp-chat-msgs');
-  var d=document.createElement('div');d.className='norm-user-wrap';
-  d.innerHTML='<div class="norm-user-bubble">'+txt+'</div>';
-  m.appendChild(d);m.scrollTop=m.scrollHeight;
-}
-
-async function sendCampChat(){
-  var inp=document.getElementById('camp-chat-in');
-  var txt=inp.value.trim();if(!txt)return;
-  inp.value='';addCampUser(txt);
-  campChatHist.push({role:'user',content:txt});
-  addCampBot('考え中...');
-  var q=campQuizQs[campQuizCur];var t=TEACHERS[selectedTeacher];
-  var ctx;
-  if(q.format==='ox'){
-    ctx='今の問題（○×形式）：\nカテゴリ：'+campQuizGenre+'\n記述：'+q.q+'\n正解：'+(q.ans===0?'○':'×')+'\n解説：'+q.ex;
-  }else{
-    ctx='今の問題：\nカテゴリ：'+campQuizGenre+'\n問題：'+q.q+'\n正解：'+q.opts[q.ans]+'\n解説：'+q.ex;
-  }
-  try{
-    var r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:campChatHist,character:selectedTeacher,system:ctx})});
-    var d=await r.json();var rep=d.reply||t.error;
-    campChatHist.push({role:'assistant',content:rep});
-    var m=document.getElementById('camp-chat-msgs');if(m.lastChild)m.removeChild(m.lastChild);
-    addCampBot(rep);
-  }catch(e){
-    var m=document.getElementById('camp-chat-msgs');if(m.lastChild)m.removeChild(m.lastChild);
-    addCampBot(t.error);
-  }
-}
-
-/* ===================================================
    管理画面：問題数サマリー
    =================================================== */
 function loadQuestionCountSummary(){
@@ -3691,7 +2938,6 @@ function deleteMemo(){
 }
 
 updateHome();
-updateContinueBtn();
 renderDailyQuote();
 renderCategoryBtns();
 renderGapBtns();
