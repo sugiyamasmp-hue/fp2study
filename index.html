@@ -2828,6 +2828,27 @@ var amadoNormal = [
   '/images/amado/amado_seikai_2.png',
 ];
 
+/* ===== レアアマドの自動読み込み =====
+   images/amado/rare/ にファイルを足すだけで出現するようにしてある。index.html の書き換えは不要。
+
+   静的ホスティングなのでフォルダの一覧は取れない。そこで連番のファイル名を組み立てて
+   HEADリクエストで存在を確かめ、見つかったものを出題プールにする。
+   ファイル名は rare1.png / rare_1.png / amado_rare_1.png のいずれでもよく、
+   拡張子は png / webp / jpg に対応する（1番のファイルで判定し、以降は同じ拡張子で探す）。
+   探索結果は localStorage に24時間キャッシュするので、毎回の起動で通信は走らない。 */
+var AMADO_RARE_DIR = '/images/amado/rare/';
+var AMADO_RARE_NAMERS = [
+  function(n){ return 'rare' + n; },
+  function(n){ return 'rare_' + n; },
+  function(n){ return 'amado_rare_' + n; },
+];
+var AMADO_RARE_EXTS = ['png','webp','jpg'];
+var AMADO_RARE_MAX = 200;   // 連番をどこまで探すか
+var AMADO_RARE_BATCH = 10;  // まとめて確認する件数。1件も無ければそこで打ち切る
+var AMADO_RARE_CACHE_KEY = 'aid_fp2_amado_rare';
+var AMADO_RARE_CACHE_MS = 24 * 60 * 60 * 1000;
+
+/* 探索前・探索失敗時に使う既定リスト（従来のハードコード分） */
 var amadoRare = [
   '/images/amado/rare/amado_rare_1.png',
   '/images/amado/rare/amado_rare_2.png',
@@ -2840,6 +2861,89 @@ var amadoRare = [
 
 function getRandomAmado(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
+}
+
+/* HEADで存在確認。画像本体はダウンロードしないので探索が軽い */
+async function amadoFileExists(url){
+  try{
+    var res = await fetch(url, { method:'HEAD' });
+    return res.ok;
+  }catch(e){ return false; }
+}
+
+/* 1つの命名パターンについて連番を探す */
+async function discoverRareSeries(namer){
+  var ext = null;
+  for(var i=0;i<AMADO_RARE_EXTS.length;i++){
+    if(await amadoFileExists(AMADO_RARE_DIR + namer(1) + '.' + AMADO_RARE_EXTS[i])){
+      ext = AMADO_RARE_EXTS[i];
+      break;
+    }
+  }
+  if(!ext) return [];
+
+  var found = [AMADO_RARE_DIR + namer(1) + '.' + ext];
+  var n = 2;
+  while(n <= AMADO_RARE_MAX){
+    var urls = [];
+    for(var k=0; k<AMADO_RARE_BATCH && n<=AMADO_RARE_MAX; k++, n++){
+      urls.push(AMADO_RARE_DIR + namer(n) + '.' + ext);
+    }
+    var oks = await Promise.all(urls.map(amadoFileExists));
+    var hit = 0;
+    for(var j=0;j<urls.length;j++){
+      if(oks[j]){ found.push(urls[j]); hit++; }
+    }
+    if(!hit) break;  // 10連続で見つからなければ打ち切り（途中の欠番は飛ばせる）
+  }
+  return found;
+}
+
+function readRareAmadoCache(){
+  try{
+    var o = JSON.parse(localStorage.getItem(AMADO_RARE_CACHE_KEY));
+    if(!o || !o.list || !o.list.length) return null;
+    if(Date.now() - o.at > AMADO_RARE_CACHE_MS) return null;
+    return o.list;
+  }catch(e){ return null; }
+}
+
+function writeRareAmadoCache(list){
+  try{ localStorage.setItem(AMADO_RARE_CACHE_KEY, JSON.stringify({ at: Date.now(), list: list })); }catch(e){}
+}
+
+function clearRareAmadoCache(){
+  try{ localStorage.removeItem(AMADO_RARE_CACHE_KEY); }catch(e){}
+}
+
+/* 起動時に一度だけ走らせる。失敗しても既定リストのままなので出題は止まらない */
+async function loadRareAmado(){
+  var cached = readRareAmadoCache();
+  if(cached){ amadoRare = cached; return; }
+
+  var all = [];
+  for(var i=0;i<AMADO_RARE_NAMERS.length;i++){
+    var list = await discoverRareSeries(AMADO_RARE_NAMERS[i]);
+    for(var j=0;j<list.length;j++){
+      if(all.indexOf(list[j]) < 0) all.push(list[j]);
+    }
+  }
+  if(all.length){
+    amadoRare = all;
+    writeRareAmadoCache(all);
+  }
+}
+
+/* キャッシュ後にファイルが消えていた場合の保険。
+   表示に失敗したら候補から外し、キャッシュを捨てて次回起動で探索し直す */
+function onAmadoImgError(imgEl){
+  var bad = imgEl.getAttribute('src');
+  if(!bad) return;  // 表示前（src未設定）は無視する
+  var idx = amadoRare.indexOf(bad);
+  if(idx >= 0) amadoRare.splice(idx, 1);
+  clearRareAmadoCache();
+  var next = amadoRare.length ? getRandomAmado(amadoRare) : getRandomAmado(amadoNormal);
+  if(next && next !== bad){ imgEl.src = next; currentAmadoImage = next; }
 }
 
 var amadoFadeTimer = null;
@@ -2927,7 +3031,9 @@ async function shareAmado(imageUrl, streakCount){
         var res = await fetch(src);
         if(res.ok){
           var blob = await res.blob();
-          var f = new File([blob], 'amado.png', { type: blob.type || 'image/png' });
+          /* 拡張子は元ファイルに合わせる（png以外もあり得るため） */
+          var m = String(src).match(/\.(png|webp|jpe?g)(?:\?|$)/i);
+          var f = new File([blob], 'amado.' + (m ? m[1].toLowerCase() : 'png'), { type: blob.type || 'image/png' });
           if(navigator.canShare({ files: [f] })) file = f;
         }
       } catch(e) { /* 画像が取れなければテキストだけでシェアする */ }
@@ -3822,13 +3928,14 @@ renderDailyQuote();
 renderCategoryBtns();
 renderGapBtns();
 restoreStudyCharacter();
+loadRareAmado();
 </script>
 
 <!-- アマドポップアップ -->
 <div id="amado-overlay" class="amado-overlay" style="display:none" onclick="closeAmado()">
   <div id="amado-popup" class="amado-popup" onclick="event.stopPropagation()">
     <div id="amado-badge" class="amado-badge normal">正解！</div>
-    <img id="amado-img" class="amado-img" src="" alt="アマド">
+    <img id="amado-img" class="amado-img" alt="アマド" onerror="onAmadoImgError(this)">
     <div id="amado-msg" class="amado-msg"></div>
     <div id="amado-sub" class="amado-sub"></div>
     <div class="amado-actions">
