@@ -230,6 +230,10 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 .amado-sub{font-size:12px;color:var(--text-secondary);margin-bottom:16px;transition:opacity 0.6s ease}
 .amado-popup.text-fade .amado-badge,.amado-popup.text-fade .amado-msg,.amado-popup.text-fade .amado-sub{opacity:0}
 .amado-close{padding:10px 28px;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:800;cursor:pointer}
+.amado-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.amado-share{padding:10px 22px;background:linear-gradient(135deg,#ffd700,#f0a500);border:none;border-radius:10px;color:#4a3200;font-size:14px;font-weight:800;cursor:pointer}
+.amado-share:disabled{opacity:0.6;cursor:default}
+.amado-share-note{font-size:11px;color:var(--text-secondary);margin-top:8px;min-height:14px}
 .streak-badge{display:inline-block;background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.4);color:#2563eb;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700;margin-left:8px}
 
 /* 今日の格言 */
@@ -2839,6 +2843,8 @@ function getRandomAmado(arr) {
 }
 
 var amadoFadeTimer = null;
+var currentAmadoImage = '';
+var currentAmadoStreak = 0;
 
 function showAmado(isCorrect) {
   if(!isCorrect){ streak=0; return; }
@@ -2869,6 +2875,16 @@ function showAmado(isCorrect) {
     msg.textContent = 'アマド登場！';
     sub.textContent = streak > 1 ? streak + '問連続正解中！' : 'よくできました！';
   }
+
+  currentAmadoImage = img.src;
+  currentAmadoStreak = streak;
+  var shareBtn = document.getElementById('amado-share');
+  var note = document.getElementById('amado-share-note');
+  note.textContent = '';
+  shareBtn.disabled = false;
+  /* シェアはレアアマドのときだけ（文面が「レアアマド出た！」のため） */
+  shareBtn.style.display = (isRare && canShareAmado()) ? '' : 'none';
+
   overlay.style.display = 'flex';
 
   amadoFadeTimer = setTimeout(function(){
@@ -2879,6 +2895,63 @@ function showAmado(isCorrect) {
 function closeAmado(){
   clearTimeout(amadoFadeTimer);
   document.getElementById('amado-overlay').style.display = 'none';
+  document.getElementById('amado-share-note').textContent = '';
+}
+
+/* Web Share API も clipboard も無い端末ではシェアボタンを出さない */
+function canShareAmado(){
+  return !!(navigator.share || (navigator.clipboard && navigator.clipboard.writeText));
+}
+
+var amadoShareBusy = false;
+
+async function shareAmado(imageUrl, streakCount){
+  if(amadoShareBusy) return;
+  var src = imageUrl || currentAmadoImage;
+  var n = streakCount || currentAmadoStreak;
+  var text = n + '問連続正解でレアアマド出た！🐕✨\n#FP2級 #BlakePassport';
+  var siteUrl = 'https://fp2study.vercel.app';
+  var btn = document.getElementById('amado-share');
+  var note = document.getElementById('amado-share-note');
+
+  amadoShareBusy = true;
+  btn.disabled = true;
+  note.textContent = '';
+  /* シェア操作中にポップアップの文字が消えないようフェードを止める */
+  clearTimeout(amadoFadeTimer);
+
+  try {
+    var file = null;
+    if(navigator.canShare && src){
+      try {
+        var res = await fetch(src);
+        if(res.ok){
+          var blob = await res.blob();
+          var f = new File([blob], 'amado.png', { type: blob.type || 'image/png' });
+          if(navigator.canShare({ files: [f] })) file = f;
+        }
+      } catch(e) { /* 画像が取れなければテキストだけでシェアする */ }
+    }
+
+    if(navigator.share){
+      /* 画像付きシェアでは url が落ちる共有先が多いので text に埋め込む */
+      await navigator.share(file
+        ? { text: text + '\n' + siteUrl, files: [file] }
+        : { text: text, url: siteUrl });
+      note.textContent = 'シェアしました！';
+    } else if(navigator.clipboard && navigator.clipboard.writeText){
+      await navigator.clipboard.writeText(text + '\n' + siteUrl);
+      note.textContent = 'テキストをコピーしました！';
+    } else {
+      note.textContent = 'この端末ではシェアできません。';
+    }
+  } catch(err){
+    /* ユーザーがシェアシートを閉じただけのときは何も出さない */
+    if(!err || err.name !== 'AbortError') note.textContent = 'シェアに失敗しました。';
+  } finally {
+    amadoShareBusy = false;
+    btn.disabled = false;
+  }
 }
 
 function escapeHtml(s){
@@ -3758,7 +3831,11 @@ restoreStudyCharacter();
     <img id="amado-img" class="amado-img" src="" alt="アマド">
     <div id="amado-msg" class="amado-msg"></div>
     <div id="amado-sub" class="amado-sub"></div>
-    <button class="amado-close" onclick="closeAmado()">とじる</button>
+    <div class="amado-actions">
+      <button id="amado-share" class="amado-share" style="display:none" onclick="shareAmado()">📣 シェア</button>
+      <button class="amado-close" onclick="closeAmado()">とじる</button>
+    </div>
+    <div id="amado-share-note" class="amado-share-note"></div>
   </div>
 </div>
 </body>
