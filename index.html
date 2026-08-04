@@ -2842,9 +2842,6 @@ var amadoNormal = [
   '/images/amado/amado_seikai_2.png',
 ];
 var amadoRare = [
-  '/images/amado/rare/amado_rare_1.png',
-  '/images/amado/rare/amado_rare_2.png',
-  '/images/amado/rare/amado_rare_3.png',
   '/images/amado/rare/amado_rare_4.png',
   '/images/amado/rare/amado_rare_5.png',
   '/images/amado/rare/amado_rare_6.png',
@@ -2884,20 +2881,25 @@ function amadoUrl(pool, namerIndex, n, ext){
   return pool.dir + pool.namers[namerIndex](n) + '.' + ext;
 }
 
-/* 1つの命名パターンについて連番を探す。{ext, max, urls} を返す（1番が無ければ null） */
-async function discoverAmadoSeries(pool, namerIndex){
-  var ext = null;
-  for(var i=0;i<AMADO_EXTS.length;i++){
-    if(await amadoFileExists(amadoUrl(pool, namerIndex, 1, AMADO_EXTS[i]))){
-      ext = AMADO_EXTS[i];
-      break;
-    }
+/* 拡張子の判定。1番が欠けていても系列を見失わないよう、先頭5つのどれかに当たれば採用する */
+async function detectAmadoExt(pool, namerIndex){
+  for(var e=0;e<AMADO_EXTS.length;e++){
+    var oks = await Promise.all([1,2,3,4,5].map(function(n){
+      return amadoFileExists(amadoUrl(pool, namerIndex, n, AMADO_EXTS[e]));
+    }));
+    if(oks.indexOf(true) >= 0) return AMADO_EXTS[e];
   }
+  return null;
+}
+
+/* 1つの命名パターンについて連番を探す。{ext, max, urls} を返す（1つも無ければ null） */
+async function discoverAmadoSeries(pool, namerIndex){
+  var ext = await detectAmadoExt(pool, namerIndex);
   if(!ext) return null;
 
-  var urls = [amadoUrl(pool, namerIndex, 1, ext)];
-  var max = 1;
-  var n = 2;
+  var urls = [];
+  var max = 0;
+  var n = 1;
   while(n <= AMADO_MAX){
     var nums = [];
     for(var k=0; k<AMADO_BATCH && n<=AMADO_MAX; k++, n++) nums.push(n);
@@ -2910,7 +2912,7 @@ async function discoverAmadoSeries(pool, namerIndex){
     }
     if(!hit) break;  // 10連続で見つからなければ打ち切り（途中の欠番は飛ばせる）
   }
-  return { ext: ext, max: max, urls: urls };
+  return urls.length ? { ext: ext, max: max, urls: urls } : null;
 }
 
 /* キャッシュには画像リストに加えて、系列ごとの拡張子と最終番号も持たせる。
