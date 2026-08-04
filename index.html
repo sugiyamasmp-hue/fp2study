@@ -2871,67 +2871,112 @@ async function amadoFileExists(url){
   }catch(e){ return false; }
 }
 
-/* 1つの命名パターンについて連番を探す */
-async function discoverRareSeries(namer){
+function rareAmadoUrl(namerIndex, n, ext){
+  return AMADO_RARE_DIR + AMADO_RARE_NAMERS[namerIndex](n) + '.' + ext;
+}
+
+/* 1つの命名パターンについて連番を探す。{ext, max, urls} を返す（1番が無ければ null） */
+async function discoverRareSeries(namerIndex){
   var ext = null;
   for(var i=0;i<AMADO_RARE_EXTS.length;i++){
-    if(await amadoFileExists(AMADO_RARE_DIR + namer(1) + '.' + AMADO_RARE_EXTS[i])){
+    if(await amadoFileExists(rareAmadoUrl(namerIndex, 1, AMADO_RARE_EXTS[i]))){
       ext = AMADO_RARE_EXTS[i];
       break;
     }
   }
-  if(!ext) return [];
+  if(!ext) return null;
 
-  var found = [AMADO_RARE_DIR + namer(1) + '.' + ext];
+  var urls = [rareAmadoUrl(namerIndex, 1, ext)];
+  var max = 1;
   var n = 2;
   while(n <= AMADO_RARE_MAX){
-    var urls = [];
-    for(var k=0; k<AMADO_RARE_BATCH && n<=AMADO_RARE_MAX; k++, n++){
-      urls.push(AMADO_RARE_DIR + namer(n) + '.' + ext);
-    }
-    var oks = await Promise.all(urls.map(amadoFileExists));
+    var nums = [];
+    for(var k=0; k<AMADO_RARE_BATCH && n<=AMADO_RARE_MAX; k++, n++) nums.push(n);
+    var oks = await Promise.all(nums.map(function(num){
+      return amadoFileExists(rareAmadoUrl(namerIndex, num, ext));
+    }));
     var hit = 0;
-    for(var j=0;j<urls.length;j++){
-      if(oks[j]){ found.push(urls[j]); hit++; }
+    for(var j=0;j<nums.length;j++){
+      if(oks[j]){ urls.push(rareAmadoUrl(namerIndex, nums[j], ext)); max = nums[j]; hit++; }
     }
     if(!hit) break;  // 10連続で見つからなければ打ち切り（途中の欠番は飛ばせる）
   }
-  return found;
+  return { ext: ext, max: max, urls: urls };
 }
 
+/* キャッシュには画像リストに加えて、系列ごとの拡張子と最終番号も持たせる。
+   次回以降「最終番号+1が増えていないか」だけを軽く確認するために使う */
 function readRareAmadoCache(){
   try{
     var o = JSON.parse(localStorage.getItem(AMADO_RARE_CACHE_KEY));
     if(!o || !o.list || !o.list.length) return null;
     if(Date.now() - o.at > AMADO_RARE_CACHE_MS) return null;
-    return o.list;
+    return o;
   }catch(e){ return null; }
 }
 
-function writeRareAmadoCache(list){
-  try{ localStorage.setItem(AMADO_RARE_CACHE_KEY, JSON.stringify({ at: Date.now(), list: list })); }catch(e){}
+function writeRareAmadoCache(list, series){
+  try{
+    localStorage.setItem(AMADO_RARE_CACHE_KEY, JSON.stringify({ at: Date.now(), list: list, series: series }));
+  }catch(e){}
 }
 
 function clearRareAmadoCache(){
   try{ localStorage.removeItem(AMADO_RARE_CACHE_KEY); }catch(e){}
 }
 
-/* 起動時に一度だけ走らせる。失敗しても既定リストのままなので出題は止まらない */
-async function loadRareAmado(){
-  var cached = readRareAmadoCache();
-  if(cached){ amadoRare = cached; return; }
-
-  var all = [];
+/* 全パターンを総当たりで探索し直す */
+async function rediscoverRareAmado(){
+  var all = [], series = [];
   for(var i=0;i<AMADO_RARE_NAMERS.length;i++){
-    var list = await discoverRareSeries(AMADO_RARE_NAMERS[i]);
-    for(var j=0;j<list.length;j++){
-      if(all.indexOf(list[j]) < 0) all.push(list[j]);
+    var s = await discoverRareSeries(i);
+    if(!s) continue;
+    series.push({ n: i, ext: s.ext, max: s.max });
+    for(var j=0;j<s.urls.length;j++){
+      if(all.indexOf(s.urls[j]) < 0) all.push(s.urls[j]);
     }
   }
   if(all.length){
     amadoRare = all;
-    writeRareAmadoCache(all);
+    writeRareAmadoCache(all, series);
   }
+  return all.length;
+}
+
+/* 画像を足した直後でもその場で反映されるように、キャッシュを使った後で
+   増分が無いかだけ軽く確認する。確認するのは次の2つだけ（HEAD数件で済む）。
+     - 既知の系列の「最終番号+1」が増えていないか
+     - まだ見つかっていない命名パターンの「1番」が現れていないか
+   どちらかが当たれば総当たりで探索し直してキャッシュを更新する。 */
+async function refreshRareAmadoIfGrown(cache){
+  var series = cache.series || [];
+  var known = {}, probes = [];
+
+  for(var i=0;i<series.length;i++){
+    known[series[i].n] = true;
+    probes.push(rareAmadoUrl(series[i].n, series[i].max + 1, series[i].ext));
+  }
+  /* 未発見の命名パターンは1番だけ拡張子違いで当たってみる（新しい系列の追加を拾うため） */
+  for(var n=0;n<AMADO_RARE_NAMERS.length;n++){
+    if(known[n]) continue;
+    for(var e=0;e<AMADO_RARE_EXTS.length;e++) probes.push(rareAmadoUrl(n, 1, AMADO_RARE_EXTS[e]));
+  }
+  if(!probes.length) return;
+
+  var oks = await Promise.all(probes.map(amadoFileExists));
+  if(oks.indexOf(true) >= 0) await rediscoverRareAmado();
+}
+
+/* 起動時に一度だけ走らせる。失敗しても既定リストのままなので出題は止まらない */
+async function loadRareAmado(){
+  var cache = readRareAmadoCache();
+  if(cache){
+    amadoRare = cache.list;
+    /* 追加分の確認は裏で走らせる。失敗してもキャッシュのまま遊べればよい */
+    refreshRareAmadoIfGrown(cache).catch(function(){});
+    return;
+  }
+  await rediscoverRareAmado();
 }
 
 /* キャッシュ後にファイルが消えていた場合の保険。
