@@ -2841,12 +2841,9 @@ var amadoNormal = [
   '/images/amado/amado_seikai_1.png',
   '/images/amado/amado_seikai_2.png',
 ];
-var amadoRare = [
-  '/images/amado/rare/amado_rare_4.png',
-  '/images/amado/rare/amado_rare_5.png',
-  '/images/amado/rare/amado_rare_6.png',
-  '/images/amado/rare/amado_rare_7.png',
-];
+/* レアは総入れ替え中で既定リストなし。images/amado/rare/ に rare1, rare2, … を
+   置けば探索が拾う。空のあいだは5問目以降も通常アマドでしのぐ（下の isRare 判定） */
+var amadoRare = [];
 
 var AMADO_POOLS = {
   normal: {
@@ -3043,7 +3040,8 @@ var currentAmadoStreak = 0;
 function showAmado(isCorrect) {
   if(!isCorrect){ streak=0; return; }
   streak++;
-  var isRare = (streak >= AMADO_RARE_FROM);
+  /* レア画像が1枚も無いあいだは通常アマドを出す（「レア出現！」で空画像を出さないため） */
+  var isRare = (streak >= AMADO_RARE_FROM && amadoRare.length > 0);
   var overlay = document.getElementById('amado-overlay');
   var popup = document.getElementById('amado-popup');
   var badge = document.getElementById('amado-badge');
