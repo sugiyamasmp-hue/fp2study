@@ -2836,13 +2836,11 @@ var AMADO_CACHE_MS = 24 * 60 * 60 * 1000;
 
 /* 出現プール。探索が終わるまで／失敗したときは、この既定リスト（従来のハードコード分）を使う。
    表示は登録順なので、配列の並びがそのまま出る順番になる。 */
-var amadoNormal = [
-  '/images/amado/amado_seikai.png',
-  '/images/amado/amado_seikai_1.png',
-  '/images/amado/amado_seikai_2.png',
-];
-/* レアは総入れ替え中で既定リストなし。images/amado/rare/ に rare1, rare2, … を
-   置けば探索が拾う。空のあいだは5問目以降も通常アマドでしのぐ（下の isRare 判定） */
+/* 画像を総入れ替え中のため既定リストは空。フォルダに置けば探索が拾う。
+     通常 … images/amado/      に normal1, normal2, …
+     レア … images/amado/rare/ に rare1, rare2, …
+   1枚も無いあいだはアマドのポップアップ自体を出さない（showAmado の src 判定） */
+var amadoNormal = [];
 var amadoRare = [];
 
 var AMADO_POOLS = {
@@ -3040,8 +3038,12 @@ var currentAmadoStreak = 0;
 function showAmado(isCorrect) {
   if(!isCorrect){ streak=0; return; }
   streak++;
-  /* レア画像が1枚も無いあいだは通常アマドを出す（「レア出現！」で空画像を出さないため） */
+  /* レア画像がまだ無いあいだは通常アマドでしのぐ。該当する画像が1枚も無ければ
+     ポップアップ自体を出さない（画像入れ替え中に空の枠を見せないため） */
   var isRare = (streak >= AMADO_RARE_FROM && amadoRare.length > 0);
+  var src = isRare ? pickRareAmado(streak) : pickNormalAmado();
+  if(!src) return;
+
   var overlay = document.getElementById('amado-overlay');
   var popup = document.getElementById('amado-popup');
   var badge = document.getElementById('amado-badge');
@@ -3052,15 +3054,15 @@ function showAmado(isCorrect) {
   clearTimeout(amadoFadeTimer);
   popup.classList.remove('text-fade');
 
+  img.src = src;
+
   if(isRare){
-    img.src = pickRareAmado(streak);
     popup.className = 'amado-popup rare';
     badge.className = 'amado-badge rare';
     badge.textContent = streak + '連続正解！レアアマド出現！';
     msg.textContent = 'レアアマド！！';
     sub.textContent = 'すごい！' + streak + '問連続正解やで！';
   } else {
-    img.src = pickNormalAmado();
     popup.className = 'amado-popup';
     badge.className = 'amado-badge normal';
     badge.textContent = '正解！';
