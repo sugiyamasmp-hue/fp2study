@@ -804,17 +804,18 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
   </div>
   <div class="question-card"><div class="question-text" id="sk-q-text"></div></div>
   <div class="opts-wrap" id="sk-opts"></div>
+  <!-- 解く前から質問できるよう、チャットは解説カード（#sk-exbox）の外に置く -->
+  <div class="norm-chat-area">
+    <div class="norm-chat-head" id="sk-chat-head">先生に質問する</div>
+    <div class="norm-chat-msgs" id="sk-chat-msgs"></div>
+    <div class="norm-input-row">
+      <input class="norm-input" id="sk-chat-in" placeholder="質問してや！" onkeydown="if(event.key==='Enter')sendSukimaChat()">
+      <button class="norm-send" onclick="sendSukimaChat()">送信</button>
+    </div>
+  </div>
   <div class="ex-card" id="sk-exbox" style="display:none">
     <div class="ex-label" id="sk-ex-title"></div>
     <div class="ex-text" id="sk-ex-text"></div>
-    <div class="norm-chat-area">
-      <div class="norm-chat-head" id="sk-chat-head">先生に質問する</div>
-      <div class="norm-chat-msgs" id="sk-chat-msgs"></div>
-      <div class="norm-input-row">
-        <input class="norm-input" id="sk-chat-in" placeholder="質問してや！" onkeydown="if(event.key==='Enter')sendSukimaChat()">
-        <button class="norm-send" onclick="sendSukimaChat()">送信</button>
-      </div>
-    </div>
     <button class="next-btn" id="sk-next-btn" onclick="nextSukimaQ()">次の問題へ →</button>
   </div>
   <!-- 記録がないので、解答前でも解答後でもいつでも抜けられる（中断確認は出さない） -->
@@ -860,17 +861,18 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
   </div>
   <div class="question-card"><div class="question-text" id="q-text"></div></div>
   <div class="opts-wrap" id="opts"></div>
+  <!-- 解く前から質問できるよう、チャットは解説カード（#exbox）の外に置く -->
+  <div class="norm-chat-area">
+    <div class="norm-chat-head" id="norm-chat-head">先生に質問する</div>
+    <div class="norm-chat-msgs" id="norm-chat-msgs"></div>
+    <div class="norm-input-row">
+      <input class="norm-input" id="norm-chat-in" placeholder="質問してや！" onkeydown="if(event.key==='Enter')sendNormChat()">
+      <button class="norm-send" onclick="sendNormChat()">送信</button>
+    </div>
+  </div>
   <div class="ex-card" id="exbox" style="display:none">
     <div class="ex-label" id="ex-title"></div>
     <div class="ex-text" id="ex-text"></div>
-    <div class="norm-chat-area">
-      <div class="norm-chat-head" id="norm-chat-head">先生に質問する</div>
-      <div class="norm-chat-msgs" id="norm-chat-msgs"></div>
-      <div class="norm-input-row">
-        <input class="norm-input" id="norm-chat-in" placeholder="質問してや！" onkeydown="if(event.key==='Enter')sendNormChat()">
-        <button class="norm-send" onclick="sendNormChat()">送信</button>
-      </div>
-    </div>
     <button class="next-btn" id="next-btn" onclick="nextQ()"></button>
   </div>
 </div>
@@ -899,6 +901,16 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
     <div class="hf-btns">
       <button class="hf-maru" id="btn-maru" onclick="hfAnswer(true)" disabled>○</button>
       <button class="hf-batu" id="btn-batu" onclick="hfAnswer(false)" disabled>×</button>
+    </div>
+    <!-- 解答状態に依存せず、解く前から質問できる。入力にフォーカスした時点で
+         音声認識は止める（打鍵中にマイクが「まる」を拾って誤答するのを防ぐ） -->
+    <div class="norm-chat-area">
+      <div class="norm-chat-head" id="hf-chat-head">先生に質問する</div>
+      <div class="norm-chat-msgs" id="hf-chat-msgs"></div>
+      <div class="norm-input-row">
+        <input class="norm-input" id="hf-chat-in" placeholder="質問してや！" onfocus="stopListen()" onkeydown="if(event.key==='Enter')sendHfChat()">
+        <button class="norm-send" onclick="sendHfChat()">送信</button>
+      </div>
     </div>
     <div class="hf-result" id="hf-result">
       <div class="hf-result-icon" id="hf-result-icon"></div>
@@ -994,17 +1006,18 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
     <div class="question-text" id="camp-q-text"></div>
   </div>
   <div class="opts-wrap" id="camp-opts"></div>
+  <!-- 解く前から質問できるよう、チャットは解説カード（#camp-exbox）の外に置く -->
+  <div class="norm-chat-area">
+    <div class="norm-chat-head" id="camp-chat-head">先生に質問する</div>
+    <div class="norm-chat-msgs" id="camp-chat-msgs"></div>
+    <div class="norm-input-row">
+      <input class="norm-input" id="camp-chat-in" placeholder="質問してや！" onkeydown="if(event.key==='Enter')sendCampChat()">
+      <button class="norm-send" onclick="sendCampChat()">送信</button>
+    </div>
+  </div>
   <div class="ex-card" id="camp-exbox" style="display:none">
     <div class="ex-label" id="camp-ex-title"></div>
     <div class="ex-text" id="camp-ex-text"></div>
-    <div class="norm-chat-area">
-      <div class="norm-chat-head" id="camp-chat-head">先生に質問する</div>
-      <div class="norm-chat-msgs" id="camp-chat-msgs"></div>
-      <div class="norm-input-row">
-        <input class="norm-input" id="camp-chat-in" placeholder="質問してや！" onkeydown="if(event.key==='Enter')sendCampChat()">
-        <button class="norm-send" onclick="sendCampChat()">送信</button>
-      </div>
-    </div>
     <button class="next-btn" id="camp-next-btn" onclick="nextCampQ()"></button>
   </div>
 </div>
@@ -1560,6 +1573,7 @@ var chatApiHist=[];
 var questionOrder=[];
 var normChatHist=[];
 var campChatHist=[];
+var hfChatHist=[];
 var hist=[];
 try{hist=JSON.parse(localStorage.getItem('aid_fp2_hist')||'[]');}catch(e){hist=[];}
 
@@ -2304,6 +2318,7 @@ function renderQ(){
   normChatHist=[];
   document.getElementById('norm-chat-head').textContent=t.name+'に質問する';
   document.getElementById('norm-chat-in').placeholder=t.placeholder;
+  document.getElementById('norm-chat-in').value='';
   document.getElementById('norm-chat-msgs').innerHTML='';
   addNormBot(t.hint);
   document.getElementById('opts').innerHTML=q.opts.map(function(o,i){
@@ -2454,13 +2469,20 @@ function enableHfBtns(){document.getElementById('btn-maru').disabled=false;docum
 function disableHfBtns(){document.getElementById('btn-maru').disabled=true;document.getElementById('btn-batu').disabled=true;}
 
 function renderHfQ(){
-  var q=QsOX[cur];
+  var q=QsOX[cur];var t=TEACHERS[selectedTeacher];
   document.getElementById('prog-hf').style.width=((cur+1)/QsOX.length*100)+'%';
   document.getElementById('q-cat-hf').textContent=q.cat;
   document.getElementById('q-num-hf').textContent=(cur+1)+' / '+QsOX.length;
   document.getElementById('hf-stmt').textContent=q.stmt;
   document.getElementById('hf-result').style.display='none';
   document.getElementById('next-btn-hf').style.display='none';
+  // 前問の会話が残ると混乱するので、問題が変わるたびに履歴も表示もリセットする
+  hfChatHist=[];
+  document.getElementById('hf-chat-head').textContent=t.name+'に質問する';
+  document.getElementById('hf-chat-in').placeholder=t.placeholder;
+  document.getElementById('hf-chat-in').value='';
+  document.getElementById('hf-chat-msgs').innerHTML='';
+  addHfBot(t.hint);
   disableHfBtns();document.getElementById('voice-wave').style.display='none';
   updateMuteBtn();
   setHfStatus(ttsMuted?'問題を読んでや！':'読み上げています...',ttsMuted?'':'speaking');
@@ -2497,6 +2519,42 @@ function hfAnswer(ans){
 }
 
 function nextHfQ(){hfWaitingNext=false;stopListen();synth&&synth.cancel();if(cur+1<QsOX.length){cur++;renderHfQ();}else finish();}
+
+/* ハンズフリー画面の質問チャット。他の画面と同じく /api/chat を流用する。
+   ○×の解答状態には依存しないので、読み上げ中でも解答後でも質問できる。 */
+function addHfBot(txt){
+  var m=document.getElementById('hf-chat-msgs');
+  var d=document.createElement('div');d.className='norm-bot-wrap';
+  d.innerHTML='<div style="font-size:16px">♥</div><div class="norm-bot-bubble"></div>';
+  d.lastChild.textContent=txt;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+function addHfUser(txt){
+  var m=document.getElementById('hf-chat-msgs');
+  var d=document.createElement('div');d.className='norm-user-wrap';
+  d.innerHTML='<div class="norm-user-bubble"></div>';
+  d.lastChild.textContent=txt;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+async function sendHfChat(){
+  var inp=document.getElementById('hf-chat-in');
+  var txt=inp.value.trim();if(!txt)return;
+  inp.value='';addHfUser(txt);
+  hfChatHist.push({role:'user',content:txt});
+  addHfBot('考え中...');
+  var q=QsOX[cur];var t=TEACHERS[selectedTeacher];
+  var ctx='今の問題（○×形式）：\nカテゴリ：'+(q.cat||'')+'\n記述：'+q.stmt+'\n正解：'+(q.ans?'○':'×')+'\n解説：'+(q.ex||'');
+  try{
+    var r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hfChatHist,character:selectedTeacher,system:ctx})});
+    var d=await r.json();var rep=d.reply||t.error;
+    hfChatHist.push({role:'assistant',content:rep});
+    var m=document.getElementById('hf-chat-msgs');if(m.lastChild)m.removeChild(m.lastChild);
+    addHfBot(rep);
+  }catch(e){
+    var m=document.getElementById('hf-chat-msgs');if(m.lastChild)m.removeChild(m.lastChild);
+    addHfBot(t.error);
+  }
+}
 
 /* ===================================================
    実技試験モード
@@ -3473,6 +3531,7 @@ function renderCampQuizQ(){
   campChatHist=[];
   document.getElementById('camp-chat-head').textContent = t.name+'に質問する';
   document.getElementById('camp-chat-in').placeholder = t.placeholder;
+  document.getElementById('camp-chat-in').value = '';
   document.getElementById('camp-chat-msgs').innerHTML='';
   addCampBot(t.hint);
 }
