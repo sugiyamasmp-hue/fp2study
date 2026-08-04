@@ -2822,33 +2822,25 @@ function analyzeWithTeacher(from){
 /* ===== アマドシステム ===== */
 var streak = 0;
 
+/* ===== アマド画像の自動読み込み（通常／レア共通） =====
+   フォルダにファイルを足すだけで出現するようにしてある。index.html の書き換えは不要。
+
+   静的ホスティングなのでフォルダの一覧は取れない。そこで連番のファイル名を組み立てて
+   HEADリクエストで存在を確かめ、見つかったものを出現プールにする。
+   拡張子は png / webp / jpg に対応する（1番のファイルで判定し、以降は同じ拡張子で探す）。
+   探索結果は localStorage に24時間キャッシュするので、毎回の起動で通信は走らない。 */
+var AMADO_EXTS = ['png','webp','jpg'];
+var AMADO_MAX = 200;    // 連番をどこまで探すか
+var AMADO_BATCH = 10;   // まとめて確認する件数。1件も無ければそこで打ち切る
+var AMADO_CACHE_MS = 24 * 60 * 60 * 1000;
+
+/* 出現プール。探索が終わるまで／失敗したときは、この既定リスト（従来のハードコード分）を使う。
+   表示は登録順なので、配列の並びがそのまま出る順番になる。 */
 var amadoNormal = [
   '/images/amado/amado_seikai.png',
   '/images/amado/amado_seikai_1.png',
   '/images/amado/amado_seikai_2.png',
 ];
-
-/* ===== レアアマドの自動読み込み =====
-   images/amado/rare/ にファイルを足すだけで出現するようにしてある。index.html の書き換えは不要。
-
-   静的ホスティングなのでフォルダの一覧は取れない。そこで連番のファイル名を組み立てて
-   HEADリクエストで存在を確かめ、見つかったものを出題プールにする。
-   ファイル名は rare1.png / rare_1.png / amado_rare_1.png のいずれでもよく、
-   拡張子は png / webp / jpg に対応する（1番のファイルで判定し、以降は同じ拡張子で探す）。
-   探索結果は localStorage に24時間キャッシュするので、毎回の起動で通信は走らない。 */
-var AMADO_RARE_DIR = '/images/amado/rare/';
-var AMADO_RARE_NAMERS = [
-  function(n){ return 'rare' + n; },
-  function(n){ return 'rare_' + n; },
-  function(n){ return 'amado_rare_' + n; },
-];
-var AMADO_RARE_EXTS = ['png','webp','jpg'];
-var AMADO_RARE_MAX = 200;   // 連番をどこまで探すか
-var AMADO_RARE_BATCH = 10;  // まとめて確認する件数。1件も無ければそこで打ち切る
-var AMADO_RARE_CACHE_KEY = 'aid_fp2_amado_rare';
-var AMADO_RARE_CACHE_MS = 24 * 60 * 60 * 1000;
-
-/* 探索前・探索失敗時に使う既定リスト（従来のハードコード分） */
 var amadoRare = [
   '/images/amado/rare/amado_rare_1.png',
   '/images/amado/rare/amado_rare_2.png',
@@ -2858,6 +2850,23 @@ var amadoRare = [
   '/images/amado/rare/amado_rare_6.png',
   '/images/amado/rare/amado_rare_7.png',
 ];
+
+var AMADO_POOLS = {
+  normal: {
+    dir: '/images/amado/',
+    namers: [ function(n){ return 'normal' + n; }, function(n){ return 'normal_' + n; } ],
+    cacheKey: 'aid_fp2_amado_normal',
+    get: function(){ return amadoNormal; },
+    set: function(list){ amadoNormal = list; },
+  },
+  rare: {
+    dir: '/images/amado/rare/',
+    namers: [ function(n){ return 'rare' + n; }, function(n){ return 'rare_' + n; }, function(n){ return 'amado_rare_' + n; } ],
+    cacheKey: 'aid_fp2_amado_rare',
+    get: function(){ return amadoRare; },
+    set: function(list){ amadoRare = list; },
+  },
+};
 
 function getRandomAmado(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -2871,33 +2880,33 @@ async function amadoFileExists(url){
   }catch(e){ return false; }
 }
 
-function rareAmadoUrl(namerIndex, n, ext){
-  return AMADO_RARE_DIR + AMADO_RARE_NAMERS[namerIndex](n) + '.' + ext;
+function amadoUrl(pool, namerIndex, n, ext){
+  return pool.dir + pool.namers[namerIndex](n) + '.' + ext;
 }
 
 /* 1つの命名パターンについて連番を探す。{ext, max, urls} を返す（1番が無ければ null） */
-async function discoverRareSeries(namerIndex){
+async function discoverAmadoSeries(pool, namerIndex){
   var ext = null;
-  for(var i=0;i<AMADO_RARE_EXTS.length;i++){
-    if(await amadoFileExists(rareAmadoUrl(namerIndex, 1, AMADO_RARE_EXTS[i]))){
-      ext = AMADO_RARE_EXTS[i];
+  for(var i=0;i<AMADO_EXTS.length;i++){
+    if(await amadoFileExists(amadoUrl(pool, namerIndex, 1, AMADO_EXTS[i]))){
+      ext = AMADO_EXTS[i];
       break;
     }
   }
   if(!ext) return null;
 
-  var urls = [rareAmadoUrl(namerIndex, 1, ext)];
+  var urls = [amadoUrl(pool, namerIndex, 1, ext)];
   var max = 1;
   var n = 2;
-  while(n <= AMADO_RARE_MAX){
+  while(n <= AMADO_MAX){
     var nums = [];
-    for(var k=0; k<AMADO_RARE_BATCH && n<=AMADO_RARE_MAX; k++, n++) nums.push(n);
+    for(var k=0; k<AMADO_BATCH && n<=AMADO_MAX; k++, n++) nums.push(n);
     var oks = await Promise.all(nums.map(function(num){
-      return amadoFileExists(rareAmadoUrl(namerIndex, num, ext));
+      return amadoFileExists(amadoUrl(pool, namerIndex, num, ext));
     }));
     var hit = 0;
     for(var j=0;j<nums.length;j++){
-      if(oks[j]){ urls.push(rareAmadoUrl(namerIndex, nums[j], ext)); max = nums[j]; hit++; }
+      if(oks[j]){ urls.push(amadoUrl(pool, namerIndex, nums[j], ext)); max = nums[j]; hit++; }
     }
     if(!hit) break;  // 10連続で見つからなければ打ち切り（途中の欠番は飛ばせる）
   }
@@ -2906,30 +2915,30 @@ async function discoverRareSeries(namerIndex){
 
 /* キャッシュには画像リストに加えて、系列ごとの拡張子と最終番号も持たせる。
    次回以降「最終番号+1が増えていないか」だけを軽く確認するために使う */
-function readRareAmadoCache(){
+function readAmadoCache(pool){
   try{
-    var o = JSON.parse(localStorage.getItem(AMADO_RARE_CACHE_KEY));
+    var o = JSON.parse(localStorage.getItem(pool.cacheKey));
     if(!o || !o.list || !o.list.length) return null;
-    if(Date.now() - o.at > AMADO_RARE_CACHE_MS) return null;
+    if(Date.now() - o.at > AMADO_CACHE_MS) return null;
     return o;
   }catch(e){ return null; }
 }
 
-function writeRareAmadoCache(list, series){
+function writeAmadoCache(pool, list, series){
   try{
-    localStorage.setItem(AMADO_RARE_CACHE_KEY, JSON.stringify({ at: Date.now(), list: list, series: series }));
+    localStorage.setItem(pool.cacheKey, JSON.stringify({ at: Date.now(), list: list, series: series }));
   }catch(e){}
 }
 
-function clearRareAmadoCache(){
-  try{ localStorage.removeItem(AMADO_RARE_CACHE_KEY); }catch(e){}
+function clearAmadoCache(pool){
+  try{ localStorage.removeItem(pool.cacheKey); }catch(e){}
 }
 
 /* 全パターンを総当たりで探索し直す */
-async function rediscoverRareAmado(){
+async function rediscoverAmado(pool){
   var all = [], series = [];
-  for(var i=0;i<AMADO_RARE_NAMERS.length;i++){
-    var s = await discoverRareSeries(i);
+  for(var i=0;i<pool.namers.length;i++){
+    var s = await discoverAmadoSeries(pool, i);
     if(!s) continue;
     series.push({ n: i, ext: s.ext, max: s.max });
     for(var j=0;j<s.urls.length;j++){
@@ -2937,8 +2946,8 @@ async function rediscoverRareAmado(){
     }
   }
   if(all.length){
-    amadoRare = all;
-    writeRareAmadoCache(all, series);
+    pool.set(all);
+    writeAmadoCache(pool, all, series);
   }
   return all.length;
 }
@@ -2948,35 +2957,40 @@ async function rediscoverRareAmado(){
      - 既知の系列の「最終番号+1」が増えていないか
      - まだ見つかっていない命名パターンの「1番」が現れていないか
    どちらかが当たれば総当たりで探索し直してキャッシュを更新する。 */
-async function refreshRareAmadoIfGrown(cache){
+async function refreshAmadoIfGrown(pool, cache){
   var series = cache.series || [];
   var known = {}, probes = [];
 
   for(var i=0;i<series.length;i++){
     known[series[i].n] = true;
-    probes.push(rareAmadoUrl(series[i].n, series[i].max + 1, series[i].ext));
+    probes.push(amadoUrl(pool, series[i].n, series[i].max + 1, series[i].ext));
   }
   /* 未発見の命名パターンは1番だけ拡張子違いで当たってみる（新しい系列の追加を拾うため） */
-  for(var n=0;n<AMADO_RARE_NAMERS.length;n++){
+  for(var n=0;n<pool.namers.length;n++){
     if(known[n]) continue;
-    for(var e=0;e<AMADO_RARE_EXTS.length;e++) probes.push(rareAmadoUrl(n, 1, AMADO_RARE_EXTS[e]));
+    for(var e=0;e<AMADO_EXTS.length;e++) probes.push(amadoUrl(pool, n, 1, AMADO_EXTS[e]));
   }
   if(!probes.length) return;
 
   var oks = await Promise.all(probes.map(amadoFileExists));
-  if(oks.indexOf(true) >= 0) await rediscoverRareAmado();
+  if(oks.indexOf(true) >= 0) await rediscoverAmado(pool);
+}
+
+async function loadAmadoPool(pool){
+  var cache = readAmadoCache(pool);
+  if(cache){
+    pool.set(cache.list);
+    /* 追加分の確認は裏で走らせる。失敗してもキャッシュのまま遊べればよい */
+    refreshAmadoIfGrown(pool, cache).catch(function(){});
+    return;
+  }
+  await rediscoverAmado(pool);
 }
 
 /* 起動時に一度だけ走らせる。失敗しても既定リストのままなので出題は止まらない */
-async function loadRareAmado(){
-  var cache = readRareAmadoCache();
-  if(cache){
-    amadoRare = cache.list;
-    /* 追加分の確認は裏で走らせる。失敗してもキャッシュのまま遊べればよい */
-    refreshRareAmadoIfGrown(cache).catch(function(){});
-    return;
-  }
-  await rediscoverRareAmado();
+function loadAmadoImages(){
+  loadAmadoPool(AMADO_POOLS.normal).catch(function(){});
+  loadAmadoPool(AMADO_POOLS.rare).catch(function(){});
 }
 
 /* キャッシュ後にファイルが消えていた場合の保険。
@@ -2984,11 +2998,40 @@ async function loadRareAmado(){
 function onAmadoImgError(imgEl){
   var bad = imgEl.getAttribute('src');
   if(!bad) return;  // 表示前（src未設定）は無視する
-  var idx = amadoRare.indexOf(bad);
-  if(idx >= 0) amadoRare.splice(idx, 1);
-  clearRareAmadoCache();
-  var next = amadoRare.length ? getRandomAmado(amadoRare) : getRandomAmado(amadoNormal);
+
+  var pool = amadoRare.indexOf(bad) >= 0 ? AMADO_POOLS.rare
+           : amadoNormal.indexOf(bad) >= 0 ? AMADO_POOLS.normal : null;
+  var alt = amadoNormal;
+  if(pool){
+    var list = pool.get().slice();
+    list.splice(list.indexOf(bad), 1);
+    pool.set(list);
+    clearAmadoCache(pool);
+    alt = pool.get();
+  }
+  if(!alt.length) alt = (pool === AMADO_POOLS.rare) ? amadoNormal : amadoRare;
+
+  var next = alt.length ? getRandomAmado(alt) : '';
   if(next && next !== bad){ imgEl.src = next; currentAmadoImage = next; }
+}
+
+/* ===== どのアマドを出すかの決定 =====
+   連続正解 1〜4問目 … 通常アマドを登録順に1枚ずつ（2枚あれば交互）
+   連続正解 5問目以降 … レアアマドを登録順に。5問目=1枚目, 6問目=2枚目, …
+                        最後まで行ったら先頭に戻る */
+var AMADO_RARE_FROM = 5;
+var amadoNormalTurn = 0;  // 通常アマドを出した回数。交互表示用のカウンタ
+
+function pickNormalAmado(){
+  if(!amadoNormal.length) return '';
+  var url = amadoNormal[amadoNormalTurn % amadoNormal.length];
+  amadoNormalTurn++;
+  return url;
+}
+
+function pickRareAmado(streakCount){
+  if(!amadoRare.length) return '';
+  return amadoRare[(streakCount - AMADO_RARE_FROM) % amadoRare.length];
 }
 
 var amadoFadeTimer = null;
@@ -2998,7 +3041,7 @@ var currentAmadoStreak = 0;
 function showAmado(isCorrect) {
   if(!isCorrect){ streak=0; return; }
   streak++;
-  var isRare = (streak === 3 || streak === 5 || streak === 7);
+  var isRare = (streak >= AMADO_RARE_FROM);
   var overlay = document.getElementById('amado-overlay');
   var popup = document.getElementById('amado-popup');
   var badge = document.getElementById('amado-badge');
@@ -3010,14 +3053,14 @@ function showAmado(isCorrect) {
   popup.classList.remove('text-fade');
 
   if(isRare){
-    img.src = getRandomAmado(amadoRare);
+    img.src = pickRareAmado(streak);
     popup.className = 'amado-popup rare';
     badge.className = 'amado-badge rare';
     badge.textContent = streak + '連続正解！レアアマド出現！';
     msg.textContent = 'レアアマド！！';
     sub.textContent = 'すごい！' + streak + '問連続正解やで！';
   } else {
-    img.src = getRandomAmado(amadoNormal);
+    img.src = pickNormalAmado();
     popup.className = 'amado-popup';
     badge.className = 'amado-badge normal';
     badge.textContent = '正解！';
@@ -3973,7 +4016,7 @@ renderDailyQuote();
 renderCategoryBtns();
 renderGapBtns();
 restoreStudyCharacter();
-loadRareAmado();
+loadAmadoImages();
 </script>
 
 <!-- アマドポップアップ -->
