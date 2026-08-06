@@ -521,7 +521,7 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
     </div>
   </div>
   <div class="quote-card" id="quote-card">
-    <img class="quote-amado-img" src="/images/amado/amado_study.png" alt="アマド">
+    <img class="quote-amado-img" src="/images/amado/ijin.png" alt="アマド">
     <div class="quote-body">
       <div class="quote-label">今日の格言</div>
       <div class="quote-en" id="quote-en"></div>
@@ -2822,20 +2822,26 @@ function analyzeWithTeacher(from){
 /* ===== アマドシステム ===== */
 var streak = 0;
 
+/* Vercel の静的配信はパスが大文字小文字を区別するので、
+   実ファイル名（すべて小文字の .png）と完全に一致させること */
 var amadoNormal = [
-  '/images/amado/amado_seikai.png',
-  '/images/amado/amado_seikai_1.png',
-  '/images/amado/amado_seikai_2.png',
+  '/images/amado/seikai.png',
+  '/images/amado/seikai2.png',
 ];
 
 var amadoRare = [
-  '/images/amado/rare/amado_rare_1.png',
-  '/images/amado/rare/amado_rare_2.png',
-  '/images/amado/rare/amado_rare_3.png',
-  '/images/amado/rare/amado_rare_4.png',
-  '/images/amado/rare/amado_rare_5.png',
-  '/images/amado/rare/amado_rare_6.png',
-  '/images/amado/rare/amado_rare_7.png',
+  '/images/amado/rare1.png',
+  '/images/amado/rare2.png',
+  '/images/amado/rare3.png',
+  '/images/amado/rare4.png',
+  '/images/amado/rare5.png',
+  '/images/amado/rare6.png',
+  '/images/amado/rare7.png',
+  '/images/amado/rare8.png',
+  '/images/amado/rare9.png',
+  '/images/amado/rare10.png',
+  '/images/amado/rare11.png',
+  '/images/amado/rare12.png',
 ];
 
 function getRandomAmado(arr) {
@@ -2849,7 +2855,8 @@ var currentAmadoStreak = 0;
 function showAmado(isCorrect) {
   if(!isCorrect){ streak=0; return; }
   streak++;
-  var isRare = (streak === 3 || streak === 5 || streak === 7);
+  /* 1〜4問目は通常アマド、5問目以降は毎回レアアマド */
+  var isRare = (streak >= 5);
   var overlay = document.getElementById('amado-overlay');
   var popup = document.getElementById('amado-popup');
   var badge = document.getElementById('amado-badge');
