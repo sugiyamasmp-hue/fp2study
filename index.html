@@ -155,6 +155,10 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 .progress-bar{height:4px;background:var(--border);border-radius:4px;margin-bottom:16px;overflow:hidden}
 .progress-fill{height:100%;background:linear-gradient(90deg,#2563eb,#1d4ed8);border-radius:4px;transition:width 0.4s ease}
 .quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+/* ○×は右側に 問番号／消音／中断 の3つが並ぶので、ジャンル名が長いときは折り返して
+   ボタンを潰さない（中断ボタンが読めない幅まで縮むのを防ぐ） */
+.hf-topbar .quiz-header{flex-wrap:wrap;gap:8px}
+.quiz-header-tools{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:auto}
 .cat-tag{background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:#2563eb;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700}
 .q-count{font-size:13px;color:var(--text-secondary);font-weight:700}
 .quiz-interrupt-btn{background:none;border:1px solid #d1d5db;color:#6b7280;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;cursor:pointer;white-space:nowrap}
@@ -178,6 +182,9 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 .next-btn{width:100%;padding:13px 0;background:linear-gradient(135deg,#2563eb,#1d4ed8);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:800;cursor:pointer}
 
 /* ハンズフリー */
+/* ○×（受験モード）のヘッダーを画面上部に固定する。
+   .container の左右パディングぶんを負マージンで打ち消して、背景を画面幅いっぱいに敷く */
+.hf-topbar{position:sticky;top:0;z-index:20;background:var(--bg);margin:-20px -16px 0;padding:20px 16px 0}
 .hf-box{background:var(--surface);border:2px solid rgba(37,99,235,0.3);border-radius:16px;padding:20px;margin-bottom:16px}
 .mode-badge{display:inline-block;background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:#2563eb;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700;margin-bottom:14px}
 .hf-label{font-size:13px;color:var(--text-secondary);margin-bottom:10px}
@@ -883,13 +890,17 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 <!-- ハンズフリー -->
 <div id="quiz-hf" class="screen">
 <div class="container">
-  <div class="progress-bar"><div class="progress-fill" id="prog-hf"></div></div>
-  <div class="quiz-header">
-    <span class="cat-tag" id="q-cat-hf"></span>
-    <div style="display:flex;align-items:center;gap:8px">
-      <span class="q-count" id="q-num-hf"></span>
-      <button class="quiz-mute-btn" id="hf-mute-btn" onclick="toggleMute()" aria-pressed="false">🔊 音声ON</button>
-      <button class="quiz-interrupt-btn" onclick="interruptHfQuiz()">中断する</button>
+  <!-- 解説を読んだり先生に質問したりすると画面が縦に伸びるので、
+       ヘッダー（＝中断ボタン）はスクロールしても常に画面上部に残す -->
+  <div class="hf-topbar">
+    <div class="progress-bar"><div class="progress-fill" id="prog-hf"></div></div>
+    <div class="quiz-header">
+      <span class="cat-tag" id="q-cat-hf"></span>
+      <div class="quiz-header-tools">
+        <span class="q-count" id="q-num-hf"></span>
+        <button class="quiz-mute-btn" id="hf-mute-btn" onclick="toggleMute()" aria-pressed="false">🔊 音声ON</button>
+        <button class="quiz-interrupt-btn" onclick="interruptHfQuiz()">中断する</button>
+      </div>
     </div>
   </div>
   <div class="hf-box">
@@ -907,6 +918,15 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
     <div class="hf-result" id="hf-result">
       <div class="hf-result-icon" id="hf-result-icon"></div>
       <div class="hf-result-text" id="hf-result-text"></div>
+    </div>
+    <!-- 先生への質問。出題中は隠しておき、解答して正誤判定が出てから openHfChat() で開放する -->
+    <div class="norm-chat-area" id="hf-chat-area" style="display:none">
+      <div class="norm-chat-head" id="hf-chat-head">先生に質問する</div>
+      <div class="norm-chat-msgs" id="hf-chat-msgs"></div>
+      <div class="norm-input-row">
+        <input class="norm-input" id="hf-chat-in" placeholder="質問してや！" onfocus="pauseHfVoiceForChat()" onkeydown="if(event.key==='Enter')sendHfChat()">
+        <button class="norm-send" id="hf-chat-send" onclick="sendHfChat()">送信</button>
+      </div>
     </div>
     <button class="next-btn" id="next-btn-hf" onclick="nextHfQ()" style="display:none"></button>
   </div>
@@ -2465,6 +2485,9 @@ function renderHfQ(){
   document.getElementById('hf-stmt').textContent=q.stmt;
   document.getElementById('hf-result').style.display='none';
   document.getElementById('next-btn-hf').style.display='none';
+  resetHfChat();
+  // 前の問題の解説・質問チャットぶんだけ下にスクロールした状態で次の問題が来るのを防ぐ
+  window.scrollTo(0,0);
   disableHfBtns();document.getElementById('voice-wave').style.display='none';
   updateMuteBtn();
   setHfStatus(ttsMuted?'問題を読んでや！':'読み上げています...',ttsMuted?'':'speaking');
@@ -2488,6 +2511,8 @@ function hfAnswer(ans){
   var nb=document.getElementById('next-btn-hf');
   nb.textContent=cur+1<QsOX.length?'次の問題へ →':'結果を見る';
   nb.style.display='block';
+  // 正誤判定が出たので、この問題について先生に質問できるようにする（全問共通・条件分岐なし）
+  openHfChat();
   var resultMsg = ok ? '正解！'+q.ex : '不正解！'+q.ex;
   var hasNext = cur+1<QsOX.length;
   speak(resultMsg + (voiceOK ? (hasNext ? '。次と言ったら次の問題へ進むで！' : '。お疲れ様でした！') : ''), function(){
@@ -2501,6 +2526,85 @@ function hfAnswer(ans){
 }
 
 function nextHfQ(){hfWaitingNext=false;stopListen();synth&&synth.cancel();if(cur+1<QsOX.length){cur++;renderHfQ();}else finish();}
+
+/* ---------- ○×（受験モード）の質問チャット ----------
+   通常クイズ・合宿プランと同じく /api/chat（Anthropic API経由のキャラクター解説）を使う。
+   出題中は隠しておき、解答して正誤判定が出た問題だけ openHfChat() で開放する。
+   出題内容による出し分けはしない（全問で質問できる）。 */
+var hfChatHist=[];
+
+function hfTeacher(){return TEACHERS[selectedTeacher]||TEACHERS.yassan;}
+
+/* 新しい問題に切り替わるたびに、履歴と入力欄をまっさらに戻して閉じる */
+function resetHfChat(){
+  var t=hfTeacher();
+  hfChatHist=[];
+  document.getElementById('hf-chat-area').style.display='none';
+  document.getElementById('hf-chat-head').textContent=t.name+'に質問する';
+  document.getElementById('hf-chat-msgs').innerHTML='';
+  var inp=document.getElementById('hf-chat-in');
+  inp.placeholder=t.placeholder;inp.value='';inp.disabled=false;
+  document.getElementById('hf-chat-send').disabled=false;
+}
+
+function openHfChat(){
+  var area=document.getElementById('hf-chat-area');
+  if(area.style.display==='block')return;
+  area.style.display='block';
+  addHfBot(hfTeacher().hint);
+}
+
+/* 質問を打っている間は音声を止める。
+   「次」待ちの音声認識が動いたままだと、入力中の独り言や周囲の音で次の問題へ飛んでしまう */
+function pauseHfVoiceForChat(){
+  var voiceWasActive = hfWaitingNext || !!(synth && synth.speaking);
+  hfWaitingNext=false;
+  stopListen();
+  synth&&synth.cancel();
+  // 音声が動いていたときだけ、止めたことを伝える（無音で使っている人には出さない）
+  if(voiceWasActive) setHfStatus('質問中は音声操作をお休みします。「次の問題へ」で進んでな！','');
+}
+
+function addHfBot(txt){
+  var m=document.getElementById('hf-chat-msgs');
+  var wrap=document.createElement('div');wrap.className='norm-bot-wrap';
+  var icon=document.createElement('div');icon.style.fontSize='16px';icon.textContent='♥';
+  var bub=document.createElement('div');bub.className='norm-bot-bubble';bub.textContent=txt;
+  wrap.appendChild(icon);wrap.appendChild(bub);
+  m.appendChild(wrap);m.scrollTop=m.scrollHeight;
+  return wrap;
+}
+function addHfUser(txt){
+  var m=document.getElementById('hf-chat-msgs');
+  var wrap=document.createElement('div');wrap.className='norm-user-wrap';
+  var bub=document.createElement('div');bub.className='norm-user-bubble';bub.textContent=txt;
+  wrap.appendChild(bub);
+  m.appendChild(wrap);m.scrollTop=m.scrollHeight;
+}
+
+async function sendHfChat(){
+  var inp=document.getElementById('hf-chat-in');
+  var btn=document.getElementById('hf-chat-send');
+  var txt=inp.value.trim();if(!txt)return;
+  pauseHfVoiceForChat();
+  inp.value='';addHfUser(txt);
+  hfChatHist.push({role:'user',content:txt});
+  var loading=addHfBot('考え中...');
+  btn.disabled=true;
+  var q=QsOX[cur];var t=hfTeacher();
+  var ctx='今の問題（○×形式）：\nカテゴリ：'+q.cat+'\n記述：'+q.stmt+'\n正解：'+(q.ans?'○':'×')+'\n解説：'+(q.ex||'');
+  try{
+    var r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hfChatHist,character:selectedTeacher,system:ctx})});
+    var d=await r.json();var rep=d.reply||t.error;
+    hfChatHist.push({role:'assistant',content:rep});
+    loading.remove();
+    addHfBot(rep);
+  }catch(e){
+    loading.remove();
+    addHfBot(t.error);
+  }
+  btn.disabled=false;
+}
 
 /* ===================================================
    実技試験モード
