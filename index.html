@@ -156,6 +156,7 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 .progress-fill{height:100%;background:linear-gradient(90deg,#2563eb,#1d4ed8);border-radius:4px;transition:width 0.4s ease}
 .quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .cat-tag{background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:#2563eb;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700}
+.qid-tag{font-size:9px;color:#c1c5cb;font-weight:400;margin-left:6px;vertical-align:middle}
 .q-count{font-size:13px;color:var(--text-secondary);font-weight:700}
 .quiz-interrupt-btn{background:none;border:1px solid #d1d5db;color:#6b7280;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;cursor:pointer;white-space:nowrap}
 .quiz-mute-btn{background:rgba(37,99,235,0.1);border:1px solid rgba(37,99,235,0.35);color:#2563eb;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;cursor:pointer;white-space:nowrap}
@@ -800,7 +801,10 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 <div id="sukima-quiz" class="screen">
 <div class="container">
   <div class="quiz-header">
-    <span class="cat-tag" id="sk-cat"></span>
+    <div style="display:flex;align-items:center">
+      <span class="cat-tag" id="sk-cat"></span>
+      <span class="qid-tag" id="sk-id"></span>
+    </div>
     <div style="display:flex;align-items:center;gap:10px">
       <span class="sk-badge" id="sk-format-label"></span>
       <button class="quiz-interrupt-btn" onclick="goHome()">終了する</button>
@@ -885,7 +889,10 @@ body{background:var(--bg);color:var(--text);font-family:'Hiragino Kaku Gothic Pr
 <div class="container">
   <div class="progress-bar"><div class="progress-fill" id="prog-hf"></div></div>
   <div class="quiz-header">
-    <span class="cat-tag" id="q-cat-hf"></span>
+    <div style="display:flex;align-items:center">
+      <span class="cat-tag" id="q-cat-hf"></span>
+      <span class="qid-tag" id="q-id-hf"></span>
+    </div>
     <div style="display:flex;align-items:center;gap:8px">
       <span class="q-count" id="q-num-hf"></span>
       <button class="quiz-mute-btn" id="hf-mute-btn" onclick="toggleMute()" aria-pressed="false">🔊 音声ON</button>
@@ -1945,6 +1952,7 @@ async function nextSukimaQ(){
 function renderSukimaQ(){
   var q = sukimaQ, t = TEACHERS[selectedTeacher];
   document.getElementById('sk-cat').textContent = q.cat || 'FP2級';
+  document.getElementById('sk-id').textContent = 'ID: ' + (q.id || '');
   document.getElementById('sk-format-label').textContent = sukimaFormat === 'ox' ? '○×問題' : '4択問題';
   document.getElementById('sk-q-text').textContent = q.q;
   document.getElementById('sk-exbox').style.display = 'none';
@@ -2461,6 +2469,7 @@ function renderHfQ(){
   var q=QsOX[cur];
   document.getElementById('prog-hf').style.width=((cur+1)/QsOX.length*100)+'%';
   document.getElementById('q-cat-hf').textContent=q.cat;
+  document.getElementById('q-id-hf').textContent='ID: '+(q.id||'');
   document.getElementById('q-num-hf').textContent=(cur+1)+' / '+QsOX.length;
   document.getElementById('hf-stmt').textContent=q.stmt;
   document.getElementById('hf-result').style.display='none';
